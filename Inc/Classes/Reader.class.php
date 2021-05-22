@@ -43,18 +43,23 @@ class Compare
 		self::$ObjectToCompare = $newObject;
 	}
 
+	public function loadSheetsTemplate($Datasheet){
+
+		$filterSubset = new MyReadFilter();
+		$objReader = PHPExcel_IOFactory::createReader($Datasheet["ExcelFileType"]);
+		$objReader->setLoadSheetsOnly($Datasheet["worksheetName"])->setReadFilter($filterSubset);
+		$objPHPExcel = $objReader->load($Datasheet["tmp_name"]);
+
+		return $objPHPExcel->getActiveSheet()->toArray();
+
+	}
+
 	public function start_compare(){
 
 		$Datasheet = self::getCompareDatasheets();
-		$filterSubset = new MyReadFilter();
-
+		
 		// Construct data
-		$objReader = array(PHPExcel_IOFactory::createReader($Datasheet[0]["ExcelFileType"]), PHPExcel_IOFactory::createReader($Datasheet[1]["ExcelFileType"]));
-		$objReader[0]->setLoadSheetsOnly($Datasheet[0]["worksheetName"])->setReadFilter($filterSubset);
-		$objReader[1]->setLoadSheetsOnly($Datasheet[1]["worksheetName"])->setReadFilter($filterSubset);
-		$objPHPExcel = array($objReader[0]->load($Datasheet[0]["tmp_name"]), $objReader[1]->load($Datasheet[1]["tmp_name"]));
-		$sheetData = array($objPHPExcel[0]->getActiveSheet()->toArray(), $objPHPExcel[1]->getActiveSheet()->toArray());
-
+		$sheetData = array(self::loadSheetsTemplate($Datasheet[0]), self::loadSheetsTemplate($Datasheet[1]));
 		$listaRefeicaoQuarta = array( 0 => array(), 1 => array());
 		$listaNomes = array( 0 => array(), 1 => array());
 
