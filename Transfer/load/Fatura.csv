@@ -1,0 +1,15 @@
+ Fatura 
+Conta ;54944333
+Cartao ;2306.XXXX.XXXX.7008
+Periodo ;04/3271
+Vencimento ;10/04/2021
+Saldo ;192,23
+
+Data da Transacao;Estabelecimento;Tipo da Transacao;Valor
+31/03/2021;Ajuste Db Iof Adicio;Compra à vista;+0,66
+31/03/2021;Aj Db Iof Dia;Compra à vista;+0,11
+31/03/2021;Multa Por Atraso;Compra à vista;+3,45
+31/03/2021;Encargos Rotativo;Compra à vista;+9,62
+31/03/2021;Juros Projetados;Compra à vista;+3,93
+31/03/2021;Juros De Mora;Compra à vista;+1,25
+31/03/2021;Projecao De Mora;Compra à vista;+0,51

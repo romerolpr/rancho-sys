@@ -145,7 +145,7 @@ class Render
 	
 
 
-	public function construct_object()
+	public function constructObject()
 	{
 
 		function add($SheetData, $obj, $indice)
@@ -232,34 +232,43 @@ class Render
 	}
 
 	public function construct_table(){
+		try {
+			$return = '<p>Datasheet: <strong>' . self::getDatasheetName() . '</strong><p><table>';
 
-		$return = '<p>Datasheet: <strong>' . self::getDatasheetName() . '</strong><p><table>';
+			foreach (self::$SheetData as $key => $value):
 
-		foreach (self::$SheetData as $key => $value):
+				// var_dump(self::$SheetData);
 
-			$return .= "<tr ".($key == 0 ? 'class="bar-table"' : null).">";
-			$return .= "<td>" . (isset($value[0]) ? $value[0] : "-") . "</td>";
-			$return .= "<td>" . (isset($value[1]) ? $value[1] : "-") . "</td>";
-			$return .= "<td>" . (isset($value[2]) ? $value[2] : "-") . "</td>";
-			$return .= "<td>" . (isset($value[3]) ? $value[3] : "-") . "</td>";
-			$return .= "<td>" . (isset($value[4]) ? $value[4] : "-") . "</td>";
-			$return .= "<td>" . (isset($value[5]) ? $value[5] : "-") . "</td>";
-			$return .= "<td>" . (isset($value[6]) ? $value[6] : "-") . "</td>";
-			$return .= "<td>" . (isset($value[7]) ? $value[7] : "-") . "</td>";
-			$return .= "<td>" . (isset($value[8]) ? $value[8] : "-") . "</td>";
-			$return .= "<td>" . (isset($value[9]) ? $value[9] : "-") . "</td>";
-			$return .= "<td>" . (isset($value[10]) ? $value[10] : "-") . "</td>";
-			$return .= "<td>" . (isset($value[10]) ? $value[11] : "-") . "</td>";
-			$return .= "</tr>";
+				$return .= "<tr ".($key == 0 ? 'class="bar-table"' : null).">";
+				for ($i=0; $i < count(self::$SheetData[0]) ; $i++) { 
+					# code...
+					$return .= "<td data-tr=\"". $key ."\" data-td=\"". $i ."\">" . (isset($value[$i]) ? $value[$i] : "-") . "</td>";
+				}
+				// $return .= "<td>" . (isset($value[1]) ? $value[1] : "-") . "</td>";
+				// $return .= "<td>" . (isset($value[2]) ? $value[2] : "-") . "</td>";
+				// $return .= "<td>" . (isset($value[3]) ? $value[3] : "-") . "</td>";
+				// $return .= "<td>" . (isset($value[4]) ? $value[4] : "-") . "</td>";
+				// $return .= "<td>" . (isset($value[5]) ? $value[5] : "-") . "</td>";
+				// $return .= "<td>" . (isset($value[6]) ? $value[6] : "-") . "</td>";
+				// $return .= "<td>" . (isset($value[7]) ? $value[7] : "-") . "</td>";
+				// $return .= "<td>" . (isset($value[8]) ? $value[8] : "-") . "</td>";
+				// $return .= "<td>" . (isset($value[9]) ? $value[9] : "-") . "</td>";
+				// $return .= "<td>" . (isset($value[10]) ? $value[10] : "-") . "</td>";
+				// $return .= "<td>" . (isset($value[10]) ? $value[11] : "-") . "</td>";
+				$return .= "</tr>";
 
-		endforeach;
+			endforeach;
 
-		$return .= "</table>";
+			$return .= "</table>";
 
-		// Define Object
-		self::setObject(self::$SheetData);
+			// Define Object
+			self::setObject(self::$SheetData);
 
-		echo $return;
+			echo $return;
+
+		} catch (Exception $e) {
+			echo 'Exceção capturada: ',  $e->getMessage(), "\n";
+		}
 
 	}
 

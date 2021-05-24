@@ -1,5 +1,7 @@
 <?php
 
+
+
 /** Url base **/
 $url = "";
 
@@ -19,17 +21,17 @@ include 'define.inc.php';
 $get = filter_input_array(INPUT_GET, FILTER_DEFAULT);
 
 $dataAtual = new DateTime();
-$dataAtual = $dataAtual->format("d-m-Y H:i:s");
+$dataAtual = $dataAtual->format("d-m-Y");
 
 /** Exit session **/
 if (isset($get["exit"])):
 	switch ($get["exit"]):
-		case 'session':
+		case 'session_obj':
 			unset($_SESSION["objfile"]);
 			break;
 
 		case 'session_login':
-			unset($_SESSION["user_login"]);
+			unset($_SESSION);
 			break;
 		
 		default:
@@ -40,5 +42,8 @@ endif;
 
 /** Define include errors lists **/
 include 'err.list.php';
+
+/** Functions include **/
+require_once 'functions.inc.php';
 
 ?>

@@ -89,14 +89,38 @@ $Db->setter(HOST, USER, PASS, DBNAME);
 
 						<?php
 
-						$Files = array("name" => array(),"size" => array());
+						$Files = array();
+						foreach (glob(TRANSFER . "*.*") as $arquivo) array_push($Files, array($arquivo, filesize($arquivo), filemtime($arquivo)));
 
-						foreach (glob(TRANSFER . "*.*") as $arquivo) {
-						    array_push($Files["name"], $arquivo);
-						    array_push($Files["size"], filesize($arquivo));
-						}
+						echo "<table>";
+						echo "<tr class=\"bar-table\">";
+						echo "<td>Alocação</td>";
+						echo "<td>Última modificação</td>";
+						echo "<td>Tamanho</td>";
+						echo "</tr>";
+							foreach ($Files as $key => $value):
 
-						var_dump($Files);
+								$dateFile = date("d-m-Y", $value[2]);
+
+								$data1 = implode('-', array_reverse(explode('/', $dateFile)));
+								$data2 = implode('-', array_reverse(explode('/', $dataAtual)));
+								$d1 = strtotime($data1); 
+								$d2 = strtotime($data2);
+
+								$conta = ($d2 - $d1) /86400;
+
+								$dataFinal = ($conta <= 0) ? "Hoje mesmo" : "Há " . $conta . " " . ($conta == 1 ? "dia" : "dias");
+
+								echo "<tr>";
+								echo "<td>",$value[0],"</td>";
+								echo "<td><i>",$dataFinal,"</i></td>";
+								echo "<td><i>",$value[1]," KB</i></td>";
+								echo "</tr>";
+
+							endforeach;
+						echo "</ul>";
+
+						// var_dump($Files);
 
 						?>
 
@@ -116,8 +140,8 @@ $Db->setter(HOST, USER, PASS, DBNAME);
 
 			else:
 
-				// unset($_SESSION["objfile"]);
-				echo '<span class="alert danger"><strong>404</strong>: Não foi possível localizar o arquivo em: "//'.$_SESSION["objfile"]["tmp_name"].'". Adicione o arquivo novamente.</span>';
+				$Alert->setConfig("danger", "<strong>404</strong>: Não foi possível localizar o arquivo em: \"/Transfer/load/".str_replace(" ", "_", $_SESSION["objfile"]["name"])."\". Adicione o arquivo novamente.</span>");
+				echo ($Alert->displayPrint());
 				include FRONT . 'form.php';
 
 			endif;

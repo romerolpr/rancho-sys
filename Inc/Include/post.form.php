@@ -19,7 +19,8 @@ if (isset($_POST["Envia"]) && !empty($_POST["Envia"])):
 
 			/** Set a new name for file **/
 			$temp = explode(".", $ObjLoad["name"]);
-			$newfilename = round(microtime(true)) . '.' . end($temp);
+			$newfilename = clearString(str_replace(" ", "_", $temp[0])) . '.' . end($temp);
+			$ObjLoad["name"] = $newfilename;
 			$dir = TRANSFER . $newfilename;
 
 			if(move_uploaded_file($ObjLoad["tmp_name"], $dir)):
