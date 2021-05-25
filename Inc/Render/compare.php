@@ -1,3 +1,5 @@
+<h1>Comparar dados</h1>
+
 <?php
 
 /* Set the current obj */

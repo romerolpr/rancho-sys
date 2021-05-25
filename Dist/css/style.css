@@ -33,7 +33,7 @@ body, html {
     font-weight: bold;
     font-size: 12px;
     padding: 0;
-    border-bottom: 1px solid #248636;
+    border-bottom: 1px solid #ddd;
 }
 
 .sidebar .middle {
@@ -153,7 +153,7 @@ body, html {
     box-sizing: border-box;
 }
 
-.breadcrumb strong { text-decoration: underline; font-weight: 600;}
+.breadcrumb strong { text-decoration: underline; font-weight: 400;}
 .breadcrumb span, 
 .breadcrumb strong { color: #1f752a}
 
@@ -166,8 +166,9 @@ article h1 {
 }
 
 .main {
+    float: left;
     display: block;
-    width: 95%;
+    width: 100%;
 }
 
 .main label, p {
@@ -314,6 +315,22 @@ table tr.removed {
     cursor: default;
 }
 
+.box-table {
+    width: 100%;
+    max-height: 600px;
+    overflow-x: auto;
+}
+
+.window_fixed {
+    position: fixed;
+    z-index: 9998;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100%;
+    background: #fff;
+}
+
 .box-align {
     float: left;
     width: 33%;
@@ -351,6 +368,10 @@ table tr.removed {
 
 .btn {
     color: #248636; 
+}
+
+.btn_link {
+    margin: .5em;
 }
 
 .red {

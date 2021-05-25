@@ -7,7 +7,7 @@
 
 	if (!isset($_SESSION["objfile_to_compare"])):
 
-		echo '<p>Selecione outro arquivo para realizar a comparação de dados.</p><br><li>Arquivo 1: <br><strong>',$_SESSION["objfile"]["tmp_name"],'</strong> (',$_SESSION["objfile"]["name"],') <i><span title="Datasheet">',$_SESSION["objfile"]["worksheetName"],'</span></i></li><br>'; ?>
+		echo '<p>Selecione pelo menos dois arquivos para comparar.</p><br><li>Arquivo 1: <br><strong>',$_SESSION["objfile"]["tmp_name"],'</strong> (',$_SESSION["objfile"]["name"],') <i><span title="Datasheet">',$_SESSION["objfile"]["worksheetName"],'</span></i></li><br>'; ?>
 
 		<form method="POST" enctype="multipart/form-data" class="form-post">
 			<div class="form-box">

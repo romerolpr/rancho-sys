@@ -142,102 +142,18 @@ class Render
 	public function setObject($newObject){
 		self::$Object = $newObject;
 	}
-	
-
-
-	public function constructObject()
-	{
-
-		function add($SheetData, $obj, $indice)
-		{
-
-			switch ($indice) {
-				case 0:
-					$itemKey = "Carimbo de data/hora";
-					break;
-				case 1:
-					$itemKey = "Endereço de e-mail";
-					break;
-				case 2:
-					$itemKey = "Posto/Graduação";
-					break;
-				case 3:
-					$itemKey = "Nome de guerra";
-					break;
-				case 4:
-					$itemKey = "Organização Militar";
-					break;
-				case 5:
-					$itemKey = "Segunda-feira";
-					break;
-				case 6:
-					$itemKey = "Terça-feira";
-					break;
-				case 7:
-					$itemKey = "Quarta-feira";
-					break;
-				case 8:
-					$itemKey = "Quinta-feira";
-					break;
-				case 9:
-					$itemKey = "Sexta-feira";
-					break;
-				case 10:
-					$itemKey = "Sábado";
-					break;
-				case 11:
-					$itemKey = "Domingo";
-					break;
-				
-				default:
-					$itemKey = "Carimbo de data/hora";
-					break;
-			}
-
-			foreach ($SheetData as $key => $value):
-				$return = $SheetData[$key][$indice];
-				if ($SheetData[$key][$indice]):
-					if ($SheetData[$key][0][0] != 0):
-						array_push($obj[$indice][$itemKey], $return);
-					endif;
-				// else:
-					// var_dump($obj[$indice][$itemKey]);
-				// 	array_push($obj[$indice][$itemKey], $return);
-				endif;
-			endforeach;
-
-
-			return $obj;
-		}
-
-		$ObjArray = array();
-		$maxHeight = count(self::$SheetData[0])/2;
-
-		for ($i=0; $i <= $maxHeight; $i++) { 
-			$newarray = self::$SheetData[0][$i];
-			$newarray = array(
-				$newarray => array()
-			);
-			array_push($ObjArray, $newarray);
-		}
-
-		for ($i=0; $i < count(self::$SheetData[0]); $i++) { 
-			# code...
-			$ObjArray = add(self::$SheetData, $ObjArray, $i);
-		}
-
-
-		// var_dump($ObjArray);
-
-	}
 
 	public function construct_table(){
 		try {
-			$return = '<p>Datasheet: <strong>' . self::getDatasheetName() . '</strong><p><table>';
+			$return = '<p class="fleft">Datasheet: <strong>' . self::getDatasheetName() . '</strong> <span class="fright"><a href="index.php?worksheetName=' . self::getDatasheetName() . '" class="btn btn_link btn_expand" title="Expandir"><i class="fas fa-expand"></i></a><a href="index.php?worksheetName=None" class="btn btn_link" title="Alterar Datasheet"><i class="fas fa-pen"></i></a><a href="index.php?compare" class="btn btn_link" title="Comparação"><i class="fas fa-file-upload"></i></a></span><p>';
+			$return .= '<div class="box-table"><table>';
 
 			foreach (self::$SheetData as $key => $value):
 
 				// var_dump(self::$SheetData);
+
+				// var_dump($value);
+				// break;
 
 				$return .= "<tr ".($key == 0 ? 'class="bar-table"' : null).">";
 				for ($i=0; $i < count(self::$SheetData[0]) ; $i++) { 
@@ -259,7 +175,7 @@ class Render
 
 			endforeach;
 
-			$return .= "</table>";
+			$return .= "</div></table>";
 
 			// Define Object
 			self::setObject(self::$SheetData);
@@ -270,122 +186,6 @@ class Render
 			echo 'Exceção capturada: ',  $e->getMessage(), "\n";
 		}
 
-	}
-
-}
-
-/**
-	Connect db class
-**/
-class ObjectDB
-{
-	/*
-	** Métodos do banco de dados **
-	*/
-	static $host; // host
-	static $user; // usuario
-	static $pass; // senha
-	static $db; // banco de dados
-
-	public static function connect_db()
-	{
-
-		try 
-		{
-			$connection = new PDO("mysql:dbname=". self::$db .";host=" . self::$host . "", self::$user, self::$pass);
-		} catch (PDOException $e)
-		{
-			echo ("We could't connect db.");
-		}
-
-		return $connection;
-
-	}
-
-	public static function return_query($db, $table)
-	{	
-		try 
-		{
-			$stt = $db->prepare('SELECT * FROM ' . $table);
-			$stt->execute();
-
-		} catch (PDOException $e)
-		{
-			echo ("You don't have anything to return.");
-		}
-
-		return $stt->fetchAll(PDO::FETCH_ASSOC);
-	}
-
-	public static function insert_query($db, $table, $obj)
-	{
-		try 
-		{	
-			switch ($table) {
-				case 'cancel':
-					$sql = "INSERT INTO $table (`id`, `nome`, `posto_graduacao`, `data_time`, `solicitacao`, `motivo`, `justificativa`) VALUES (:id, :nome, :posto_graduacao, :data_time, :solicitacao, :motivo, :justificativa)";
-					break;
-				
-				default:
-					$sql = "INSERT INTO $table (`id`, `nome`, `idade`, `sexo`, `posto_graduacao`, `data_time`) VALUES (:id, :nome, :idade, :sexo, :posto_graduacao, :data_time)";
-					break;
-			}
-				
-			$stmt = $db->prepare($sql);
-			$stmt->execute($obj);
-
-		} catch (PDOException $e)
-		{
-			echo ("We can't insert a new data on db.");
-		}
-	}
-
-	public static function update_query($db, $table, $obj, $metodo, $x = null, $replace = "&h=Cancelamentos")
-	{
-		try 
-		{	
-			switch ($x) {
-				case true:
-					$sql = "UPDATE $table SET status=$metodo WHERE nome=$obj";
-					break;
-				
-				default:
-					$sql = "UPDATE $table SET status=$metodo WHERE id=$obj";
-					break;
-			}	
-				
-			$stmt = $db->prepare($sql);
-			$stmt->execute();
-
-			echo "<script>document.location.replace('?action=Consultar".$replace."')</script>";
-
-		} catch (PDOException $e)
-		{
-			echo ("We can't insert a new data on db.");
-		}
-	}
-
-	public static function delete_query($db, $table, $obj)
-	{
-		try 
-		{	
-			$sql = "DELETE FROM $table WHERE id=$obj";
-				
-			$stmt = $db->prepare($sql);
-			$stmt->execute();
-
-		} catch (PDOException $e)
-		{
-			echo ("We can't insert a new data on db.");
-		}
-	}
-
-	public static function setter($host, $user, $pass, $dbname)
-	{
-		self::$host = $host;
-		self::$user = $user;
-		self::$pass = $pass;
-		self::$db = $dbname;
 	}
 
 }

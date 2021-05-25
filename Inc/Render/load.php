@@ -1,9 +1,9 @@
 <br>
-<p>Gerenciar:</p>
+<p>Gerenciar arquivo:</p>
 <ul class='list'>
-	<li><a href="<?php echo $url ?>index.php?worksheetName=None" title="Alterar Datasheet">Alterar Datasheet</a></li>
-	<li><a href="<?php echo $url ?>index.php?compare" title="Realizar comparação">Realizar comparação</a></li>
-	<br><li><a href="<?php echo $url ?>index.php?exit=session_obj" title="Fechar arquivo">Fechar arquivo</a></li>
+	<!-- <li><a href="<?php echo $url ?>index.php?worksheetName=None" title="Alterar Datasheet">Alterar Datasheet</a></li> -->
+	<!-- <li><a href="<?php echo $url ?>index.php?compare" title="Realizar comparação">Realizar comparação</a></li> -->
+	<li><a href="<?php echo $url ?>index.php?exit=session_obj" title="Fechar arquivo">Fechar arquivo</a></li>
 </ul><br>
 
 <?php

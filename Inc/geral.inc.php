@@ -14,6 +14,7 @@ include 'Inc/Classes/PHPExcel/IOFactory.php';
 /** Classes globals **/
 include 'Inc/Classes/Reader.class.php';
 include 'Inc/Classes/DisplayAlert.class.php';
+include 'Inc/Classes/ObjectDB.class.php';
 
 /** Define includes **/
 include 'define.inc.php';
@@ -21,7 +22,7 @@ include 'define.inc.php';
 $get = filter_input_array(INPUT_GET, FILTER_DEFAULT);
 
 $dataAtual = new DateTime();
-$dataAtual = $dataAtual->format("d-m-Y");
+$dataAtual = $dataAtual->format("d-m-Y H:i:s");
 
 /** Exit session **/
 if (isset($get["exit"])):

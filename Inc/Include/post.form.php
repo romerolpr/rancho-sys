@@ -55,7 +55,7 @@ if (isset($_POST["Login"]) && !empty($_POST["Login"])):
 	    header("location: index.php?err=username_or_pass");
 	else:
 
-	    $Obj = $Db->return_query($Db->connect_db(), "users");
+	    $Obj = $Db->return_query($Db->connect_db(), TB_USERS);
 
 	    // var_dump($myInput);
 	    // var_dump($Obj);

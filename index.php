@@ -21,6 +21,8 @@ $Db->setter(HOST, USER, PASS, DBNAME);
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>SisA - Sistema de Arranchamento</title>
 	<link rel="stylesheet" type="text/css" href="<?php echo $url?>Dist/css/style.css">
+	<link rel="stylesheet" type="text/css" href="<?php echo $url?>Dist/css/fontawesome.css">
+	<script><?php include "Dist/js/jquery.js"; ?></script>
 </head>
 <body>
 
@@ -74,67 +76,13 @@ $Db->setter(HOST, USER, PASS, DBNAME);
 					$objReader = PHPExcel_IOFactory::createReader($inputFileName);
 					$worksheetData = $objReader->listWorksheetInfo($inputTmp);
 
-					if (is_null($_SESSION["objfile"]["worksheetName"])):
-						echo "<br><p>Datasheet:</p>";
-						echo "<ul class='list'>";
-						foreach ($worksheetData as $worksheet):
-							echo '<li><a href="',$url,'?worksheetName=',$worksheet['worksheetName'],'">', $worksheet['worksheetName'],'</a></li>';
-						endforeach;
-						// echo '<br><li><a href="',$url,'?exit=session">Novo arquivo</a></li>';
-						echo "</ul>"; ?>
-
-						<br>
-						<p>Arquivos recentes</p>
-						<span class="divider"></span>
-
-						<?php
-
-						$Files = array();
-						foreach (glob(TRANSFER . "*.*") as $arquivo) array_push($Files, array($arquivo, filesize($arquivo), filemtime($arquivo)));
-
-						echo "<table>";
-						echo "<tr class=\"bar-table\">";
-						echo "<td>Alocação</td>";
-						echo "<td>Última modificação</td>";
-						echo "<td>Tamanho</td>";
-						echo "</tr>";
-							foreach ($Files as $key => $value):
-
-								$dateFile = date("d-m-Y", $value[2]);
-
-								$data1 = implode('-', array_reverse(explode('/', $dateFile)));
-								$data2 = implode('-', array_reverse(explode('/', $dataAtual)));
-								$d1 = strtotime($data1); 
-								$d2 = strtotime($data2);
-
-								$conta = ($d2 - $d1) /86400;
-
-								$dataFinal = ($conta <= 0) ? "Hoje mesmo" : "Há " . $conta . " " . ($conta == 1 ? "dia" : "dias");
-
-								echo "<tr>";
-								echo "<td>",$value[0],"</td>";
-								echo "<td><i>",$dataFinal,"</i></td>";
-								echo "<td><i>",$value[1]," KB</i></td>";
-								echo "</tr>";
-
-							endforeach;
-						echo "</ul>";
-
-						// var_dump($Files);
-
-						?>
-
-					<?php else:
-
-						/* Including the render file */
-						include 'Inc/Render/load.php';
-
-					endif;
+					/* Load datasheets */
+					include RENDER . 'datasheet.php';
 
 				else:
 
 					/* Including the compare file */
-					include 'Inc/Render/compare.php';
+					include RENDER . 'compare.php';
 
 				endif;
 
@@ -162,6 +110,42 @@ $Db->setter(HOST, USER, PASS, DBNAME);
 		</div>
 
 	</section>
+
+	<script>
+		function confirm_clicked(url, action) {
+			if (confirm("Você tem certeza que deseja "+action+" este item?")) {
+				document.location = url;
+			}
+		}
+		$(".btn_click_consult").on("click", function(e){
+			var url = $(this).attr("href"), action = $(this).attr("data-action");
+			e.preventDefault();
+			confirm_clicked(url, action);
+		});
+
+		var clicked = false, popup = false;
+		$(".btn_expand").on("click", function(e){
+			e.preventDefault();
+			if (!clicked){
+				if (!popup){
+					if (confirm("Aviso: Pressione a tecla \"ESC\" para minimizar a tabela novamente."))
+						$(".box-table").addClass("window_fixed");
+						popup=true;
+				} else {
+					$(".box-table").addClass("window_fixed");
+				}
+				clicked = true;
+			}
+		});
+
+		document.addEventListener('keydown', function (event) {
+		    if (event.keyCode == 27 && clicked){
+		     	$(".box-table").removeClass("window_fixed");
+		     	clicked = false;	
+		    }
+		});
+
+	</script>
 
 </body>
 </html>
