@@ -11,6 +11,12 @@ $Db 	= new ObjectDB();
 $breadcrumbTitle = isset($_SESSION["user_login"]) ? "Painel" : "Início";
 $Db->setter(HOST, USER, PASS, DBNAME);
 
+if (isset($_SESSION["user_login"])):
+	foreach ($Db->return_query($Db->connect_db(), TB_USERS) as $key => $values):
+		if ($_SESSION["user_login"]["username"] == $values["username"] && $_SESSION["user_login"]["password"] == $values["password"]) $_SESSION["user_login"]["nome"] = $values["nome"];
+	endforeach; 
+endif;
+
 ?>
 
 <!DOCTYPE html>
@@ -111,41 +117,8 @@ $Db->setter(HOST, USER, PASS, DBNAME);
 
 	</section>
 
-	<script>
-		function confirm_clicked(url, action) {
-			if (confirm("Você tem certeza que deseja "+action+" este item?")) {
-				document.location = url;
-			}
-		}
-		$(".btn_click_consult").on("click", function(e){
-			var url = $(this).attr("href"), action = $(this).attr("data-action");
-			e.preventDefault();
-			confirm_clicked(url, action);
-		});
-
-		var clicked = false, popup = false;
-		$(".btn_expand").on("click", function(e){
-			e.preventDefault();
-			if (!clicked){
-				if (!popup){
-					if (confirm("Aviso: Pressione a tecla \"ESC\" para minimizar a tabela novamente."))
-						$(".box-table").addClass("window_fixed");
-						popup=true;
-				} else {
-					$(".box-table").addClass("window_fixed");
-				}
-				clicked = true;
-			}
-		});
-
-		document.addEventListener('keydown', function (event) {
-		    if (event.keyCode == 27 && clicked){
-		     	$(".box-table").removeClass("window_fixed");
-		     	clicked = false;	
-		    }
-		});
-
-	</script>
+	<!-- Events, functions js -->
+	<script><?php include 'Dist/js/geral.js'; ?></script>
 
 </body>
 </html>

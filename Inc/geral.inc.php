@@ -21,8 +21,9 @@ include 'define.inc.php';
 
 $get = filter_input_array(INPUT_GET, FILTER_DEFAULT);
 
-$dataAtual = new DateTime();
-$dataAtual = $dataAtual->format("d-m-Y H:i:s");
+$date = new DateTime();
+$dataAtual = $date->format("d-m-Y H:i:s");
+$diaAtual  = $date->format("d-m-Y");
 
 /** Exit session **/
 if (isset($get["exit"])):

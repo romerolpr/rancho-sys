@@ -23,7 +23,8 @@ $Render->setUnset(true);
 
 /* Get object data and render*/
 $Objects = $Render->getObject();
-echo $Render->construct_table($sheetData);
+echo $Render->constructTable($sheetData);
+// echo $Render->getSchedulingPerDay($sheetData);
 
 
 

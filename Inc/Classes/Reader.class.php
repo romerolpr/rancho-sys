@@ -99,7 +99,6 @@ class Render
 	static $unset;
 	static $Object;
 	
-
 	/** 
 	Getter and Setter 
 	**/
@@ -143,34 +142,67 @@ class Render
 		self::$Object = $newObject;
 	}
 
-	public function construct_table(){
+	public function constructTable(){
 		try {
-			$return = '<p class="fleft">Datasheet: <strong>' . self::getDatasheetName() . '</strong> <span class="fright"><a href="index.php?worksheetName=' . self::getDatasheetName() . '" class="btn btn_link btn_expand" title="Expandir"><i class="fas fa-expand"></i></a><a href="index.php?worksheetName=None" class="btn btn_link" title="Alterar Datasheet"><i class="fas fa-pen"></i></a><a href="index.php?compare" class="btn btn_link" title="Comparação"><i class="fas fa-file-upload"></i></a></span><p>';
-			$return .= '<div class="box-table"><table>';
 
+			$preg = ",";
+
+			$return = '<p class="fleft">Datasheet: <strong>' .  self::getDatasheetName() . '</strong> <span class="fright"><a href="index.php?worksheetName=' . urlencode(self::getDatasheetName()) . '&window=expanded'.(isset($_GET["hideItem"]) ? "&hideItem=" . $_GET["hideItem"] : null).'" class="btn btn_link btn_expand" title="Expandir tabela"><i class="fas fa-expand"></i></a><a href="index.php?worksheetName=None'.(isset($_GET["window"]) && $_GET["window"] == "expanded" ? "&window=expanded" : null).'" class="btn btn_link" title="Alterar Datasheet"><i class="fas fa-exchange-alt"></i></a></span><p>';
+			$return .= '<div class="box-table '. (isset($_GET["window"]) && $_GET["window"] == "expanded" ? "window_fixed" : null) .'"><table>';
+			$return .= '<tr id="hide-td">';
+			for ($i=0; $i < count(self::$SheetData[0]) ; $i++):
+				if (isset($_GET["hideItem"])):
+					$iconAdd = (!in_array($i, explode($preg, $_GET["hideItem"]))) ? array("Esconder", "fa fa-eye-slash") : array("Mostrar", "fas fa-eye");
+				else:
+					$iconAdd = array("Esconder", "fa fa-eye-slash");
+				endif;
+				$return .= "<td><a data-action='".strtolower($iconAdd[0])."' class='btn btn_click_hide ".($iconAdd[0] == "Esconder" ? "red" : null)."' data-td-hide='".$i."' href='index.php?hideItem=";
+				if(isset($_GET["hideItem"]) && !in_array($i, explode($preg, $_GET["hideItem"]))):
+					$hideItemsUrl = $_GET["hideItem"].$preg.$i;
+				else:
+					if (isset($_GET["hideItem"])):
+						$arrayUrl = explode($preg, $_GET["hideItem"]);
+						foreach ($arrayUrl as $key => $value) 
+							if ($value == $i) 
+								unset($arrayUrl[$key]);
+
+						$hideItemsUrl = implode($preg, $arrayUrl);
+					else:
+						$hideItemsUrl = $i;
+					endif;
+
+				endif;
+				$return .= $hideItemsUrl . (isset($_GET["window"]) && $_GET["window"] == "expanded" ? "&window=expanded" : null) . "&worksheetName=". urlencode(self::getDatasheetName());
+				$return .= "' title='".$iconAdd[0]."'><i class='".$iconAdd[1]."'></i></a></td>";
+
+			endfor;
+
+			$return .= '</tr>';
 			foreach (self::$SheetData as $key => $value):
-
-				// var_dump(self::$SheetData);
-
-				// var_dump($value);
-				// break;
-
+				$s = 5;
 				$return .= "<tr ".($key == 0 ? 'class="bar-table"' : null).">";
-				for ($i=0; $i < count(self::$SheetData[0]) ; $i++) { 
-					# code...
-					$return .= "<td data-tr=\"". $key ."\" data-td=\"". $i ."\">" . (isset($value[$i]) ? $value[$i] : "-") . "</td>";
-				}
-				// $return .= "<td>" . (isset($value[1]) ? $value[1] : "-") . "</td>";
-				// $return .= "<td>" . (isset($value[2]) ? $value[2] : "-") . "</td>";
-				// $return .= "<td>" . (isset($value[3]) ? $value[3] : "-") . "</td>";
-				// $return .= "<td>" . (isset($value[4]) ? $value[4] : "-") . "</td>";
-				// $return .= "<td>" . (isset($value[5]) ? $value[5] : "-") . "</td>";
-				// $return .= "<td>" . (isset($value[6]) ? $value[6] : "-") . "</td>";
-				// $return .= "<td>" . (isset($value[7]) ? $value[7] : "-") . "</td>";
-				// $return .= "<td>" . (isset($value[8]) ? $value[8] : "-") . "</td>";
-				// $return .= "<td>" . (isset($value[9]) ? $value[9] : "-") . "</td>";
-				// $return .= "<td>" . (isset($value[10]) ? $value[10] : "-") . "</td>";
-				// $return .= "<td>" . (isset($value[10]) ? $value[11] : "-") . "</td>";
+				for ($i=0; $i < count(self::$SheetData[0]) ; $i++):
+					$valor = (isset($value[$i]) ? $value[$i] : "-");
+
+					if (isset($_GET["hideItem"]) && in_array($i, explode($preg, $_GET["hideItem"])))
+						$valor = null;
+						$bgnone = $i;
+
+					if (!in_array($i, array(5,6,7,8,9,10,11))):
+						$return .= "<td ". (is_null($valor) ? "class=\"hide-td\"" : null) ." data-tr=\"". $key ."\" data-td=\"". $i ."\">" . $valor . "</td>";
+					else:
+						$array = explode(",", self::$SheetData[$key][$s]);
+						$myself = array(
+							0 => (isset($array[0]) ? $array[0] : null),
+							1 => (isset($array[1]) ? $array[1] : null),
+							2 => (isset($array[2]) ? $array[2] : null)
+						);
+						// var_dump($array);
+						$return .= "<td ". (is_null($valor) ? "class=\"hide-td\"" : null) ." data-tr=\"". $key ."\" data-td=\"". $i ."\">" . $myself[0] . "; " . $myself[1] . "; " . $myself[2] ."</td>";
+						$s++;
+					endif;
+
+				endfor;
 				$return .= "</tr>";
 
 			endforeach;

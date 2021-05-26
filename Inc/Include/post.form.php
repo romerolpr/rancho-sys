@@ -3,9 +3,7 @@
 // Add file
 if (isset($_POST["Envia"]) && !empty($_POST["Envia"])):
 
-
 	if (isset($_FILES["file"]) && !empty($_FILES["file"])):
-
 
 		$ObjLoad = array(
 			"name" => (!empty($_FILES["file"]["name"]) ? $_FILES["file"]["name"] : "undefined"),
@@ -20,7 +18,10 @@ if (isset($_POST["Envia"]) && !empty($_POST["Envia"])):
 			/** Set a new name for file **/
 			$temp = explode(".", $ObjLoad["name"]);
 			$newfilename = clearString(str_replace(" ", "_", $temp[0])) . '.' . end($temp);
-			$ObjLoad["name"] = $newfilename;
+
+			$timestamp = strtotime(implode('-', array_reverse(explode('/', $dataAtual))));
+
+			$ObjLoad["name"] = $newfilename . "_" . $timestamp;
 			$dir = TRANSFER . $newfilename;
 
 			if(move_uploaded_file($ObjLoad["tmp_name"], $dir)):
@@ -47,9 +48,11 @@ endif;
 if (isset($_POST["Login"]) && !empty($_POST["Login"])):
 
 	$myInput = array(
-	    "username" => trim($_POST["user"]),
+	    "username" => md5(trim($_POST["user"])),
 	    "password" => md5($_POST["pass"])
 	);
+
+	// var_dump($myInput);
 
 	if (in_array('', $_POST)):
 	    header("location: index.php?err=username_or_pass");
@@ -57,14 +60,11 @@ if (isset($_POST["Login"]) && !empty($_POST["Login"])):
 
 	    $Obj = $Db->return_query($Db->connect_db(), TB_USERS);
 
-	    // var_dump($myInput);
-	    // var_dump($Obj);
-
 	    foreach ($Obj as $key => $values):
-	        // var_dump($myInput);
+
 	        if ($myInput["username"] == $values["username"] && $myInput["password"] == $values["password"]):
 	            $_SESSION["user_login"] = $myInput;
-	            $header = $url . "index.php?exb=painel";
+	            $header = $url . "index.php";
 	        else:
 	            // echo "<script>alert('Nome de usuário ou senha inválido.')</script>";
 	            $header = "index.php?err=username_or_pass";

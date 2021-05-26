@@ -5,7 +5,7 @@ $ErrList = array(
 
 	"form" => array(
 		"username_or_pass" 	=> array(
-			"<strong>Dados incorretos</strong>: Existem dados informados incorretos", "danger"),
+			"<strong>Dados incorretos</strong>: Existem dados informados incorretos.", "danger"),
 		"file"				=> array(
 			"<strong>Atenção</strong>: Adicione um arquivo válido.", "danger"),
 		"not_supported"		=> array(

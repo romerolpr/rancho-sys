@@ -315,6 +315,14 @@ table tr.removed {
     cursor: default;
 }
 
+#hide-td td {
+    border: none!important;
+}
+
+.hide-td {
+    filter: opacity(0);
+}
+
 .box-table {
     width: 100%;
     max-height: 600px;

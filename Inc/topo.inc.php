@@ -4,7 +4,7 @@
             <?php if(isset($_SESSION["user_login"])): ?>
                 <a href="?exit=session_login" title="Sair">
                     <div class="navgation-bar">
-                        <span class="btn"><?php echo $_SESSION["user_login"]["username"]?><br>Sair</span>
+                        <span class="btn"><?php echo $_SESSION["user_login"]["nome"]?><br>Sair</span>
                     </div>
                 </a>
             <?php else: ?>
