@@ -197,42 +197,54 @@ class Render
 		return $n;
 	}
 
-	public function pushAppropriateData(){
+	public function pushData(){
 
-		$Data = self::getSheetData();
-		$Items = array();
+		function cut($string, $i){
+			$newString = strtolower(str_replace("-", "_", preg_replace(array("/(á|à|ã|â|ä)/","/(Á|À|Ã|Â|Ä)/","/(é|è|ê|ë)/","/(É|È|Ê|Ë)/","/(í|ì|î|ï)/","/(Í|Ì|Î|Ï)/","/(ó|ò|õ|ô|ö)/","/(Ó|Ò|Õ|Ô|Ö)/","/(ú|ù|û|ü)/","/(Ú|Ù|Û|Ü)/","/(ñ)/","/(Ñ)/", "/Ç/", "/ç/"), explode(" ","a A e E i I o O u U n N c C"),$string[$i])));
+			preg_match("/\[(.*)\]/", $newString, $match);
+			$match = explode(" ", end($match));
+			return end($match);
+		}
+
 		$Db = new ObjectDB();
 		$Db->setter(HOST, USER, PASS, DBNAME);
+		$Data = self::getSheetData();
+		$Items = array();
+		$timestamp = new DateTime();
 
-		unset($Data[0]);
+		// Save header table
+		$cabecalho = $Data[0];
+		unset($Data[0]); // Remove from var after save
+
 		foreach ($Data as $key => $value):
 			$carimboData = new DateTime($value[0]);
 			$myObject = array(
 				"id" => null,
+				"hash" => md5($timestamp->getTimestamp() . "_" . utf8_encode($value[4])),
 				"carimbo" => $carimboData->format("Y-m-d H:i:s"),
 				"email" => trim($value[1]),
 				"posto_graduacao" => utf8_encode($value[3]),
 				"nome" => utf8_encode($value[4]),
 				"organizacao_militar" => utf8_encode($value[2]),
-				"segunda_feira" => utf8_encode($value[5]),
-				"terca_feira" => utf8_encode($value[6]),
-				"quarta_feira" => utf8_encode($value[7]),
-				"quinta_feira" => utf8_encode($value[8]),
-				"sexta_feira" => utf8_encode($value[9]),
-				"sabado" => utf8_encode($value[10]),
-				"domingo" => utf8_encode($value[11]),
-				"datasheet_name" => self::getDatasheetName(),
+				"segunda_feira" => utf8_encode($value[5]) . "&&" . cut($cabecalho, 5),
+				"terca_feira" => utf8_encode($value[6]) . "&&" . cut($cabecalho, 6),
+				"quarta_feira" => utf8_encode($value[7]) . "&&" . cut($cabecalho, 7),
+				"quinta_feira" => utf8_encode($value[8]) . "&&" . cut($cabecalho, 8),
+				"sexta_feira" => utf8_encode($value[9]) . "&&" . cut($cabecalho, 9),
+				"sabado" => utf8_encode($value[10]) . "&&" . cut($cabecalho, 10),
+				"domingo" => utf8_encode($value[11]) . "&&" . cut($cabecalho, 11),
+				"datasheet_name" => self::getTableName(),
 			);
 			array_push($Items, $myObject);
 		endforeach;
 
 		if (self::getInsereData()):
+			$sheet = TB_SHEET;
 			foreach ($Items as $key => $value):
-				// var_dump($value);
-				$Insert = $Db->insert_query($Db->connect_db(), TB_RESP, $value);
+				$Db->insert_query($Db->connect_db(), TB_RESP, $value);
 			endforeach;
+			self::powerOffInsereData(false);
 		endif;
-
 	}
 
 }

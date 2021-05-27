@@ -299,9 +299,13 @@ table {
 table tr, td {
     border: 1px solid #c0c1c1;
     padding: .4em .6em;
-    font-size: 14px;
+    font-size: 12px;
     text-align: center;
     height: 30px;
+}
+
+.clear {
+    clear: both;
 }
 
 table tr.bar-table {
@@ -313,6 +317,16 @@ table tr.removed {
     background: #f9f9f9;
     color: #666;
     cursor: default;
+}
+
+table tr td label {
+    font-size: 12px!important;
+    line-height: 18px!important;
+}
+
+table tr td input {
+    float: right;
+    margin: .1em;
 }
 
 #hide-td td {

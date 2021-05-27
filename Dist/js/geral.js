@@ -33,4 +33,13 @@ $(window).bind("popstate", function(e) {
   $('.main').load(e.state.url);
 });
 
-$(".btn_expand").click(function(){ $(this).addClass("btn_active"); })
+$(".btn_expand").click(function(){ $(this).addClass("btn_active"); });
+
+$('.input_checked').on('change', function () {
+ 
+ 	if ($(this).is(':checked')){
+ 		var nome = $(this).parent();
+    	console.log("hash-id: " + nome.attr("data-hash-id") + ", value: " + $("label#" + $(this).attr('id')).text());
+ 	}
+
+})

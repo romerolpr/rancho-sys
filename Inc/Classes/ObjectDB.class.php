@@ -29,16 +29,21 @@ class ObjectDB
 
 	}
 
-	public static function return_query($db, $table)
+	public static function return_query($db, $table, $where = null, $gettable = false)
 	{	
 		try 
 		{
-			$stt = $db->prepare('SELECT * FROM ' . $table);
+		// var_dump($where);
+			if (!isset($gettable) || !$gettable):
+				$stt = $db->prepare('SELECT * FROM ' . $table . (!is_null($where) ? " WHERE " . $where[0][0] . "=\"" . $where[1][$where[0][0]] . "\" AND " . $where[0][1] . "=\"" . $where[1][$where[0][1]] . "\"" : null));
+			else:
+				$stt = $db->prepare('SELECT * FROM $table WHERE datasheet_name="$gettable"');
+			endif;
 			$stt->execute();
 
 		} catch (PDOException $e)
 		{
-			var_dump("You don't have anything to return.");
+			return ("Não foi possível recuperar os registros da tabela.");
 		}
 
 		return $stt->fetchAll(PDO::FETCH_ASSOC);
@@ -48,15 +53,20 @@ class ObjectDB
 	{
 		try 
 		{	
-			// var_dump($obj);
-			$sql = "INSERT INTO $table (`id`, `carimbo`, `email`, `posto_graduacao`, `nome`, `organizacao_militar`, `segunda_feira`, `terca_feira`, `quarta_feira`, `quinta_feira`, `sexta_feira`, `sabado`, `domingo`, `datasheet`) VALUES (:id, :carimbo, :email, :posto_graduacao, :nome, :organizacao_militar, :segunda_feira, :terca_feira, :quarta_feira, :quinta_feira, :sexta_feira, :sabado, :domingo, :datasheet_name)";
-				
-			$stmt = $db->prepare($sql);
-			$stmt->execute($obj);
+		 	$sql = self::return_query($db, $table, array(array("nome", "posto_graduacao"), $obj));
+			// var_dump($sql);
+			if(empty($sql)):
+				$sql = "INSERT INTO $table (`id`, `hash`, `carimbo`, `email`, `posto_graduacao`, `nome`, `organizacao_militar`, `segunda_feira`, `terca_feira`, `quarta_feira`, `quinta_feira`, `sexta_feira`, `sabado`, `domingo`, `datasheet`) VALUES (:id, :hash, :carimbo, :email, :posto_graduacao, :nome, :organizacao_militar, :segunda_feira, :terca_feira, :quarta_feira, :quinta_feira, :sexta_feira, :sabado, :domingo, :datasheet_name)";
+				$stmt = $db->prepare($sql);
+				$stmt->execute($obj);
+				// echo "Inserido: ",utf8_decode($obj["nome"]),"<br>";
+			// else:
+				// echo "O registro: <strong>",utf8_decode($obj["nome"]),"</strong> já existe.<br>";
+			endif;
 
 		} catch (PDOException $e)
 		{
-			var_dump("We can't insert a new data on db.");
+			var_dump("Impossível inserir novo registro");
 		}
 	}
 

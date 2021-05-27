@@ -20,7 +20,7 @@ endif;
 
 // var_dump($_SESSION);
 
-// unset($_SESSION["user_login"]);
+// unset($_SESSION);
 
 ?>
 
