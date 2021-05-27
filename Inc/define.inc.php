@@ -11,6 +11,8 @@ define(
 	"INC", "Inc/Include/");
 define(
 	"RENDER", "Inc/Render/");
+define(
+	"PAGES", "Inc/Include/Front/pages/");
 
 /** 
 	Db config

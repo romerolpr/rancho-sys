@@ -382,6 +382,33 @@ table tr.removed {
     margin: .5em;
 }
 
+.btn_manage {
+    margin: 0 .2em;
+    background: #d4f7d8;
+    padding: .3em;
+    border-radius: 3px;
+}
+
+.btn_active {
+    background: #b2e6b9;
+    color: #248636;
+    border: 1px solid #8ae49b;
+}
+
+.d-center-items {
+    display: flex;
+    float: left;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    padding: .5em;
+}
+
+.head_table {
+    margin: 1em 0;
+}
+
 .red {
     border: none;
     background: transparent;
@@ -459,7 +486,9 @@ span.success {
     border-color: #c3e6cb;
 }
 
-
+a.btn_manage:hover {
+    filter: opacity(.85);
+}
 
 body > section > div > article > div > form > div > a.btn-back.fright {
     margin: .8em 0;

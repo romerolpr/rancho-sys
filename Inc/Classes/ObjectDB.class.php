@@ -19,9 +19,10 @@ class ObjectDB
 		try 
 		{
 			$connection = new PDO("mysql:dbname=". self::$db .";host=" . self::$host . "", self::$user, self::$pass);
+			$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		} catch (PDOException $e)
 		{
-			echo ("We could't connect db.");
+			var_dump("We could't connect db.");
 		}
 
 		return $connection;
@@ -37,7 +38,7 @@ class ObjectDB
 
 		} catch (PDOException $e)
 		{
-			echo ("You don't have anything to return.");
+			var_dump("You don't have anything to return.");
 		}
 
 		return $stt->fetchAll(PDO::FETCH_ASSOC);
@@ -47,22 +48,15 @@ class ObjectDB
 	{
 		try 
 		{	
-			switch ($table) {
-				case 'cancel':
-					$sql = "INSERT INTO $table (`id`, `nome`, `posto_graduacao`, `data_time`, `solicitacao`, `motivo`, `justificativa`) VALUES (:id, :nome, :posto_graduacao, :data_time, :solicitacao, :motivo, :justificativa)";
-					break;
-				
-				default:
-					$sql = "INSERT INTO $table (`id`, `nome`, `idade`, `sexo`, `posto_graduacao`, `data_time`) VALUES (:id, :nome, :idade, :sexo, :posto_graduacao, :data_time)";
-					break;
-			}
+			// var_dump($obj);
+			$sql = "INSERT INTO $table (`id`, `carimbo`, `email`, `posto_graduacao`, `nome`, `organizacao_militar`, `segunda_feira`, `terca_feira`, `quarta_feira`, `quinta_feira`, `sexta_feira`, `sabado`, `domingo`, `datasheet`) VALUES (:id, :carimbo, :email, :posto_graduacao, :nome, :organizacao_militar, :segunda_feira, :terca_feira, :quarta_feira, :quinta_feira, :sexta_feira, :sabado, :domingo, :datasheet_name)";
 				
 			$stmt = $db->prepare($sql);
 			$stmt->execute($obj);
 
 		} catch (PDOException $e)
 		{
-			echo ("We can't insert a new data on db.");
+			var_dump("We can't insert a new data on db.");
 		}
 	}
 
@@ -87,7 +81,7 @@ class ObjectDB
 
 		} catch (PDOException $e)
 		{
-			echo ("We can't insert a new data on db.");
+			var_dump("We can't insert a new data on db.");
 		}
 	}
 
@@ -102,7 +96,7 @@ class ObjectDB
 
 		} catch (PDOException $e)
 		{
-			echo ("We can't insert a new data on db.");
+			var_dump("We can't insert a new data on db.");
 		}
 	}
 

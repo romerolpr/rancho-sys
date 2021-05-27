@@ -17,6 +17,11 @@ if (isset($_SESSION["user_login"])):
 	endforeach; 
 endif;
 
+
+// var_dump($_SESSION);
+
+// unset($_SESSION["user_login"]);
+
 ?>
 
 <!DOCTYPE html>

@@ -2,7 +2,7 @@
     <div class="top">
         <div class="container">
             <?php if(isset($_SESSION["user_login"])): ?>
-                <a href="?exit=session_login" title="Sair">
+                <a href="?exit=session_login" title="Sair" class="btn_click_consult" data-action="end">
                     <div class="navgation-bar">
                         <span class="btn"><?php echo $_SESSION["user_login"]["nome"]?><br>Sair</span>
                     </div>

@@ -1,15 +1,27 @@
 <?php
 
-
-
 /** Url base **/
 $url = "";
 
 /** Include path **/
 set_include_path(get_include_path() . PATH_SEPARATOR . 'Inc/Classes/');
 
-/** PHPExcel_IOFactory */
+/** PHPExcel_IOFactory **/
 include 'Inc/Classes/PHPExcel/IOFactory.php';
+
+// Extending class
+class MyReadFilter implements PHPExcel_Reader_IReadFilter
+{
+	public function readCell($column, $row, $worksheetName = '') {
+		// Read rows 1 to 7 and columns A to E only
+		if ($row >= 1) {
+			if (in_array($column, range('A','Z'))) {
+				return true;
+			}
+		}
+		return false;
+	}
+}
 
 /** Classes globals **/
 include 'Inc/Classes/Reader.class.php';
@@ -26,7 +38,7 @@ $dataAtual = $date->format("d-m-Y H:i:s");
 $diaAtual  = $date->format("d-m-Y");
 
 /** Exit session **/
-if (isset($get["exit"])):
+if (isset($get["exit"]) && !empty($get["exit"])):
 	switch ($get["exit"]):
 		case 'session_obj':
 			unset($_SESSION["objfile"]);

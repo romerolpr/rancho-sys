@@ -13,8 +13,9 @@ if (isset($_POST["Envia"]) && !empty($_POST["Envia"])):
 			"worksheetName" => null
 		);
 
-		if (in_array($ObjLoad["inputFileType"], array('application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/x-excel', 'application/x-msexcel',))):
+		$format = explode(".", $ObjLoad["name"]);
 
+		if (in_array($ObjLoad["inputFileType"], array('application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/x-excel', 'application/x-msexcel',)) && end($format) !== "csv"):
 			/** Set a new name for file **/
 			$temp = explode(".", $ObjLoad["name"]);
 			$newfilename = clearString(str_replace(" ", "_", $temp[0])) . '.' . end($temp);

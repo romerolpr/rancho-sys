@@ -1,4 +1,6 @@
-<h1>Adicionar arquivo</h1>
+<?php if(!isset($nonTitle)): ?>
+	<h1>Adicionar arquivo</h1>
+<?php endif; ?>
 <form method="POST" enctype="multipart/form-data" class="form-post">
 	<p>Ao selecionar o arquivo de planilha desejado, você poderá selecionar qual <span title="Página">"Datasheet"</span> deve ser carregada no sistema.</p><br>
 

@@ -17,7 +17,7 @@ $ErrList = array(
 		"session_login" 	=> array(
 			"<strong>Sessão finalizada</strong>: Você encerrou a sessão com sucesso.", "success"),
 		"session_obj"		=> array(
-			"<strong>Sucesso</strong>: Você removeu o arquivo da caixa de afazeres.", "success"),
+			"<strong>Sucesso</strong>: Você removeu o arquivo com sucesso.", "success"),
 
 	),
 
