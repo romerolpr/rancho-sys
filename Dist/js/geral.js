@@ -37,23 +37,6 @@ $(".btn_expand").click(function(){ $(this).addClass("btn_active"); });
 
 var itemsBox = [];
 
-// $('.input_checked').on('change', function () {
-
-// 	let elem = $(this).parent(),
-// 		label = $("label[for=" + $(this).attr('id') + "]").text();
-//  	var	values = {
-// 		'hash': elem.attr("data-hash-id"),
-// 		'value': label
-// 	}
-
-//  	itemsBox.push(values);
-//  	$("button.btn").text("Salvar alterações");
-
-//  	(itemsBox.length > 0) ? $("button.btn").prop("disabled", false).show() : $("button.btn").prop("disabled", true).hide();
-
-// 	console.log(values);
-// });
-
 $('.input_checked').on('change', function () {
 
 	let elem = $(this).parent(),
@@ -66,8 +49,13 @@ $('.input_checked').on('change', function () {
 	}
 
 	for (var i = label.length-1; i >= 0; i--) {
-		if( label[i].dataset.date == elem.attr("data-date") && label[i].checked !== false)
-			values['value'].push(label[i].value.trim() + ";" + elem.attr("data-date"));
+		if (label[i].checked !== false) {
+			if( label[i].dataset.date == elem.attr("data-date")) {
+				values['value'].push(label[i].value.trim() + ";" + elem.attr("data-date"));
+			} else {
+				values['value'].push(label[i].value.trim() + ";" + label[i].dataset.date);
+			}
+		}
 	}
 
  	itemsBox.push(values);

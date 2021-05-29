@@ -120,13 +120,49 @@ foreach ($fromDb as $key => $value):
 
 					else:
 
+						$getDbInputCheck = $Db->return_query($Db->connect_db(), TB_CONF);
+						
+						$Checked = array(false, false, false);
+
+						foreach ($getDbInputCheck as $key => $item) {
+							if ($item["hash_id"] == $value["hash"]){
+								$DataJSON = json_decode($item["data_json"], true);
+								// break;
+							}
+						}
+
+						foreach ($DataJSON as $key => $v) {
+							$valor = $v["values"];
+
+							// if (in_array(resizeString($arranchamento[0], 10), $value["values"])):
+							// 	$Checked[0] = true;
+							// elseif (in_array(resizeString($arranchamento[1], 10), $value["values"])):
+							// 	$Checked[1] = true; 
+							// elseif (in_array(resizeString($arranchamento[2], 10), $value["values"])):
+							// 	$Checked[2] = true; 
+							// endif;
+						}
+
+						foreach ($valor as $key => $V) {
+							$checks = explode(";", $V);
+
+
+							if (isset($arranchamento[0]) && in_array(resizeString($arranchamento[0], 10), $checks) && $checks[1] == $ObjDecoded["refc"][$i][1]):
+								$Checked[0] = true;
+							elseif (isset($arranchamento[1]) && in_array(resizeString($arranchamento[1], 10), $checks)):
+								$Checked[1] = true; 
+							elseif (isset($arranchamento[2]) && in_array(resizeString($arranchamento[2], 10), $checks)):
+								$Checked[2] = true; 
+							endif;
+						}
+
 						$sheetBody .= "<td data-hash-id=\"".$value["hash"]."\" data-date=\"".$ObjDecoded["refc"][$i][1]."\">" . 
 
-							(isset($arranchamento[0]) ? "<label for=\"1".$idItem."\">" .resizeString($arranchamento[0], 10). "</label> <input data-date=\"".$ObjDecoded["refc"][$i][1]."\" class=\"input_checked\" type=\"checkbox\" name=\"check_refc\" value=\"".resizeString($arranchamento[0], 10)."\" id=\"1".$idItem."\">" : null) . 
+							(isset($arranchamento[0]) ? "<label for=\"1".$idItem."\">" .resizeString($arranchamento[0], 10). "</label> <input ".($Checked[0] !== false ? "checked" : null)." data-date=\"".$ObjDecoded["refc"][$i][1]."\" class=\"input_checked\" type=\"checkbox\" name=\"check_refc\" value=\"".resizeString($arranchamento[0], 10)."\" id=\"1".$idItem."\">" : null) . 
 							
-							(isset($arranchamento[1]) ? "<br class=\"clear\"><label for=\"2".$idItem."\">" . resizeString($arranchamento[1], 10) . "</label> <input data-date=\"".$ObjDecoded["refc"][$i][1]."\" class=\"input_checked\" type=\"checkbox\" name=\"check_refc\" value=\"".resizeString($arranchamento[1], 10)."\" id=\"2".$idItem."\">" : null) . 
+							(isset($arranchamento[1]) ? "<br class=\"clear\"><label for=\"2".$idItem."\">" . resizeString($arranchamento[1], 10) . "</label> <input ".($Checked[1] !== false ? "checked" : null)." data-date=\"".$ObjDecoded["refc"][$i][1]."\" class=\"input_checked\" type=\"checkbox\" name=\"check_refc\" value=\"".resizeString($arranchamento[1], 10)."\" id=\"2".$idItem."\">" : null) . 
 							
-							(isset($arranchamento[2]) ? "<label for=\"3".$idItem."\">" .resizeString($arranchamento[2], 10). "</label> <input data-date=\"".$ObjDecoded["refc"][$i][1]."\" class=\"input_checked\" type=\"checkbox\" name=\"check_refc\" value=\"".resizeString($arranchamento[2], 10)."\" id=\"3".$idItem."\">" : null) . 
+							(isset($arranchamento[2]) ? "<label for=\"3".$idItem."\">" .resizeString($arranchamento[2], 10). "</label> <input ".($Checked[2] !== false ? "checked" : null)." data-date=\"".$ObjDecoded["refc"][$i][1]."\" class=\"input_checked\" type=\"checkbox\" name=\"check_refc\" value=\"".resizeString($arranchamento[2], 10)."\" id=\"3".$idItem."\">" : null) . 
 
 						"</td>";
 	
