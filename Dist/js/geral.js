@@ -35,11 +35,70 @@ $(window).bind("popstate", function(e) {
 
 $(".btn_expand").click(function(){ $(this).addClass("btn_active"); });
 
-$('.input_checked').on('change', function () {
- 
- 	if ($(this).is(':checked')){
- 		var nome = $(this).parent();
-    	console.log("hash-id: " + nome.attr("data-hash-id") + ", value: " + $("label#" + $(this).attr('id')).text());
- 	}
+var itemsBox = [];
 
-})
+// $('.input_checked').on('change', function () {
+
+// 	let elem = $(this).parent(),
+// 		label = $("label[for=" + $(this).attr('id') + "]").text();
+//  	var	values = {
+// 		'hash': elem.attr("data-hash-id"),
+// 		'value': label
+// 	}
+
+//  	itemsBox.push(values);
+//  	$("button.btn").text("Salvar alterações");
+
+//  	(itemsBox.length > 0) ? $("button.btn").prop("disabled", false).show() : $("button.btn").prop("disabled", true).hide();
+
+// 	console.log(values);
+// });
+
+$('.input_checked').on('change', function () {
+
+	let elem = $(this).parent(),
+		hash = elem.attr("data-hash-id")
+		label = $("td[data-hash-id=" + elem.attr("data-hash-id") + "]").children("input");
+ 	var	values = {
+ 		'timestamp': new Date().getTime(),
+		'hash': hash,
+		'value': []
+	}
+
+	for (var i = label.length-1; i >= 0; i--) {
+		if( label[i].dataset.date == elem.attr("data-date") && label[i].checked !== false)
+			values['value'].push(label[i].value.trim() + ";" + elem.attr("data-date"));
+	}
+
+ 	itemsBox.push(values);
+ 	$("button.btn").text("Salvar alterações");
+ 	(itemsBox.length > 0) ? $("button.btn").prop("disabled", false).show() : $("button.btn").prop("disabled", true).hide();
+
+	console.log(values);
+});
+
+
+
+$('#saveAll').on("click", function(e){
+	e.preventDefault();
+	var data = JSON.stringify(itemsBox);
+	var request = $.ajax({
+	    url: "Transfer/save.form.php",
+	    type: "POST",
+	    data: "values=" + data,
+	    dataType: "html"
+	});
+
+	request.done(function(response){
+		$("button.btn").text("Salvando...");
+		console.log(response);
+	});
+	request.fail(function(jqXHR, textStatus) {
+	    console.log("Request failed: " + textStatus);
+	});
+	request.always(function() {
+	    $("button.btn").prop("disabled", true).text("Salvo!");
+	    console.log("Saved successfully.");
+	});
+
+});	

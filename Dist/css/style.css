@@ -390,6 +390,14 @@ table tr td input {
 
 .btn {
     color: #248636; 
+   
+}
+
+button.btn {
+    display: none;
+    border: none;
+    border: 1px solid #d5f5d9;
+    cursor: pointer; 
 }
 
 .btn_link {
@@ -500,7 +508,7 @@ span.success {
     border-color: #c3e6cb;
 }
 
-a.btn_manage:hover {
+a.btn_manage:hover, button:hover {
     filter: opacity(.85);
 }
 

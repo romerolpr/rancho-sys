@@ -220,7 +220,7 @@ class Render
 			$carimboData = new DateTime($value[0]);
 			$myObject = array(
 				"id" => null,
-				"hash" => md5($timestamp->getTimestamp() . "_" . utf8_encode($value[4])),
+				"hash" => md5("_" . utf8_encode($value[4])),
 				"carimbo" => $carimboData->format("Y-m-d H:i:s"),
 				"email" => trim($value[1]),
 				"posto_graduacao" => utf8_encode($value[3]),
@@ -242,6 +242,27 @@ class Render
 			$sheet = TB_SHEET;
 			foreach ($Items as $key => $value):
 				$Db->insert_query($Db->connect_db(), TB_RESP, $value);
+
+				$db = $Db->connect_db();
+				
+				$JSONData = array(
+				 	'hash' => $value["hash"], 
+				 	array(
+				 		'timestamp' => $timestamp->getTimestamp(), 
+				 		'values' => array()
+				 	)
+				);
+
+				$objData = array(
+					'id' => null,
+					'hash_id' => $value["hash"],
+					'data_json' => json_encode($JSONData, true)
+				);
+
+				// $sql = "INSERT INTO `tb_conf` (`id`, `hash_id`, `data_json`) VALUES (:id ,:hash_id, :data_json)";
+				// $stmt = $db->prepare($sql);
+				// $stmt->execute($objData);	
+
 			endforeach;
 			self::powerOffInsereData(false);
 		endif;

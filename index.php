@@ -72,7 +72,7 @@ endif;
 		// Config params
 		include INC . 'param.inc.php';
 
-		if(isset($_SESSION["objfile"]) && !empty($_SESSION["objfile"])):
+		if(isset($_SESSION["objfile"]) && !empty($_SESSION["objfile"]) && isset($_SESSION["user_login"]) && !empty($_SESSION["user_login"])):
 
 			if (file_exists($_SESSION["objfile"]["tmp_name"])):
 
@@ -108,6 +108,10 @@ endif;
 
 		else: 
 
+			if (isset($_SESSION["objfile"])):
+				$Alert->setConfig("warning", "<strong>Aviso</strong>: O arquivo \"".$_SESSION["objfile"]["name"]."\" permanece aberto. <a href='index.php?exit=session_obj' title='Fechar arquivo' class='btn btn_click_consult'>Fechar arquivo</a></span>");
+				echo ($Alert->displayPrint());
+			endif;
 			include FRONT . 'form.php';
 
 		endif;

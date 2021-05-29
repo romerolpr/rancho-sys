@@ -39,19 +39,8 @@ $diaAtual  = $date->format("d-m-Y");
 
 /** Exit session **/
 if (isset($get["exit"]) && !empty($get["exit"])):
-	switch ($get["exit"]):
-		case 'session_obj':
-			unset($_SESSION["objfile"]);
-			break;
-
-		case 'session_login':
-			unset($_SESSION);
-			break;
-		
-		default:
-			unset($_SESSION);
-			break;
-	endswitch;
+	if ($get["exit"] == 'session_obj') unset($_SESSION["objfile"]);
+	if ($get["exit"] == 'session_login') unset($_SESSION["user_login"]);
 endif;
 
 /** Define include errors lists **/

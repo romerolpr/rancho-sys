@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set('America/Sao_Paulo');
+
 /**
 	Define for includes on project
 **/
@@ -36,5 +38,7 @@ define(
 	"TB_RESP", "tb_resp");
 define(
 	"TB_SHEET", "tb_sheet");
+define(
+	"TB_CONF", "tb_conf");
 
 ?>

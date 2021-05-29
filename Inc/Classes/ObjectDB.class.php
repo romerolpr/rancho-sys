@@ -53,6 +53,8 @@ class ObjectDB
 	{
 		try 
 		{	
+
+			
 		 	$sql = self::return_query($db, $table, array(array("nome", "posto_graduacao"), $obj));
 			// var_dump($sql);
 			if(empty($sql)):
@@ -63,6 +65,23 @@ class ObjectDB
 			// else:
 				// echo "O registro: <strong>",utf8_decode($obj["nome"]),"</strong> já existe.<br>";
 			endif;
+
+		} catch (PDOException $e)
+		{
+			var_dump("Impossível inserir novo registro");
+		}
+	}
+
+	public static function insert_data($db, $table, $obj)
+	{
+		try 
+		{	
+		 	
+
+			$sql = "INSERT INTO $table (`id`, `hash_id`, `data_json`) VALUES (:id, :hash_id, :data_json)";
+			$stmt = $db->prepare($sql);
+			$stmt->execute($obj);
+
 
 		} catch (PDOException $e)
 		{

@@ -32,20 +32,21 @@ $sheetBody = "<div class=\"box-table>\"";
 <span class="fleft"><strong><?php echo $Render->getDatasheetName(); ?></strong></span>
 <span class="fright head_table">
 
-	<a href="index.php" class="btn btn_link btn_manage" title="Restaurar tabela"><i class="fas fa-undo-alt"></i>
-	</a>
+	<a href="index.php" class="btn btn_link btn_manage" title="Restaurar tabela"><i class="fas fa-undo-alt"></i></a>
 
-	<a href="<?php echo (isset($get) ? str_replace("window=expanded", "", $current_url) . "&window=expanded" : "?window=expanded")?>" class="btn btn_link btn_manage btn_expand" title="Expandir tabela"><i class="fas fa-expand"></i>
-	</a>
+	<a href="<?php echo (isset($get) ? str_replace("window=expanded", "", $current_url) . "&window=expanded" : "?window=expanded")?>" class="btn btn_link btn_manage btn_expand" title="Expandir tabela"><i class="fas fa-expand"></i></a>
 
-	<a href="<?php echo (isset($get) ? str_replace("worksheetName=None", "", $current_url) . "&worksheetName=None" : "?worksheetName=None") ?>" class="btn btn_link btn_manage" title="Alterar Datasheet"><i class="fas fa-exchange-alt"></i>
-	</a>
+	<a href="<?php echo (isset($get) ? str_replace("worksheetName=None", "", $current_url) . "&worksheetName=None" : "?worksheetName=None") ?>" class="btn btn_link btn_manage" title="Alterar Datasheet"><i class="fas fa-exchange-alt"></i></a>
 
-	<a href="<?php echo (isset($get) ? str_replace("exb_all", "", $current_url) . "&exb_all" : "?exb_all" ) ?>" class="btn btn_link btn_manage" title="Todas as colunas"><i class="fas fa-globe"></i>
-	</a>
+	<?php if(!isset($get["exb_all"])): ?>
+		<a href="<?php echo (isset($get) ? str_replace("exb_all", "", $current_url) . "&exb_all" : "?exb_all" ) ?>" class="btn btn_link btn_manage" title="Todas as colunas"><i class="fas fa-globe"></i></a>
+	<?php else: ?>
+		<a href="<?php echo (isset($get) ? str_replace("exb_all", "", $current_url) . "" : "" ) ?>" class="btn btn_link btn_manage btn_active" title="Desativar modo: Todas as colunas"><i class="fas fa-globe"></i></a>
+	<?php endif; ?>
 
-	<a href="index.php?exit=session_obj" class="btn btn_link btn_manage btn_click_consult" title="Fechar arquivo" data-action="fechar"><i class="fas fa-power-off"></i>
-	</a>
+	<a href="index.php?exit=session_obj" class="btn btn_link btn_manage btn_click_consult" title="Fechar arquivo" data-action="fechar"><i class="fas fa-power-off"></i></a>
+
+	<button class="btn btn_link btn_manage" title="Salvar alterações" disabled id="saveAll">Salvar alterações</button>
 
 </span>
 </p>
@@ -55,6 +56,8 @@ $sheetBody = "<div class=\"box-table>\"";
 // $sheetBody .= "<span>Buttons are here.</span>";
 $sheetBody .= "</p>";
 $sheetBody .= "<table>";
+
+$diasemana = array('Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sabado');
 
 foreach ($fromDb as $key => $value):
 
@@ -84,28 +87,14 @@ foreach ($fromDb as $key => $value):
 		$sheetBody .= "<td>Posto/Graduação</td>";
 		$sheetBody .= "<td>Nome de guerra</td>";
 
-		if ($Today == $ObjDecoded["refc"][0][1] || isset($get["exb_all"]))
-			$sheetBody .= "<td>Refeições  [Segunda-feira " . $ObjDecoded["refc"][0][1] . "]</td>";
-		
-		if ($Today == $ObjDecoded["refc"][1][1] || isset($get["exb_all"]))
-			$sheetBody .= "<td>Refeições  [Terça-feira " . $ObjDecoded["refc"][1][1] . "]</td>";
-		
-		if ($Today == $ObjDecoded["refc"][2][1] || isset($get["exb_all"]))
-			$sheetBody .= "<td>Refeições  [Quarta-feira " . $ObjDecoded["refc"][2][1] . "]</td>";
-		
-		if ($Today == $ObjDecoded["refc"][3][1] || isset($get["exb_all"]))
-			$sheetBody .= "<td>Refeições  [Quinta-feira " . $ObjDecoded["refc"][3][1] . "]</td>";
-		
-		if ($Today == $ObjDecoded["refc"][4][1] || isset($get["exb_all"]))
-			$sheetBody .= "<td>Refeições  [Sexta-feira " . $ObjDecoded["refc"][4][1] . "]</td>";
-		
-		if ($Today == $ObjDecoded["refc"][5][1] || isset($get["exb_all"]))
-			$sheetBody .= "<td>Refeições  [Sábado " . $ObjDecoded["refc"][5][1] . "]</td>";
-		
-		if ($Today == $ObjDecoded["refc"][6][1] || isset($get["exb_all"]))
-			$sheetBody .= "<td>Refeições  [Domingo " . $ObjDecoded["refc"][6][1] . "]</td>";
+		// All days
+		for ($i=0; $i < 7; $i++):
 
-		// $sheetBody .= "<td>Conferência</td>";
+			$diasemana_numero = date('w', strtotime(str_replace("/", "-", $ObjDecoded["refc"][$i][1])));
+			if ($Today == $ObjDecoded["refc"][$i][1] || isset($get["exb_all"]))
+				$sheetBody .= "<td>Refeições  [" . $diasemana[$diasemana_numero] . "] " .  $ObjDecoded["refc"][$i][1] . "</td>";
+
+		endfor;
 
 		$sheetBody .= "</tr>";
 
@@ -117,22 +106,34 @@ foreach ($fromDb as $key => $value):
 		$sheetBody .= "<td>" . $ObjDecoded["posto_graduacao"] . "</td>";
 		$sheetBody .= "<td>" . $ObjDecoded["nome"] . "</td>";
 
+		// Creating the button checkbox and text
 		for ($i=0; $i <= 6 ; $i++):
 			if ($Today == $ObjDecoded["refc"][$i][1] || isset($get["exb_all"])):
 				$arranchamento = explode(",", $ObjDecoded["refc"][$i][0]);
 				if (is_array($arranchamento)):
-					$idItem = $i.$key."_".strtolower(clearString($ObjDecoded["nome"]))."_checked";
-					$sheetBody .= "<td data-hash-id=\"".$value["hash"]."\">" . 
-						
-						(isset($arranchamento[0]) ? "<label for=\"1".$idItem."\">" .resizeString($arranchamento[0], 10). "</label> <input class=\"input_checked\" type=\"checkbox\" name=\"check_refc\" value=\"".resizeString($arranchamento[0], 10)."\" id=\"1".$idItem."\">" : null) . 
-						
-						(isset($arranchamento[1]) ? "<br class=\"clear\"><label for=\"2".$idItem."\">" . resizeString($arranchamento[1], 10) . "</label> <input class=\"input_checked\" type=\"checkbox\" name=\"check_refc\" value=\"".resizeString($arranchamento[1], 10)."\" id=\"2".$idItem."\">" : null) . 
-						
-						(isset($arranchamento[2]) ? "<label for=\"3".$idItem."\">" .resizeString($arranchamento[2], 10). "</label> <input class=\"input_checked\" type=\"checkbox\" name=\"check_refc\" value=\"".resizeString($arranchamento[2], 10)."\" id=\"3".$idItem."\">" : null) . 
-					"</td>";
-				else:
-					$sheetBody .= "<td>".$arranchamento."</td>";
-				endif;
+
+					$idItem = $i.$key."_".strtolower(clearString(str_replace(" ", "_", $ObjDecoded["nome"])))."_checked";
+
+					if (empty($arranchamento[0])):
+
+						$sheetBody .= "<td data-hash-id=\"".$value["hash"]."\" data-date=\"".$ObjDecoded["refc"][$i][1]."\">-</td>";
+
+					else:
+
+						$sheetBody .= "<td data-hash-id=\"".$value["hash"]."\" data-date=\"".$ObjDecoded["refc"][$i][1]."\">" . 
+
+							(isset($arranchamento[0]) ? "<label for=\"1".$idItem."\">" .resizeString($arranchamento[0], 10). "</label> <input data-date=\"".$ObjDecoded["refc"][$i][1]."\" class=\"input_checked\" type=\"checkbox\" name=\"check_refc\" value=\"".resizeString($arranchamento[0], 10)."\" id=\"1".$idItem."\">" : null) . 
+							
+							(isset($arranchamento[1]) ? "<br class=\"clear\"><label for=\"2".$idItem."\">" . resizeString($arranchamento[1], 10) . "</label> <input data-date=\"".$ObjDecoded["refc"][$i][1]."\" class=\"input_checked\" type=\"checkbox\" name=\"check_refc\" value=\"".resizeString($arranchamento[1], 10)."\" id=\"2".$idItem."\">" : null) . 
+							
+							(isset($arranchamento[2]) ? "<label for=\"3".$idItem."\">" .resizeString($arranchamento[2], 10). "</label> <input data-date=\"".$ObjDecoded["refc"][$i][1]."\" class=\"input_checked\" type=\"checkbox\" name=\"check_refc\" value=\"".resizeString($arranchamento[2], 10)."\" id=\"3".$idItem."\">" : null) . 
+
+						"</td>";
+	
+					endif;
+
+				endif;	
+
 			endif;
 		endfor;
 
