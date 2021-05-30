@@ -166,9 +166,20 @@ article h1 {
 }
 
 .main {
+    position: relative;
     float: left;
     display: block;
     width: 100%;
+}
+
+.sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    left: 0;
+    background-color: #fff;
+   /* padding: 50px;
+    font-size: 20px;*/
 }
 
 .main label, p {
@@ -390,7 +401,6 @@ table tr td input {
 
 .btn {
     color: #248636; 
-   
 }
 
 button.btn {
@@ -398,6 +408,20 @@ button.btn {
     border: none;
     border: 1px solid #d5f5d9;
     cursor: pointer; 
+}
+
+button[disabled], .disabled {
+    cursor: not-allowed!important;
+}
+
+.disabled, .disabled:hover {
+    filter: opacity(.4);
+}
+
+
+.separator {
+    color: #c0c1c1;
+    font-style: 12px;
 }
 
 .btn_link {
