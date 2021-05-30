@@ -76,26 +76,18 @@ endif;
 
 			if (file_exists($_SESSION["objfile"]["tmp_name"])):
 
-				if (!isset($get["compare"])):
-					// Setting the class
-					$Render->setTableName($_SESSION["objfile"]["name"]);
-					$Render->setDatasheetName($_SESSION["objfile"]["worksheetName"]);
+				// Setting the class
+				$Render->setTableName($_SESSION["objfile"]["name"]);
+				$Render->setDatasheetName($_SESSION["objfile"]["worksheetName"]);
 
-					$inputFileName = $_SESSION["objfile"]["ExcelFileType"];
-					$inputTmp = $_SESSION["objfile"]["tmp_name"];
+				$inputFileName = $_SESSION["objfile"]["ExcelFileType"];
+				$inputTmp = $_SESSION["objfile"]["tmp_name"];
 
-					$objReader = PHPExcel_IOFactory::createReader($inputFileName);
-					$worksheetData = $objReader->listWorksheetInfo($inputTmp);
+				$objReader = PHPExcel_IOFactory::createReader($inputFileName);
+				$worksheetData = $objReader->listWorksheetInfo($inputTmp);
 
-					/* Load datasheets */
-					include RENDER . 'datasheet.php';
-
-				else:
-
-					/* Including the compare file */
-					include RENDER . 'compare.php';
-
-				endif;
+				/* Load datasheets */
+				include RENDER . 'datasheet.php';
 
 			else:
 

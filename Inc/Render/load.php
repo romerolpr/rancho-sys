@@ -23,6 +23,7 @@ $fromDb = $Db->return_query($Db->connect_db(), TB_RESP);
 $getSheetBody = $Render->getSheetData();
 $getSheetBody = count($getSheetBody[0]) - 2;
 $Today  = $date->format("d/m/Y");
+$diasemana = array('Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sabado');
 
 function replaceUrl($urlString){
 	return (isset($_GET) ? str_replace($urlString, "", (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS']=="on") ? "https" : "http") . '://'.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING']) . "&" . $urlString : "?" . $urlString;
@@ -36,42 +37,12 @@ $sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage\" t
 $sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage btn_expand\" title=\"Expandir tabela\"><i class=\"fas fa-expand\"></i></a>";
 $sheetBody .= "<a href=\"". replaceUrl("worksheetName=None") ."\" class=\"btn btn_link btn_manage\" title=\"Alterar Datasheet\"><i class=\"fas fa-exchange-alt\"></i></a>";
 $sheetBody .= "<a href=\"".replaceUrl("exb_all")."\" class=\"btn btn_link btn_manage\" title=\"Exibir todos os dias\"><i class=\"fas fa-globe\"></i></a>";
+$sheetBody .= "<a href=\"".$url."index.php?action=relatorio&file=".$_SESSION["objfile"]["name"]."\" class=\"btn btn_link btn_manage\" title=\"Gerar relatório\" id=\"report\"><i class=\"far fa-file-alt\"></i></a>";
+$sheetBody .= "<span class=\"separator\">|</span>";
+$sheetBody .= "<a href=\"".$url."index.php?exit=session_obj\" class=\"btn btn_link btn_manage btn_click_consult\" title=\"Fechar arquivo\" data-action=\"fechar\"><i class=\"fas fa-power-off\"></i></a>";
+$sheetBody .= "<button class=\"btn btn_link btn_manage\" title=\"Salvar alterações\" disabled id=\"saveAll\">Salvar alterações</button>";
 
-?>
-
-<p class="fleft d-center-items sticky">
-<span class="fleft"><strong><?php echo $Render->getDatasheetName(); ?></strong></span>
-<span class="fright head_table">
-
-	<a href="index.php" class="btn btn_link btn_manage" title="Restaurar tabela"><i class="fas fa-undo-alt"></i></a>
-
-	<a href="index.php" class="btn btn_link btn_manage btn_expand" title="Expandir tabela"><i class="fas fa-expand"></i></a>
-
-	<a href="<?php echo (isset($get) ? str_replace("worksheetName=None", "", $current_url) . "&worksheetName=None" : "?worksheetName=None") ?>" class="btn btn_link btn_manage" title="Alterar Datasheet"><i class="fas fa-exchange-alt"></i></a>
-
-	<?php if(!isset($get["exb_all"])): ?>
-		<a href="<?php echo (isset($get) ? str_replace("exb_all", "", $current_url) . "&exb_all" : "?exb_all" ) ?>" class="btn btn_link btn_manage" title="Exibir todos os dias"><i class="fas fa-globe"></i></a>
-	<?php else: ?>
-		<a href="<?php echo (isset($get) ? str_replace("exb_all", "", $current_url) . "" : "" ) ?>" class="btn btn_link btn_manage btn_active" title="Desativar modo: Exibir todos os dias"><i class="fas fa-globe"></i></a>
-	<?php endif; ?>
-
-	<a href="index.php?action=relatorio&file=<?php echo $_SESSION["objfile"]["name"]?>" class="btn btn_link btn_manage" title="Gerar relatório" id="report"><i class="far fa-file-alt"></i></a>
-
-	<span class="separator">|</span>
-
-	<a href="index.php?exit=session_obj" class="btn btn_link btn_manage btn_click_consult" title="Fechar arquivo" data-action="fechar"><i class="fas fa-power-off"></i></a>
-
-	<button class="btn btn_link btn_manage" title="Salvar alterações" disabled id="saveAll">Salvar alterações</button>
-</span>
-</p>
-
-<?php
-
-// $sheetBody .= "<span>Buttons are here.</span>";
-// $sheetBody .= "</p>";
 $sheetBody .= "<table>";
-
-$diasemana = array('Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sabado');
 
 foreach ($fromDb as $key => $value):
 
