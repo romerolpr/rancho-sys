@@ -22,8 +22,8 @@ if (isset($_POST["Envia"]) && !empty($_POST["Envia"])):
 
 			$timestamp = strtotime(implode('-', array_reverse(explode('/', $dataAtual))));
 
-			$ObjLoad["name"] = $newfilename . "_" . $timestamp;
-			$dir = TRANSFER . $newfilename;
+			$ObjLoad["name"] = $timestamp . "_" . $newfilename;
+			$dir = TRANSFER . $ObjLoad["name"];
 
 			if(move_uploaded_file($ObjLoad["tmp_name"], $dir)):
 				$ObjLoad["tmp_name"] = $dir;

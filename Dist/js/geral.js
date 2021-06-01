@@ -15,8 +15,8 @@ $(".btn_click_consult").on("click", function(e){
 $(".btn_expand").on("click", function(e){
 	e.preventDefault();
 	// if (!clicked){
-		$(".box-table").addClass("window_fixed");
-		window.history.pushState({url: "" + $(this).attr('href') + ""}, $(this).attr('title') , $(this).attr('href'));
+	$(".box-table").addClass("window_fixed");
+	window.history.pushState({url: "" + $(this).attr('href') + ""}, $(this).attr('title') , $(this).attr('href'));
 		// clicked = true;
 	//}
 });
@@ -24,8 +24,7 @@ $(".btn_expand").on("click", function(e){
 document.addEventListener('keydown', function (event) {
     if (event.keyCode == 27){
      	$(".box-table").removeClass("window_fixed");
-     	window.history.pushState({url: window.location.href}, "Minimizar" , window.location.href.replace("&window=expanded", ""));
-     	clicked = false;	
+   		$(".btn_expand").removeClass("btn_active"); 
     }
 });
  
@@ -33,7 +32,18 @@ $(window).bind("popstate", function(e) {
   $('.main').load(e.state.url);
 });
 
-$(".btn_expand").click(function(){ $(this).addClass("btn_active"); });
+var click_btn = false;
+$(".btn_expand").click(function(){ 
+	if (click_btn === false){
+		$(this).addClass("btn_active");
+			click_btn = true;
+	} else {
+		$(".box-table").removeClass("window_fixed");
+		$(this).removeClass("btn_active"); 
+		click_btn = false;
+	}
+
+});
 
 var itemsBox = [],
 	is_empty = [];
@@ -48,11 +58,35 @@ function tryStatus(){
 	}
 }
 
+function mescleItems(){
+	
+	var mescleItemsVar = {
+		checked	: [],
+		empty 	: []
+	};
+
+	let elem  = $(".input_checked").parent().parent(),
+			trdad   = elem.parent(),
+			input = $("td").children("div").children("input");
+
+	for (var i = input.length-1; i >= 0; i--) {
+		if (input[i].checked !== false) {
+			mescleItemsVar['checked'].push(input[i].id);
+		} else {
+			mescleItemsVar['empty'].push(input[i].id);
+		}
+	}
+
+	return [mescleItemsVar, trdad];
+}
+
+
 $('.input_checked').on('change', function () {
 
-	let elem = $(this).parent(),
+	let elem = $(this).parent().parent(),
 		hash = elem.attr("data-hash-id")
-		label = $("td[data-hash-id=" + hash + "]").children("input");
+		label = $("td[data-hash-id=" + hash + "]").children("div").children("input");
+
  	var	values = {
  		'timestamp': new Date().getTime(),
 		'hash': hash,
@@ -75,19 +109,22 @@ $('.input_checked').on('change', function () {
  	$("button#saveAll").text("Salvar alterações");
  	(itemsBox.length > 0) ? $("button#saveAll").prop("disabled", false).show() : $("button#saveAll").prop("disabled", true).hide();
 
-	console.log(is_empty);
+	// console.log(is_empty);
+	// console.log(label);
 });
 
 $('#saveAll').on("click", function(e){
 	e.preventDefault();
-	var data = JSON.stringify(itemsBox);
-	var request = $.ajax({
+	var data = JSON.stringify(itemsBox),
+		$body = $("body"),
+		request = $.ajax({
 	    url: "Transfer/save.form.php",
 	    type: "POST",
 	    data: "values=" + data,
 	    dataType: "html"
 	});
 
+	$body.addClass("loading");
 	request.done(function(response){
 		$("button#saveAll").text("Salvando...");
 		console.log(response);
@@ -98,22 +135,51 @@ $('#saveAll').on("click", function(e){
 	request.always(function() {
 	    $("button#saveAll").prop("disabled", true).text("Salvo!");
 	    console.log("Saved successfully.");
+	    $body.removeClass("loading");
 	});
 
 });	
-
 
 $('#report').on("click", function(e){
 	e.preventDefault();
 	var url = $(this).attr("href");
 
 	tryStatus();
-
 	if (is_empty.length !== 0){
 		if (confirm("Existem campos vazios. Deseja gerar o relatório mesmo assim?")){
-			document.location = url;
+			window.open(url, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=150,width=800,height=800")
 		}
 	} else {
-		console.log("Generation report...");
+
+		// document.location = url;
+		window.open(url, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=150,width=800,height=800")
 	}
+});
+
+$(".td-button span[data-filter]").on("click", function(e){
+	e.preventDefault();
+
+	var divdrop = $(this).children("div.sub-dropdown"),
+		request = $.ajax({
+		    url: "Inc/load.drop.php",
+		    type: "POST",
+		    data: "content=" + $(this).attr("data-filter"),
+		    dataType: "html"
+		});
+
+	$("div.sub-dropdown").hide();
+	divdrop.show();
+
+	// divdrop.addClass("loading");
+	request.done(function(data){
+		divdrop.empty().append(data);
+	});
+	request.fail(function(jqXHR, textStatus) {
+	    console.log("Request failed: " + textStatus);
+	});
+	request.always(function() {
+	    console.log("Load successfully.");
+	    // divdrop.removeClass("loading");
+	});
+
 });

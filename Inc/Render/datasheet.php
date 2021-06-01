@@ -71,23 +71,26 @@ if(!isset($get["exb"])):
 
 	else:
 
-		switch ($get["exb"]):
-			
-			case 'add_new':
-				/* Including the render file */
-				$Alert->setConfig("warning", "<strong>Aviso</strong>: Ao adicionar um novo arquivo o sistema fechará automaticamente o arquivo atual.</span>");
-				echo ($Alert->displayPrint());
+		if (isset($get["exb"])):
+			switch ($get["exb"]):
+				
+				case 'add_new':
+					/* Including the render file */
+					$Alert->setConfig("warning", "<strong>Aviso</strong>: Ao adicionar um novo arquivo o sistema fechará automaticamente o arquivo atual.</span>");
+					echo ($Alert->displayPrint());
 
-				$nonTitle = true;
-				include PAGES . 'add.files.php';
-				break;
-			
-			default:
-				include RENDER . 'load.php';
-				break;
+					$nonTitle = true;
+					include PAGES . 'add.files.php';
+					break;
+				
+				default:
+					include RENDER . 'load.php';
+					break;
 
-		endswitch;
-
+			endswitch;
+		else:
+			include RENDER . 'load.php';
+		endif;
 
 	endif;
 

@@ -17,6 +17,14 @@ if (isset($_SESSION["user_login"])):
 	endforeach; 
 endif;
 
+if (isset($get["action"]) && $get["action"] == "generateReport"):
+
+	if (isset($_SESSION["objfile"])):
+		header("location: report.php?datasheetFile=" . $_SESSION["objfile"]["name"] . "&h=1");
+	endif;
+
+endif;
+
 
 // var_dump($_SESSION);
 
@@ -33,9 +41,20 @@ endif;
 	<title>SisA - Sistema de Arranchamento</title>
 	<link rel="stylesheet" type="text/css" href="<?php echo $url?>Dist/css/style.css">
 	<link rel="stylesheet" type="text/css" href="<?php echo $url?>Dist/css/fontawesome.css">
+
+	<script src="Dist/js/jspdf.umd.js"></script>
+
+	<script>
+		window.jsPDF = window.jspdf.jsPDF;
+	</script>
+
+	<script><?php include "Dist/js/generate.report.js"; ?></script>
 	<script><?php include "Dist/js/jquery.js"; ?></script>
+
 </head>
 <body>
+
+	<div class="modal"></div>
 
 	<header>
 	    <?php include 'Inc/topo.inc.php' ?>

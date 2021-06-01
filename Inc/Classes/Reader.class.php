@@ -13,6 +13,9 @@ class Render
 	static $Object;
 	static $PregUrl;
 	static $InsereData;
+	static $Status;
+	static $Filter;
+	static $Teste;
 	
 	/** 
 	Getter and Setter 
@@ -20,6 +23,9 @@ class Render
 
 	public function __construct()
 	{	
+		self::setStatus(false);
+		self::setFilter(true);
+
 		if (!isset(self::$InsereData) or is_null(self::$InsereData))
 			self::powerOffInsereData(true);
 		# Unseting the first element [always null]
@@ -31,6 +37,12 @@ class Render
 
 	public function getTableName(){
 		return self::$TableName;
+	}
+	public function getTeste(){
+		return self::$Teste;
+	}
+	public function getFilter(){
+		return self::$Filter;
 	}
 	public function getDatasheetName(){
 		return self::$DatasheetName;
@@ -50,6 +62,9 @@ class Render
 	public function getInsereData(){
 		return self::$InsereData;
 	}
+	public function getStatus(){
+		return self::$Status;
+	}
 	public function setSheetData($newSheetData){
 		self::$SheetData = $newSheetData;
 	}
@@ -58,6 +73,9 @@ class Render
 	}
 	public function setUnset($newUnset){
 		self::$unset = $newUnset;
+	}
+	public function setTeste($newUnset){
+		self::$Teste = $newUnset;
 	}
 	public function setDatasheetName($newDatasheetName){
 		self::$DatasheetName = $newDatasheetName;
@@ -70,6 +88,12 @@ class Render
 	}
 	public function powerOffInsereData($newData){
 		self::$InsereData = $newData; 
+	}
+	public function setStatus($newStatus){
+		self::$Status = $newStatus; 
+	}
+	public function setFilter($newFilter){
+		self::$Filter = $newFilter; 
 	}
 
 	public function constructTable(){
@@ -199,73 +223,104 @@ class Render
 
 	public function pushData(){
 
-		function cut($string, $i){
-			$newString = strtolower(str_replace("-", "_", preg_replace(array("/(á|à|ã|â|ä)/","/(Á|À|Ã|Â|Ä)/","/(é|è|ê|ë)/","/(É|È|Ê|Ë)/","/(í|ì|î|ï)/","/(Í|Ì|Î|Ï)/","/(ó|ò|õ|ô|ö)/","/(Ó|Ò|Õ|Ô|Ö)/","/(ú|ù|û|ü)/","/(Ú|Ù|Û|Ü)/","/(ñ)/","/(Ñ)/", "/Ç/", "/ç/"), explode(" ","a A e E i I o O u U n N c C"),$string[$i])));
-			preg_match("/\[(.*)\]/", $newString, $match);
-			$match = explode(" ", end($match));
-			return end($match);
-		}
+		try {
+			function cut($string, $i){
+				$newString = strtolower(str_replace("-", "_", preg_replace(array("/(á|à|ã|â|ä)/","/(Á|À|Ã|Â|Ä)/","/(é|è|ê|ë)/","/(É|È|Ê|Ë)/","/(í|ì|î|ï)/","/(Í|Ì|Î|Ï)/","/(ó|ò|õ|ô|ö)/","/(Ó|Ò|Õ|Ô|Ö)/","/(ú|ù|û|ü)/","/(Ú|Ù|Û|Ü)/","/(ñ)/","/(Ñ)/", "/Ç/", "/ç/"), explode(" ","a A e E i I o O u U n N c C"),$string[$i])));
+				preg_match("/\[(.*)\]/", $newString, $match);
+				$match = explode(" ", end($match));
+				return end($match);
+			}
 
-		$Db = new ObjectDB();
-		$Db->setter(HOST, USER, PASS, DBNAME);
-		$Data = self::getSheetData();
-		$Items = array();
-		$timestamp = new DateTime();
+			$Db = new ObjectDB();
+			$Db->setter(HOST, USER, PASS, DBNAME);
+			$Data = self::getSheetData();
+			$Items = array();
+			$timestamp = new DateTime();
 
-		// Save header table
-		$cabecalho = $Data[0];
-		unset($Data[0]); // Remove from var after save
+			// Save header table
+			$cabecalho = $Data[0];
+			unset($Data[0]); // Remove from var after save
 
-		foreach ($Data as $key => $value):
-			$carimboData = new DateTime($value[0]);
-			$myObject = array(
-				"id" => null,
-				"hash" => md5("_" . utf8_encode($value[4])),
-				"carimbo" => $carimboData->format("Y-m-d H:i:s"),
-				"email" => trim($value[1]),
-				"posto_graduacao" => utf8_encode($value[3]),
-				"nome" => utf8_encode($value[4]),
-				"organizacao_militar" => utf8_encode($value[2]),
-				"segunda_feira" => utf8_encode($value[5]) . "&&" . cut($cabecalho, 5),
-				"terca_feira" => utf8_encode($value[6]) . "&&" . cut($cabecalho, 6),
-				"quarta_feira" => utf8_encode($value[7]) . "&&" . cut($cabecalho, 7),
-				"quinta_feira" => utf8_encode($value[8]) . "&&" . cut($cabecalho, 8),
-				"sexta_feira" => utf8_encode($value[9]) . "&&" . cut($cabecalho, 9),
-				"sabado" => utf8_encode($value[10]) . "&&" . cut($cabecalho, 10),
-				"domingo" => utf8_encode($value[11]) . "&&" . cut($cabecalho, 11),
-				"datasheet_name" => self::getTableName(),
-			);
-			array_push($Items, $myObject);
-		endforeach;
-
-		if (self::getInsereData()):
-			$sheet = TB_SHEET;
-			foreach ($Items as $key => $value):
-				$Db->insert_query($Db->connect_db(), TB_RESP, $value);
-
-				$db = $Db->connect_db();
-				
-				$JSONData = array(
-				 	'hash' => $value["hash"], 
-				 	array(
-				 		'timestamp' => $timestamp->getTimestamp(), 
-				 		'values' => array()
-				 	)
+			foreach ($Data as $key => $value):
+				$carimboData = new DateTime($value[0]);
+				$myObject = array(
+					"id" => null,
+					"hash" => md5($carimboData->format("Y-m-d H:i:s") . "_" . utf8_encode($value[4])),
+					"carimbo" => $carimboData->format("Y-m-d H:i:s"),
+					"email" => trim($value[1]),
+					"posto_graduacao" => utf8_encode($value[3]),
+					"nome" => utf8_encode($value[4]),
+					"organizacao_militar" => utf8_encode($value[2]),
+					"segunda_feira" => utf8_encode($value[5]) . "&&" . cut($cabecalho, 5),
+					"terca_feira" => utf8_encode($value[6]) . "&&" . cut($cabecalho, 6),
+					"quarta_feira" => utf8_encode($value[7]) . "&&" . cut($cabecalho, 7),
+					"quinta_feira" => utf8_encode($value[8]) . "&&" . cut($cabecalho, 8),
+					"sexta_feira" => utf8_encode($value[9]) . "&&" . cut($cabecalho, 9),
+					"sabado" => utf8_encode($value[10]) . "&&" . cut($cabecalho, 10),
+					"domingo" => utf8_encode($value[11]) . "&&" . cut($cabecalho, 11),
+					"datasheet_name" => self::getTableName(),
 				);
-
-				$objData = array(
-					'id' => null,
-					'hash_id' => $value["hash"],
-					'data_json' => json_encode($JSONData, true)
-				);
-
-				// $sql = "INSERT INTO `tb_conf` (`id`, `hash_id`, `data_json`) VALUES (:id ,:hash_id, :data_json)";
-				// $stmt = $db->prepare($sql);
-				// $stmt->execute($objData);	
-
+				array_push($Items, $myObject);
 			endforeach;
-			self::powerOffInsereData(false);
-		endif;
+
+			// var_dump($Items);
+
+			if (self::getInsereData()):
+				$sheet = TB_SHEET;
+				$insert = array(false, false);
+				foreach ($Items as $key => $value):
+
+					$Db->insert_query($Db->connect_db(), TB_RESP, $value);
+					$sql = $Db->return_query($Db->connect_db(), TB_CONF, null, true);
+					$insert[0] = true;
+
+					// var_dump($sql);
+					if (count($sql) < count($Items)):
+						$db = $Db->connect_db();
+						$objData = array(
+							'id' => null,
+							'hash_id' => $value["hash"],
+							'data_json' => json_encode(
+								array(
+						 			'hash' => $value["hash"], 
+						 			array(
+						 			'timestamp' => $timestamp->getTimestamp(), 
+						 			'values' => array()
+						 			)
+								), true
+							),
+							'datasheet' => self::getTableName()
+						);
+
+						$sql = "INSERT INTO `tb_conf` (`id`, `hash_id`, `data_json`, `datasheet`) VALUES (:id ,:hash_id, :data_json, :datasheet)";
+						$stmt = $db->prepare($sql);
+						$stmt->execute($objData);	
+
+						$insert[1] = true;
+
+					endif;
+
+
+				endforeach;
+
+				if ($insert[0] !== false)
+					self::consoleLog("`tb_resp`: Inserted \"".count($Items)."\" data on database.");
+				if ($insert[1] !== false)
+					self::consoleLog("`tb_conf`: Inserted \"".count($sql)."\" data on database.");
+
+				self::powerOffInsereData(false);
+
+			endif;
+
+			self::setStatus(true);
+
+		} catch (Exception $e) {
+			return $e;
+		}
+	}
+
+	public function consoleLog($txt){
+		echo "<script>console.log('".$txt."')</script>";
 	}
 
 }

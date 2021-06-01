@@ -41,4 +41,73 @@ define(
 define(
 	"TB_CONF", "tb_conf");
 
+/**
+	Options filter
+**/
+$Filter = array(
+
+	"buttons" => array(
+
+		"carimbo" => array(
+			"text" 		=> "Carimbo de data/hora",
+			"content"	=> "carimbo",
+			"drop" 		=> true
+		),
+
+		"email" => array(
+			"text" 		=> "Endereço de e-mail",
+			"content"	=> "email",
+			"drop" 		=> true
+		),
+
+		"organizacao_militar" => array(
+			"text" 		=> "Organização Militar",
+			"content" 	=> "organizacao_militar",
+			"drop" 		=> true
+		),
+
+		"posto_graduacao" => array(
+			"text" 		=> "Posto/Graduação",
+			"content" 	=> "posto_graduacao",
+			"drop" 		=> true
+		),
+
+		"nome" => array(
+			"text" 		=> "Nome de guerra",
+			"content" 	=> "nome",
+			"drop" 		=> true
+		),
+
+	),
+
+	"drop" => array(
+
+		"carimbo" => array(
+			"hide" 	=> true,
+			"order" => array("A-Z", "Z-A"),
+		),
+
+		"email" => array(
+			"hide" 	=> true,
+			"order" => array("A-Z", "Z-A"),
+		),
+
+		"organizacao_militar" => array(
+			"hide" 	=> true,
+			"order" => array("A-Z", "Z-A"),
+		),
+
+		"posto_graduacao" => array(
+			"hide" 	=> true,
+			"order" => array("A-Z", "Z-A"),
+		),
+
+		"nome" => array(
+			"hide" 	=> true,
+			"order" => array("A-Z", "Z-A"),
+		)
+
+	)
+);
+
 ?>

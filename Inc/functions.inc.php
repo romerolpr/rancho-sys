@@ -20,3 +20,9 @@ function resizeString($desc, $qnt_1, $r = 10){
     return $desc;
 
 }
+
+function replaceUrl($urlString){
+    $current = str_replace($urlString, "", (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS']=="on") ? "https" : "http") . '://'.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING']);
+    return str_replace($urlString, "", $current) . $urlString;
+    
+} 

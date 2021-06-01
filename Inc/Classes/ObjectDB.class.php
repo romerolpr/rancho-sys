@@ -33,17 +33,23 @@ class ObjectDB
 	{	
 		try 
 		{
-		// var_dump($where);
+			// var_dump($where);
 			if (!isset($gettable) || !$gettable):
-				$stt = $db->prepare('SELECT * FROM ' . $table . (!is_null($where) ? " WHERE " . $where[0][0] . "=\"" . $where[1][$where[0][0]] . "\" AND " . $where[0][1] . "=\"" . $where[1][$where[0][1]] . "\"" : null));
+				$stt = $db->prepare('SELECT * FROM ' . $table . (!is_null($where) ? " WHERE " . $where[0][0] . "=\"" . $where[1][$where[0][0]] . "\" AND " . $where[0][1] . "=\"" . $where[1][$where[0][1]] . "\" AND " . $where[0][2] . "=\"" . $where[1][$where[0][2]] . "\" AND " . $where[0][3] . "=\"" . $where[1][$where[0][3]] . "\""  : null));
+				// var_dump($stt);
 			else:
-				$stt = $db->prepare('SELECT * FROM $table WHERE datasheet_name="$gettable"');
+				if (!is_null($where)):
+					$stt = $db->prepare('SELECT * FROM $table WHERE datasheet_name="$where"');
+				else:
+					$stt = $db->prepare('SELECT * FROM ' . $table);
+				endif;
 			endif;
+
 			$stt->execute();
 
 		} catch (PDOException $e)
 		{
-			return ("Não foi possível recuperar os registros da tabela.");
+			return "Não foi possível recuperar os registros da tabela.";
 		}
 
 		return $stt->fetchAll(PDO::FETCH_ASSOC);
@@ -55,8 +61,8 @@ class ObjectDB
 		{	
 
 			
-		 	$sql = self::return_query($db, $table, array(array("nome", "posto_graduacao"), $obj));
-			// var_dump($sql);
+		 	$sql = self::return_query($db, $table, array(array("nome", "posto_graduacao", "segunda_feira", "domingo"), $obj));
+			// var_dump($obj);
 			if(empty($sql)):
 				$sql = "INSERT INTO $table (`id`, `hash`, `carimbo`, `email`, `posto_graduacao`, `nome`, `organizacao_militar`, `segunda_feira`, `terca_feira`, `quarta_feira`, `quinta_feira`, `sexta_feira`, `sabado`, `domingo`, `datasheet`) VALUES (:id, :hash, :carimbo, :email, :posto_graduacao, :nome, :organizacao_militar, :segunda_feira, :terca_feira, :quarta_feira, :quinta_feira, :sexta_feira, :sabado, :domingo, :datasheet_name)";
 				$stmt = $db->prepare($sql);
