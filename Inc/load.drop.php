@@ -28,29 +28,34 @@ foreach ($Filter["buttons"][$content] as $keybuttons => $button) {
 			array_push($arrayDrop, trim(utf8_decode($returnValue[$content])));
 	}
 
-	$dropRender = "<ul class=\"navdrop\">";
+	$dropRender = null;
 
 	if ($button["drop"]):
 
 		if ($Filter["drop"][$content]["hide"]):
-			$dropRender .= "<li><a href=\"index.php?hide=".urlencode($content)."\" title=\"Ocultar\">Ocultar</a></li>";
+			$dropRender .= "<p class=\"txt-left\"><a class=\"btn txt-left\" href=\"index.php?hide=".urlencode($content)."\" title=\"Ocultar\">Ocultar</a></p>";
 		endif;
 
 		foreach ($Filter["drop"][$content]["order"] as $keyorder => $order) {
-			$dropRender .= "<li><a href=\"index.php?sort=".urlencode($content).";".$order."\" title=\"Classificar por ".$order."\">Classificar por ".$order."</a></li>";
+			$dropRender .= "<p class=\"txt-left\"><a class=\"btn txt-left\" href=\"index.php?sort=".$order.":".urlencode($content)."\" title=\"Classificar por ".$order."\">Classificar por ".$order."</a></p>";
 		}
+
+		$dropRender .= "<div class=\"navdrop\">";
 
 		foreach ($Filter["drop"][$content] as $keydrop => $drop) {
 
+			$dropRender .= "<li><div class=\"d-width\"><input type=\"checkbox\" name=\"filter\" value=\"(Selecionar tudo)\" id=\"".md5($content . "_" . $keybuttons.$keydrop). "_all" ."\" class=\"input_checked_drop\"></div><div class=\"d-width\"><a href=\"index.php?filter=".urlencode($content).":All"."\" title=\"(Selecionar tudo)\">(Selecionar tudo)</a></div></li>";
 			foreach ($arrayDrop as $keyArrayDrop => $arraydrop) {
+				$idInput = md5($content . "_" . $keybuttons.$keydrop."_".preg_replace("/(-|\/|:| )/", "_", $arraydrop));
 				if ($keyArrayDrop == 0)
 					$dropRender .= "<br>";
-				$dropRender .= "<li><input type=\"checkbox\" name=\"filter\" value=\"".urlencode($arraydrop)."\" id=\"".$keybuttons.$keydrop."_".str_replace(" ", "_", $arraydrop)."\"><a href=\"index.php?filter=".urlencode($arraydrop)."\" title=\"".$arraydrop."\">" . $arraydrop . "</a></li>";
+				$dropRender .= "<li><div class=\"d-width\"><input type=\"checkbox\" name=\"filter\" value=\"".urlencode($arraydrop)."\" id=\"".$idInput."\" class=\"input_checked_drop\"></div><div class=\"d-width\"><a href=\"index.php?filter=".urlencode($arraydrop).":".urlencode($content)."\" title=\"".$arraydrop."\" class=\"text_input_label\"><label for=\"".$idInput."\">" . $arraydrop . "</label></a></div></li>";
 			}
 
 			break;
 		}
-		$dropRender .= "</ul>"; 
+		$dropRender .= "</div>"; 
+
 	endif;
 
 	echo $dropRender;

@@ -24,38 +24,7 @@ foreach ($fromDb as $key => $value):
 
 			// Td base, header
 			$sheetHeader = null;
-			// $sheetHeader .= "<tr>";
-			// $sheetHeader .= "<td><a title='Esconder coluna' class='btn btn_click_hide red' data-td-hide='0' href='index.php?hideItem=0'><i class='fa fa-eye-slash'></i></a></td>";
-			// $sheetHeader .= "<td><a title='Esconder coluna' class='btn btn_click_hide red' data-td-hide='1' href='index.php?hideItem=1'><i class='fa fa-eye-slash'></i></a></td>";
-			// $sheetHeader .= "<td><a title='Esconder coluna' class='btn btn_click_hide red' data-td-hide='2' href='index.php?hideItem=2'><i class='fa fa-eye-slash'></i></a></td>";
-			// $sheetHeader .= "<td><a title='Esconder coluna' class='btn btn_click_hide red' data-td-hide='3' href='index.php?hideItem=3'><i class='fa fa-eye-slash'></i></a></td>";
-			// $sheetHeader .= "<td><a title='Esconder coluna' class='btn btn_click_hide red' data-td-hide='4' href='index.php?hideItem=4'><i class='fa fa-eye-slash'></i></a></td>";
-			// $sheetHeader .= "<td><a title='Esconder coluna' class='btn btn_click_hide red' data-td-hide='5' href='index.php?hideItem=5'><i class='fa fa-eye-slash'></i></a></td>";
-			// if (isset($get["exb_all"])):
-			// 	$sheetHeader .= "<td><a title='Esconder coluna' class='btn btn_click_hide red' data-td-hide='6' href='index.php?hideItem=6'><i class='fa fa-eye-slash'></i></a></td>";
-			// 	$sheetHeader .= "<td><a title='Esconder coluna' class='btn btn_click_hide red' data-td-hide='7' href='index.php?hideItem=7'><i class='fa fa-eye-slash'></i></a></td>";
-			// 	$sheetHeader .= "<td><a title='Esconder coluna' class='btn btn_click_hide red' data-td-hide='8' href='index.php?hideItem=8'><i class='fa fa-eye-slash'></i></a></td>";
-			// 	$sheetHeader .= "<td><a title='Esconder coluna' class='btn btn_click_hide red' data-td-hide='9' href='index.php?hideItem=9'><i class='fa fa-eye-slash'></i></a></td>";
-			// 	$sheetHeader .= "<td><a title='Esconder coluna' class='btn btn_click_hide red' data-td-hide='10' href='index.php?hideItem=10'><i class='fa fa-eye-slash'></i></a></td>";
-			// 	$sheetHeader .= "<td><a title='Esconder coluna' class='btn btn_click_hide red' data-td-hide='11' href='index.php?hideItem=11'><i class='fa fa-eye-slash'></i></a></td>";
-			// endif;
-			// $sheetHeader .= "</tr>";
-
-			/**
-
-			Exemple of filters
-
-			?filter=BASE+ADM+AP+IBIRAPUERA!Of+Of+Sup,Of+Cap/Ten&order_by=Nome;A-Z
-
-			filter = ?!(.*)?! => array filter column [0]
-
-			**/
-
 			$sheetHeader .= "<tr class=\"bar-table\">";
-			// $sheetHeader .= "<td>Hash</td>";
-			/* 
-			class=\"td-button\"><div><span data-filter=\"carimbo\" class=\"btn btn_order fright\"><i class=\"fas fa-sort-down\"></i></span></div><div> 
-			*/	
 
 
 			foreach ($Filter["buttons"] as $keybuttons => $button) {

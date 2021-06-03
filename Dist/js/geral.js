@@ -156,8 +156,8 @@ $('#report').on("click", function(e){
 	}
 });
 
-$(".td-button span[data-filter]").on("click", function(e){
-	e.preventDefault();
+$(".td-button span[data-filter]").on("click", function(){
+	// e.preventDefault();
 
 	var divdrop = $(this).children("div.sub-dropdown"),
 		request = $.ajax({
@@ -172,14 +172,28 @@ $(".td-button span[data-filter]").on("click", function(e){
 
 	// divdrop.addClass("loading");
 	request.done(function(data){
-		divdrop.empty().append(data);
+		if (divdrop.html().length <= 0){
+			divdrop.append(data);
+		}
 	});
 	request.fail(function(jqXHR, textStatus) {
 	    console.log("Request failed: " + textStatus);
 	});
 	request.always(function() {
 	    console.log("Load successfully.");
+	    divdrop.css({"background":"#fff"});
 	    // divdrop.removeClass("loading");
 	});
 
+	// return false;
+
+});
+
+$('.input_checked_drop').each(function(){
+
+	var myValue = $(this).val();
+
+	if (myValue.split("_")[1] == "all"){
+		
+	}
 });

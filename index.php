@@ -27,7 +27,6 @@ endif;
 
 
 // var_dump($_SESSION);
-
 // unset($_SESSION);
 
 ?>
@@ -80,54 +79,54 @@ endif;
 
 				<div class="main">
 
-		<?php
+				<?php
 
-		// display Error
-		include FRONT . 'err.inc.php';
+				// display Error
+				include FRONT . 'err.inc.php';
 
-		// Post form file and login
-		include INC . 'post.form.php';
+				// Post form file and login
+				include INC . 'post.form.php';
 
-		// Config params
-		include INC . 'param.inc.php';
+				// Config params
+				include INC . 'param.inc.php';
 
-		if(isset($_SESSION["objfile"]) && !empty($_SESSION["objfile"]) && isset($_SESSION["user_login"]) && !empty($_SESSION["user_login"])):
+				if(isset($_SESSION["objfile"]) && !empty($_SESSION["objfile"]) && isset($_SESSION["user_login"]) && !empty($_SESSION["user_login"])):
 
-			if (file_exists($_SESSION["objfile"]["tmp_name"])):
+					if (file_exists($_SESSION["objfile"]["tmp_name"])):
 
-				// Setting the class
-				$Render->setTableName($_SESSION["objfile"]["name"]);
-				$Render->setDatasheetName($_SESSION["objfile"]["worksheetName"]);
+						// Setting the class
+						$Render->setTableName($_SESSION["objfile"]["name"]);
+						$Render->setDatasheetName($_SESSION["objfile"]["worksheetName"]);
 
-				$inputFileName = $_SESSION["objfile"]["ExcelFileType"];
-				$inputTmp = $_SESSION["objfile"]["tmp_name"];
+						$inputFileName = $_SESSION["objfile"]["ExcelFileType"];
+						$inputTmp = $_SESSION["objfile"]["tmp_name"];
 
-				$objReader = PHPExcel_IOFactory::createReader($inputFileName);
-				$worksheetData = $objReader->listWorksheetInfo($inputTmp);
+						$objReader = PHPExcel_IOFactory::createReader($inputFileName);
+						$worksheetData = $objReader->listWorksheetInfo($inputTmp);
 
-				/* Load datasheets */
-				include RENDER . 'datasheet.php';
+						/* Load datasheets */
+						include RENDER . 'datasheet.php';
 
-			else:
+					else:
 
-				$Alert->setConfig("danger", "<strong>404</strong>: Não foi possível localizar o arquivo em: \"/Transfer/load/".str_replace(" ", "_", $_SESSION["objfile"]["name"])."\". Adicione o arquivo novamente.</span>");
-				echo ($Alert->displayPrint());
-				include FRONT . 'form.php';
+						$Alert->setConfig("danger", "<strong>404</strong>: Não foi possível localizar o arquivo em: \"/Transfer/load/".str_replace(" ", "_", $_SESSION["objfile"]["name"])."\". Adicione o arquivo novamente.</span>");
+						echo ($Alert->displayPrint());
+						include FRONT . 'form.php';
 
-			endif;
+					endif;
 
 
-		else: 
+				else: 
 
-			if (isset($_SESSION["objfile"])):
-				$Alert->setConfig("warning", "<strong>Aviso</strong>: O arquivo \"".$_SESSION["objfile"]["name"]."\" permanece aberto. <a href='index.php?exit=session_obj' title='Fechar arquivo' class='btn btn_click_consult'>Fechar arquivo</a></span>");
-				echo ($Alert->displayPrint());
-			endif;
-			include FRONT . 'form.php';
+					if (isset($_SESSION["objfile"])):
+						$Alert->setConfig("warning", "<strong>Aviso</strong>: O arquivo \"".$_SESSION["objfile"]["name"]."\" permanece aberto. <a href='index.php?exit=session_obj' title='Fechar arquivo' class='btn btn_click_consult'>Fechar arquivo</a></span>");
+						echo ($Alert->displayPrint());
+					endif;
+					include FRONT . 'form.php';
 
-		endif;
+				endif;
 
-		?>
+				?>
 
 		</div>
 

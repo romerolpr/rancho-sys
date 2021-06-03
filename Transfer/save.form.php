@@ -11,7 +11,6 @@ $post = filter_input_array(INPUT_POST, FILTER_DEFAULT);
 $myObject = json_decode($post["values"], true);
 
 $getfromDb = $Db->return_query($db, TB_CONF);
-
 $JSONData = array();
 
 // print_r($getfromDb);
@@ -31,7 +30,7 @@ function insertOn($db, $hash, $JSONData){
 
 	$sql = "INSERT INTO `tb_conf` (`id`, `hash_id`, `data_json`) VALUES (:id ,:hash_id, :data_json)";
 	$stmt = $db->prepare($sql);
-	$stmt->execute($obj);	
+	$stmt->execute($obj);
 	
 }
 

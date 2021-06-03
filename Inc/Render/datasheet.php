@@ -18,9 +18,39 @@ if(!isset($get["exb"])):
 		echo "<p>Arquivos recentes</p>";
 		echo "<span class=\"divider\"></span>";
 
-
 		$Files = array();
-		foreach (glob(TRANSFER . "*.*") as $arquivo) array_push($Files, array($arquivo, filesize($arquivo), filemtime($arquivo)));
+		foreach (glob(TRANSFER . "*.*") as $arquivo):
+			array_push(
+				$Files, array(
+					"name" 		=> basename($arquivo),
+					"tmp_name"	=> $arquivo, 
+					"ExcelFileType" => "Excel2007",
+					"inputFileType" => filetype($arquivo),
+					"worksheetName" => null,
+					"file" => array(
+						"mtime" 	=> filemtime($arquivo), 
+						"size" 		=> filesize($arquivo)
+					)
+				));
+
+
+			if (isset($get["path"]) && isset($get["unlink"]) && !empty($get["path"])):
+				foreach ($Files as $key => $value):
+					if ($value["tmp_name"] == $get["path"])
+						unlink($arquivo);
+				endforeach;
+			endif;
+
+
+		endforeach;
+
+		if (isset($get["new"]) && !empty($get["new"])):
+			foreach ($Files as $key => $value):
+				if ($value["name"] == $get["new"])
+					$_SESSION["objfile"] = $value;
+					header("location: index.php");
+			endforeach;
+		endif;
 
 		echo "<table>";
 		echo "<tr class=\"bar-table\">";
@@ -32,7 +62,9 @@ if(!isset($get["exb"])):
 			if (!empty($Files)):
 				foreach ($Files as $key => $value):
 
-					$dateFile = date("d-m-Y H:i:s", $value[2]);
+					// var_dump($value);
+
+					$dateFile = date("d-m-Y H:i:s", $value["file"]["mtime"]);
 
 					$data1 = implode('-', array_reverse(explode('/', $dateFile)));
 					$data2 = implode('-', array_reverse(explode('/', $dataAtual)));
@@ -50,10 +82,10 @@ if(!isset($get["exb"])):
 					endif;
 
 					echo "<tr>";
-					echo "<td>",$value[0],"</td>";
+					echo "<td><a class=\"btn\" href=\"index.php?new=".$value["name"]."\">",$value["name"],"</a></td>";
 					echo "<td><i>",$dataFinal,"</i></td>";
-					echo "<td><i>",round($value[1])," KB</i></td>";
-					echo "<td><a data-action='excluir' class='btn btn_click_consult red' href='".$url."?action=Remove&path=".$value[0]."' title='Excluir'><i class='fa fa-times'></i></a></td>";
+					echo "<td><i>",round($value["file"]["size"])," KB</i></td>";
+					echo "<td><a data-action='excluir' class='btn btn_click_consult red' href='".$url."?unlink&path=".$value["tmp_name"]."' title='Excluir'><i class='fa fa-times'></i></a></td>";
 					echo "</tr>";
 
 				endforeach;

@@ -10,7 +10,8 @@ if (isset($_POST["Envia"]) && !empty($_POST["Envia"])):
 			"tmp_name" => $_FILES["file"]["tmp_name"],
 			"inputFileType" => $_FILES["file"]["type"],
 			"ExcelFileType" => "Excel2007",
-			"worksheetName" => null
+			"worksheetName" => null,
+			"file" => array("size" => $_FILES["file"]["size"], filemtime($_FILES["file"]))
 		);
 
 		$format = explode(".", $ObjLoad["name"]);

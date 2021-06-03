@@ -24,7 +24,7 @@ class Render
 	public function __construct()
 	{	
 		self::setStatus(false);
-		self::setFilter(true);
+		// self::setFilter(self::getFilterDefault());
 
 		if (!isset(self::$InsereData) or is_null(self::$InsereData))
 			self::powerOffInsereData(true);
@@ -92,8 +92,20 @@ class Render
 	public function setStatus($newStatus){
 		self::$Status = $newStatus; 
 	}
-	public function setFilter($newFilter){
-		self::$Filter = $newFilter; 
+	public function setFilter($newFilter, $default = false){
+		self::$Filter = ($default !== true) ? $newFilter : self::getFilterDefault(); 
+	}
+
+	public function getFilterDefault(){
+		return array(
+			"sort" => array(),
+			"hide" => array(),
+			"filter" => array()
+		);
+	}
+
+	public function manipuleFilter(){
+		
 	}
 
 	public function constructTable(){

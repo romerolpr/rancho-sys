@@ -20,9 +20,14 @@ if (isset($get["worksheetName"])):
 	$Render->powerOffInsereData(true);
 endif;
 
-if (isset($get["filter"]) && $get["filter"] == "none"):
-	$Render->setFilter(false);
+if (isset($get["filter"]) && empty($get["filter"])):
+	$Render->setFilter(null, true);
+	// header("location: index.php");
+else:
+	$Render->manipuleFilter();
 endif;
+
+// var_dump($Render->getFilter());
 
 /* Get object data and render*/
 $Render->getObject();
@@ -47,8 +52,9 @@ $sheetBody = "<div class=\"box-table\">";
 $sheetBody .= "<p class=\"fleft d-center-items sticky\">";
 $sheetBody .= "<span class=\"fleft\"><strong>" . $Render->getDatasheetName() ."</strong></span>";
 $sheetBody .= "<span class=\"fright head_table\">";
+
 if ($Render->getFilter() !== true):
-	$sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage\" title=\"Visualização de filtro\"><i class=\"fas fa-filter\"></i></a>";
+	$sheetBody .= "<a href=\"".$url."index.php?filter\" class=\"btn btn_link btn_manage\" title=\"Visualização de filtro\" id=\"power_filter\"><i class=\"fas fa-filter\"></i></a>";
 else:
 	$sheetBody .= "<a href=\"".$url."index.php?filter=none\" class=\"btn btn_link btn_manage btn_active\" title=\"Desativar modo: Visualização de filtro\"><i class=\"fas fa-filter\"></i></a>";
 endif;
@@ -63,7 +69,9 @@ $sheetBody .= "<button class=\"btn btn_link btn_manage\" title=\"Salvar alteraç
 
 $sheetBody .= "<table data-exb=\"".((!isset($get["exb_all"])) ? "default" : "exb_all")."\">";
 
+$sheetBody .= "<div id=\"load_sheet_data\">";
 include FRONT . "pages/load.sheet.php";
+$sheetBody .= "</div>";
 
 $sheetBody .= "</table></div>";
 
