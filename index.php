@@ -29,6 +29,22 @@ if (!is_dir("./Transfer/load")):
 	mkdir("./Transfer/load", 0700);
 endif;
 
+if (isset($get["path"]) && isset($get["unlink"]) && !empty($get["path"])):
+	foreach ($Files as $key => $value):
+		if ($value["tmp_name"] == $get["path"])
+			unlink($arquivo);
+			header("location: index.php?unlink=true");
+	endforeach;
+endif;
+
+if (isset($get["new"]) && !empty($get["new"])):
+	foreach ($Files as $key => $value):
+		if ($value["name"] == $get["new"])
+			$_SESSION["objfile"] = $value;
+			header("location: index.php");
+	endforeach;
+endif;
+
 
 // var_dump($_SESSION);
 // unset($_SESSION);
@@ -45,13 +61,6 @@ endif;
 	<link rel="stylesheet" type="text/css" href="<?php echo $url?>Dist/css/style.css">
 	<link rel="stylesheet" type="text/css" href="<?php echo $url?>Dist/css/fontawesome.css">
 
-	<script src="Dist/js/jspdf.umd.js"></script>
-
-	<script>
-		window.jsPDF = window.jspdf.jsPDF;
-	</script>
-
-	<script><?php include "Dist/js/generate.report.js"; ?></script>
 	<script><?php include "Dist/js/jquery.js"; ?></script>
 
 </head>
@@ -142,6 +151,7 @@ endif;
 
 	<!-- Events, functions js -->
 	<script><?php include 'Dist/js/geral.js'; ?></script>
+	<script><?php include 'Dist/js/Filter.js'; ?></script>
 
 </body>
 </html>

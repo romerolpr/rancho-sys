@@ -78,6 +78,8 @@ $Filter = array(
 			"drop" 		=> true
 		),
 
+		// "refc" => array()
+
 	),
 
 	"drop" => array(
@@ -105,9 +107,27 @@ $Filter = array(
 		"nome" => array(
 			"hide" 	=> true,
 			"order" => array("A-Z", "Z-A"),
-		)
+		),
+
+		"refc" => array()
 
 	)
 );
+
+$Files = array();
+foreach (glob(TRANSFER . "*.*") as $arquivo):
+	array_push(
+		$Files, array(
+			"name" 		=> basename($arquivo),
+			"tmp_name"	=> $arquivo, 
+			"ExcelFileType" => "Excel2007",
+			"inputFileType" => filetype($arquivo),
+			"worksheetName" => null,
+			"file" => array(
+				"mtime" 	=> filemtime($arquivo), 
+				"size" 		=> filesize($arquivo)
+			)
+		));
+endforeach;
 
 ?>

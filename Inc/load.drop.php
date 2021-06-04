@@ -30,8 +30,11 @@ foreach ($Filter["buttons"][$content] as $keybuttons => $button) {
 
 	if ($button["drop"]):
 
+		$dropRender .= "<p class=\"txt-center\"><a class=\"btn txt-left fleft\" href=\"index.php?hide=".urlencode($content)."\" title=\"Aplicar\">Aplicar</a></p>";
+		$dropRender .= "<span class=\"divider\"></span>";
+
 		if ($Filter["drop"][$content]["hide"]):
-			$dropRender .= "<p class=\"txt-left\"><a class=\"btn txt-left\" href=\"index.php?hide=".urlencode($content)."\" title=\"Ocultar\">Ocultar</a></p>";
+			$dropRender .= "<p class=\"txt-left\"><a class=\"btn txt-left\" href=\"index.php?hide=".urlencode($content)."\" title=\"Ocultar coluna\">Ocultar coluna</a></p>";
 		endif;
 
 		foreach ($Filter["drop"][$content]["order"] as $keyorder => $order) {
@@ -42,11 +45,13 @@ foreach ($Filter["buttons"][$content] as $keybuttons => $button) {
 
 		foreach ($Filter["drop"][$content] as $keydrop => $drop) {
 
+			// Seleciona tudo
 			$dropRender .= "<li><div class=\"d-width\"><input type=\"checkbox\" name=\"filter\" value=\"(Selecionar tudo)\" id=\"".md5($content . "_" . $keybuttons.$keydrop). "_all" ."\" class=\"input_checked_drop\"></div><div class=\"d-width\"><a href=\"index.php?filter=".urlencode($content).":All"."\" title=\"(Selecionar tudo)\">(Selecionar tudo)</a></div></li>";
+
 			foreach ($arrayDrop as $keyArrayDrop => $arraydrop) {
 				$idInput = md5($content . "_" . $keybuttons.$keydrop."_".preg_replace("/(-|\/|:| )/", "_", $arraydrop));
-				if ($keyArrayDrop == 0)
-					$dropRender .= "<br>";
+
+				// List
 				$dropRender .= "<li><div class=\"d-width\"><input type=\"checkbox\" name=\"filter\" value=\"".urlencode($arraydrop)."\" id=\"".$idInput."\" class=\"input_checked_drop\"></div><div class=\"d-width\"><a href=\"index.php?filter=".urlencode($arraydrop).":".urlencode($content)."\" title=\"".$arraydrop."\" class=\"text_input_label\"><label for=\"".$idInput."\">" . $arraydrop . "</label></a></div></li>";
 			}
 

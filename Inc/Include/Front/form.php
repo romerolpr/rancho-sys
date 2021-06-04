@@ -2,7 +2,11 @@
 
 if(isset($_SESSION["user_login"])):
 
-	include FRONT . 'pages/add.files.php';
+	if(isset($get["exb"]) && $get["exb"] == "recents"):
+		include PAGES . 'recents.inc.php';
+	else:
+		include FRONT . 'pages/add.files.php';
+	endif;
 
 else: 
 

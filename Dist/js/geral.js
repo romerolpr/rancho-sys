@@ -156,6 +156,10 @@ $('#report').on("click", function(e){
 	}
 });
 
+function onlyUnique(value, index, self) {
+  return self.indexOf(value) === index;
+}
+
 $(".td-button span[data-filter]").on("click", function(){
 	// e.preventDefault();
 
@@ -163,37 +167,39 @@ $(".td-button span[data-filter]").on("click", function(){
 		request = $.ajax({
 		    url: "Inc/load.drop.php",
 		    type: "POST",
-		    data: "content=" + $(this).attr("data-filter"),
+		    data: "content=" + $(this)[0].dataset.filter,
 		    dataType: "html"
-		});
+		}),
+		filterExtract = $(this)[0].dataset.filterExtract,
+		inputDate = [];
 
 	$("div.sub-dropdown").hide();
+	$(".td-button span i").removeClass("rotate180deg");
+
+	$(this).children("i").addClass("rotate180deg");
 	divdrop.show();
 
+
 	// divdrop.addClass("loading");
-	request.done(function(data){
-		if (divdrop.html().length <= 0){
-			divdrop.append(data);
-		}
-	});
-	request.fail(function(jqXHR, textStatus) {
-	    console.log("Request failed: " + textStatus);
-	});
-	request.always(function() {
-	    console.log("Load successfully.");
-	    divdrop.css({"background":"#fff"});
-	    // divdrop.removeClass("loading");
-	});
+	if (filterExtract !== undefined){
+		// $(this)
+	} else {
+		request.done(function(data){
+			if (divdrop.html().length <= 0){
+				divdrop.append(data);
+			}
+		});
+		request.fail(function(jqXHR, textStatus) {
+		    console.log("Request failed: " + textStatus);
+		});
+		request.always(function() {
+		    console.log("Load successfully.");
+		    divdrop.css({"background":"#fff"});
+		    // $(this).children("i").css({"trasform":"inital"});
+		    // divdrop.removeClass("loading");
+		});
+	}
 
 	// return false;
 
-});
-
-$('.input_checked_drop').each(function(){
-
-	var myValue = $(this).val();
-
-	if (myValue.split("_")[1] == "all"){
-		
-	}
 });

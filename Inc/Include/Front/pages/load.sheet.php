@@ -26,6 +26,7 @@ foreach ($fromDb as $key => $value):
 			$sheetHeader = null;
 			$sheetHeader .= "<tr class=\"bar-table\">";
 
+			// var_dump($Filter["buttons"]);
 
 			foreach ($Filter["buttons"] as $keybuttons => $button) {
 
@@ -38,9 +39,6 @@ foreach ($fromDb as $key => $value):
 
 			}
 
-			// var_dump($arrayDrop);
-
-			// $sheetHeader .= "<td ".($Render->getFilter() ? "class=\"td-button\"><div><span data-filter=\"carimbo\" class=\"btn btn_order fright\"><i class=\"fas fa-sort-down\"></i><div class=\"sub-dropdown\">".$drop."</div></span></div><div>" : ">" )."<span>Carimbo de data/hora</span>".($Render->getFilter() ? "</div>" : null)."</td>";
 
 			// All days
 			for ($i=0; $i < 7; $i++):
@@ -48,7 +46,8 @@ foreach ($fromDb as $key => $value):
 				$diasemana_numero = date('w', strtotime(str_replace("/", "-", $ObjDecoded["refc"][$i][1])));
 				if ($Today == $ObjDecoded["refc"][$i][1] || isset($get["exb_all"]))
 					# 
-					$sheetHeader .= "<td ".($Render->getFilter() ? "class=\"td-button\"><div><span data-filter=\"refc-".strtolower(clearString($diasemana[$diasemana_numero]))."\" class=\"btn btn_order fright\"><i class=\"fas fa-sort-down\"></i></span></div><div>" : ">" )."<span>[" . $diasemana[$diasemana_numero] . "] " .  $ObjDecoded["refc"][$i][1] . "".($Render->getFilter() ? "</span></div>" : null)."</td>";
+
+					$sheetHeader .= "<td ".($Render->getFilter() ? "class=\"td-button\"><div><span data-filter=\"refc-".strtolower(clearString($diasemana[$diasemana_numero]))."\" class=\"btn btn_order fright\" data-filter-extract=\"".$ObjDecoded["refc"][$i][1]."\"><i class=\"fas fa-sort-down\"></i><div class=\"sub-dropdown drop-render\"></div></span></div><div>" : ">" )."<span>[" . $diasemana[$diasemana_numero] . "] " .  $ObjDecoded["refc"][$i][1] . "".($Render->getFilter() ? "</span></div>" : null)."</td>";
 
 			endfor;
 
@@ -66,7 +65,7 @@ foreach ($fromDb as $key => $value):
 			$sheetBody .= "<td>" . $ObjDecoded["nome"] . "</td>";
 
 			// Creating the button checkbox and text
-			for ($i=0; $i <= 6 ; $i++):
+			for ($i=0; $i < 7 ; $i++):
 				if ($Today == $ObjDecoded["refc"][$i][1] || isset($get["exb_all"])):
 					$arranchamento = explode(",", $ObjDecoded["refc"][$i][0]);
 					if (is_array($arranchamento)):

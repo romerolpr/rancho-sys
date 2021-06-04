@@ -14,10 +14,13 @@
 	<?php //elseif(isset($_SESSION["objfile"])):?>
 		<!-- <li><a href="<?php echo $url?>index.php?exb=compare&item1=<?php echo $_SESSION["objfile"]["name"]?>" title="Adicionar arquivo para comparação">Adicionar arquivo para comparação</a></li> -->
 	<?php endif;?>
+
 	<li><a href="<?php echo $url?>index.php?exb=add_new" title="Novo arquivo">Novo arquivo</a></li>
+
 	<?php if(isset($_SESSION["objfile"])):?>
 		<li><a href="<?php echo $url?>index.php?exit=session_obj" title="Fechar arquivo">Fechar arquivo</a></li>
 	<?php endif; ?>
+	<li><a href="<?php echo $url?>index.php?exb=recents" title="Adicionados recentemente">Adicionados recentemente</a></li>
 	<!-- <span class="divider"></span> -->
 	<br>
 	<li><a class="btn_click_consult" data-action="end" href="<?php echo $url?>index.php?exit=session_login" title="Encerrar sessão">Encerrar sessão</a></li>

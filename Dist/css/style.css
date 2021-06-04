@@ -346,24 +346,32 @@ td:first-child {
     padding: 0;
 }
 
+td:last-child .sub-dropdown {
+    right: 0;
+    left: initial;
+}
+
+.rotate180deg {
+    transform: rotate(180deg);
+}
+
 .sub-dropdown {
     display: none;
     position: absolute;
     top: 100%;
     left: 0;
-    /*right: .1em;*/
     width: 160px;
-    min-height: 100px;
+    min-height: 10px;
     max-height: 250px;
     overflow-y: auto;
     padding: 1em;
     background: #fff;
     border: 1px solid #c1c1c1;
     z-index: 9998;
-
     background: rgba( 255, 255, 255, 1 )
     url(../image/sheet/loading.gif) no-repeat;
     background-size: 30%;
+    background-position: center;
 }
 
 .td-button span.btn_order {
@@ -776,6 +784,10 @@ ul.active #filter::after{
     text-align: left;
     font-size: 12px;
     line-height: 18px;
+}
+
+.txt-center {
+    text-align: center;
 }
 
 .fixed-buttons {
