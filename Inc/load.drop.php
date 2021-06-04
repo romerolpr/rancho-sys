@@ -1,7 +1,5 @@
 <?php
 
-session_start();
-
 include 'Classes/DisplayAlert.class.php';
 include 'Classes/ObjectDB.class.php';
 include 'Classes/Reader.class.php';

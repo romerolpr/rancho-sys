@@ -25,6 +25,10 @@ if (isset($get["action"]) && $get["action"] == "generateReport"):
 
 endif;
 
+if (!is_dir("./Transfer/load")):
+	mkdir("./Transfer/load", 0700);
+endif;
+
 
 // var_dump($_SESSION);
 // unset($_SESSION);

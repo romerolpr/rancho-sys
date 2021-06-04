@@ -23,7 +23,8 @@ class Render
 
 	public function __construct()
 	{	
-		self::setStatus(false);
+		if (!isset(self::$Status))
+			self::setStatus(false);
 		// self::setFilter(self::getFilterDefault());
 
 		if (!isset(self::$InsereData) or is_null(self::$InsereData))
@@ -131,33 +132,33 @@ class Render
 			$returnTable = implode("", $buttons) . '<table><tr id="hide-td">';
 			$getItem = (isset($_GET["hideItem"]) ? strval($_GET["hideItem"]) : null);
 
-			# Create [tr], buttons and lines head
-			for ($i=0; $i < count(self::$SheetData[0]) ; $i++):
+			// # Create [tr], buttons and lines head
+			// for ($i=0; $i < count(self::$SheetData[0]) ; $i++):
 
-				$iconAdd = (isset($_GET["hideItem"]) && !empty($getItem)) ? (!in_array($i, explode(self::$PregUrl, $_GET["hideItem"]))) ? array("Esconder", "fa fa-eye-slash") : array("Mostrar", "fas fa-eye") : array("Esconder", "fa fa-eye-slash");
-				$returnTable .= "<td><a data-action='".strtolower($iconAdd[0])."' class='btn btn_click_hide ".($iconAdd[0] == "Esconder" ? "red" : null)."' data-td-hide='".$i."' href='index.php?hideItem=";
+			// 	$iconAdd = (isset($_GET["hideItem"]) && !empty($getItem)) ? (!in_array($i, explode(self::$PregUrl, $_GET["hideItem"]))) ? array("Esconder", "fa fa-eye-slash") : array("Mostrar", "fas fa-eye") : array("Esconder", "fa fa-eye-slash");
+			// 	$returnTable .= "<td><a data-action='".strtolower($iconAdd[0])."' class='btn btn_click_hide ".($iconAdd[0] == "Esconder" ? "red" : null)."' data-td-hide='".$i."' href='index.php?hideItem=";
 
-				if(isset($_GET["hideItem"]) && !in_array($i, explode(self::$PregUrl, $_GET["hideItem"]))):
-					$hideItemsUrl = $_GET["hideItem"].self::$PregUrl.$i;
-				else:
+			// 	if(isset($_GET["hideItem"]) && !in_array($i, explode(self::$PregUrl, $_GET["hideItem"]))):
+			// 		$hideItemsUrl = $_GET["hideItem"].self::$PregUrl.$i;
+			// 	else:
 
-					if (isset($_GET["hideItem"]) && !empty($getItem)):
-						$arrayUrl = explode(self::$PregUrl, $_GET["hideItem"]);
-						foreach ($arrayUrl as $key => $value) 
-							if ($value == $i) 
-								unset($arrayUrl[$key]);
+			// 		if (isset($_GET["hideItem"]) && !empty($getItem)):
+			// 			$arrayUrl = explode(self::$PregUrl, $_GET["hideItem"]);
+			// 			foreach ($arrayUrl as $key => $value) 
+			// 				if ($value == $i) 
+			// 					unset($arrayUrl[$key]);
 
-						$hideItemsUrl = implode(self::$PregUrl, $arrayUrl);
-					else:
-						$hideItemsUrl = $i;
-					endif;
+			// 			$hideItemsUrl = implode(self::$PregUrl, $arrayUrl);
+			// 		else:
+			// 			$hideItemsUrl = $i;
+			// 		endif;
 
-				endif;
+			// 	endif;
 
-				$returnTable .= $hideItemsUrl . (isset($_GET["window"]) && $_GET["window"] == "expanded" ? "&window=expanded" : null) . "&worksheetName=". urlencode(self::getDatasheetName());
-				$returnTable .= "' title='".$iconAdd[0]."'><i class='".$iconAdd[1]."'></i></a></td>";
+			// 	$returnTable .= $hideItemsUrl . (isset($_GET["window"]) && $_GET["window"] == "expanded" ? "&window=expanded" : null) . "&worksheetName=". urlencode(self::getDatasheetName());
+			// 	$returnTable .= "' title='".$iconAdd[0]."'><i class='".$iconAdd[1]."'></i></a></td>";
 
-			endfor;
+			// endfor;
 
 			$returnTable .= '</tr>';
 
@@ -246,6 +247,9 @@ class Render
 			$Db = new ObjectDB();
 			$Db->setter(HOST, USER, PASS, DBNAME);
 			$Data = self::getSheetData();
+
+			// var_dump($Data);
+
 			$Items = array();
 			$timestamp = new DateTime();
 
@@ -257,19 +261,19 @@ class Render
 				$carimboData = new DateTime($value[0]);
 				$myObject = array(
 					"id" => null,
-					"hash" => md5($carimboData->format("Y-m-d H:i:s") . "_" . utf8_encode($value[4])),
+					"hash" => (isset($value[4]) ? md5($carimboData->format("Y-m-d H:i:s") . "_" . utf8_encode($value[4])) : null ),
 					"carimbo" => $carimboData->format("Y-m-d H:i:s"),
-					"email" => trim($value[1]),
-					"posto_graduacao" => utf8_encode($value[3]),
-					"nome" => utf8_encode($value[4]),
-					"organizacao_militar" => utf8_encode($value[2]),
-					"segunda_feira" => utf8_encode($value[5]) . "&&" . cut($cabecalho, 5),
-					"terca_feira" => utf8_encode($value[6]) . "&&" . cut($cabecalho, 6),
-					"quarta_feira" => utf8_encode($value[7]) . "&&" . cut($cabecalho, 7),
-					"quinta_feira" => utf8_encode($value[8]) . "&&" . cut($cabecalho, 8),
-					"sexta_feira" => utf8_encode($value[9]) . "&&" . cut($cabecalho, 9),
-					"sabado" => utf8_encode($value[10]) . "&&" . cut($cabecalho, 10),
-					"domingo" => utf8_encode($value[11]) . "&&" . cut($cabecalho, 11),
+					"email" => (isset($value[1]) ? trim($value[1]) : null),
+					"posto_graduacao" => (isset($value[3]) ? utf8_encode($value[3]) : null ),
+					"nome" => (isset($value[4]) ? utf8_encode($value[4]) : null),
+					"organizacao_militar" => (isset($value[2]) ? utf8_encode($value[2]) : null),
+					"segunda_feira" => (isset($value[5]) ? utf8_encode($value[5]) . "&&" . cut($cabecalho, 5) : null),
+					"terca_feira" => (isset($value[6]) ? utf8_encode($value[6]) . "&&" . cut($cabecalho, 6) : null ),
+					"quarta_feira" => (isset($value[7]) ? utf8_encode($value[7]) . "&&" . cut($cabecalho, 7) : null ),
+					"quinta_feira" => (isset($value[8]) ? utf8_encode($value[8]) . "&&" . cut($cabecalho, 8) : null ),
+					"sexta_feira" => (isset($value[9]) ? utf8_encode($value[9]) . "&&" . cut($cabecalho, 9) : null ),
+					"sabado" => (isset($value[10]) ? utf8_encode($value[10]) . "&&" . cut($cabecalho, 10) : null ),
+					"domingo" => (isset($value[11]) ? utf8_encode($value[11]) . "&&" . cut($cabecalho, 11) : null ),
 					"datasheet_name" => self::getTableName(),
 				);
 				array_push($Items, $myObject);

@@ -38,6 +38,7 @@ if(!isset($get["exb"])):
 				foreach ($Files as $key => $value):
 					if ($value["tmp_name"] == $get["path"])
 						unlink($arquivo);
+						header("location: index.php?unlink=true");
 				endforeach;
 			endif;
 

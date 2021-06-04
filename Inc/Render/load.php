@@ -30,8 +30,12 @@ endif;
 // var_dump($Render->getFilter());
 
 /* Get object data and render*/
-$Render->getObject();
-$Render->pushData();
+
+if ($Render->pushData()):
+	$Render->setStatus(true);
+else:
+	$Render->setStatus(false);
+endif;
 
 $getSheetBody = $Render->getSheetData();
 $getSheetBody = count($getSheetBody[0]) - 2;
@@ -75,6 +79,7 @@ $sheetBody .= "</div>";
 
 $sheetBody .= "</table></div>";
 
+var_dump($Render->getStatus());
 
 if ($Render->getStatus()):
 	echo $sheetBody;

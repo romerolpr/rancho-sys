@@ -57,25 +57,31 @@ class ObjectDB
 
 	public static function insert_query($db, $table, $obj)
 	{
-		try 
-		{	
+		// try 
+		// {	
 
 			
 		 	$sql = self::return_query($db, $table, array(array("nome", "posto_graduacao", "segunda_feira", "domingo"), $obj));
-			// var_dump($obj);
+				
 			if(empty($sql)):
 				$sql = "INSERT INTO $table (`id`, `hash`, `carimbo`, `email`, `posto_graduacao`, `nome`, `organizacao_militar`, `segunda_feira`, `terca_feira`, `quarta_feira`, `quinta_feira`, `sexta_feira`, `sabado`, `domingo`, `datasheet`) VALUES (:id, :hash, :carimbo, :email, :posto_graduacao, :nome, :organizacao_militar, :segunda_feira, :terca_feira, :quarta_feira, :quinta_feira, :sexta_feira, :sabado, :domingo, :datasheet_name)";
 				$stmt = $db->prepare($sql);
 				$stmt->execute($obj);
+
 				// echo "Inserido: ",utf8_decode($obj["nome"]),"<br>";
 			// else:
 				// echo "O registro: <strong>",utf8_decode($obj["nome"]),"</strong> já existe.<br>";
+			echo "<pre>";
+			var_dump($sql);
+			echo "</pre>";
+			var_dump($obj);
 			endif;
 
-		} catch (PDOException $e)
-		{
-			var_dump("Impossível inserir novo registro");
-		}
+
+		// } catch (PDOException $e)
+		// {
+		// 	return "Impossível inserir novo registro";
+		// }
 	}
 
 	public static function insert_data($db, $table, $obj)
@@ -91,7 +97,7 @@ class ObjectDB
 
 		} catch (PDOException $e)
 		{
-			var_dump("Impossível inserir novo registro");
+			return "Impossível inserir novo registro";
 		}
 	}
 
@@ -116,7 +122,7 @@ class ObjectDB
 
 		} catch (PDOException $e)
 		{
-			var_dump("We can't insert a new data on db.");
+			return "We can't insert a new data on db.";
 		}
 	}
 
@@ -131,7 +137,7 @@ class ObjectDB
 
 		} catch (PDOException $e)
 		{
-			var_dump("We can't insert a new data on db.");
+			return "We can't insert a new data on db.";
 		}
 	}
 
