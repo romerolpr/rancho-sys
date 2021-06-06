@@ -132,10 +132,6 @@ foreach ($myResp as $keyresp => $resp):
 
 			endif;
 
-		else:
-
-			echo "Erro";
-
 		endif;
 
 	endforeach;

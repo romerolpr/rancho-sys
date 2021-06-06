@@ -28,6 +28,8 @@ define(
 	"PASS", "");
 define(
 	"DBNAME", "dbranch");
+define(
+	"ALIAS", "dbranch");
 
 /** 
 	Db TABLES
@@ -51,13 +53,13 @@ $Filter = array(
 		"carimbo" => array(
 			"text" 		=> "Carimbo de data/hora",
 			"content"	=> "carimbo",
-			"drop" 		=> true
+			"drop" 		=> false
 		),
 
 		"email" => array(
 			"text" 		=> "Endereço de e-mail",
 			"content"	=> "email",
-			"drop" 		=> true
+			"drop" 		=> false
 		),
 
 		"organizacao_militar" => array(
@@ -75,8 +77,50 @@ $Filter = array(
 		"nome" => array(
 			"text" 		=> "Nome de guerra",
 			"content" 	=> "nome",
-			"drop" 		=> true
+			"drop" 		=> false
 		),
+
+		// "refc-segunda_feira" => array(
+		// 	"text" 		=> "Segunda-feira",
+		// 	"content" 	=> "nome",
+		// 	"drop" 		=> false
+		// ),
+
+		// "refc-terca_feira" => array(
+		// 	"text" 		=> "Terça-feira",
+		// 	"content" 	=> "nome",
+		// 	"drop" 		=> false
+		// ),
+
+		// "refc-quarta_feira" => array(
+		// 	"text" 		=> "Quarta-feira",
+		// 	"content" 	=> "nome",
+		// 	"drop" 		=> false
+		// ),
+
+		// "refc-quinta_feira" => array(
+		// 	"text" 		=> "Quinta-feira",
+		// 	"content" 	=> "nome",
+		// 	"drop" 		=> false
+		// ),
+
+		// "refc-sexta_feira" => array(
+		// 	"text" 		=> "Sexta-feira",
+		// 	"content" 	=> "nome",
+		// 	"drop" 		=> false
+		// ),
+
+		// "refc-sabado" => array(
+		// 	"text" 		=> "Sábado",
+		// 	"content" 	=> "nome",
+		// 	"drop" 		=> false
+		// ),
+
+		// "refc-domingo" => array(
+		// 	"text" 		=> "Domingo",
+		// 	"content" 	=> "nome",
+		// 	"drop" 		=> false
+		// ),
 
 		// "refc" => array()
 
@@ -108,8 +152,6 @@ $Filter = array(
 			"hide" 	=> true,
 			"order" => array("A-Z", "Z-A"),
 		),
-
-		"refc" => array()
 
 	)
 );

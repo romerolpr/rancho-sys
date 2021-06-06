@@ -8,8 +8,10 @@ $Render = new Render();
 $Alert 	= new DisplayAlert();
 $Db 	= new ObjectDB();
 
-$breadcrumbTitle = isset($_SESSION["user_login"]) ? "Painel" : "Início";
 $Db->setter(HOST, USER, PASS, DBNAME);
+
+$breadcrumbTitle = isset($_SESSION["user_login"]) ? "Painel" : "Início";
+
 
 if (isset($_SESSION["user_login"])):
 	foreach ($Db->return_query($Db->connect_db(), TB_USERS) as $key => $values):
@@ -46,7 +48,7 @@ if (isset($get["new"]) && !empty($get["new"])):
 endif;
 
 
-// var_dump($_SESSION);
+// var_dump($_GET);
 // unset($_SESSION);
 
 ?>
@@ -150,8 +152,8 @@ endif;
 	</section>
 
 	<!-- Events, functions js -->
-	<script><?php include 'Dist/js/geral.js'; ?></script>
 	<script><?php include 'Dist/js/Filter.js'; ?></script>
+	<script><?php include 'Dist/js/geral.js'; ?></script>
 
 </body>
 </html>

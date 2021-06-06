@@ -16,7 +16,7 @@ $(".btn_expand").on("click", function(e){
 	e.preventDefault();
 	// if (!clicked){
 	$(".box-table").addClass("window_fixed");
-	window.history.pushState({url: "" + $(this).attr('href') + ""}, $(this).attr('title') , $(this).attr('href'));
+	// window.history.pushState({url: "" + $(this).attr('href') + ""}, $(this).attr('title') , $(this).attr('href'));
 		// clicked = true;
 	//}
 });
@@ -156,13 +156,9 @@ $('#report').on("click", function(e){
 	}
 });
 
-function onlyUnique(value, index, self) {
-  return self.indexOf(value) === index;
-}
-
 $(".td-button span[data-filter]").on("click", function(){
-	// e.preventDefault();
 
+	// Build dropdown
 	var divdrop = $(this).children("div.sub-dropdown"),
 		request = $.ajax({
 		    url: "Inc/load.drop.php",
@@ -170,7 +166,10 @@ $(".td-button span[data-filter]").on("click", function(){
 		    data: "content=" + $(this)[0].dataset.filter,
 		    dataType: "html"
 		}),
-		filterExtract = $(this)[0].dataset.filterExtract,
+		myselfFilter = {
+			filter: $(this)[0].dataset.filter,
+			extract: $(this)[0].dataset.filterExtract
+		},
 		inputDate = [];
 
 	$("div.sub-dropdown").hide();
@@ -179,9 +178,8 @@ $(".td-button span[data-filter]").on("click", function(){
 	$(this).children("i").addClass("rotate180deg");
 	divdrop.show();
 
-
 	// divdrop.addClass("loading");
-	if (filterExtract !== undefined){
+	if (myselfFilter.filterExtract !== undefined){
 		// $(this)
 	} else {
 		request.done(function(data){
@@ -193,13 +191,10 @@ $(".td-button span[data-filter]").on("click", function(){
 		    console.log("Request failed: " + textStatus);
 		});
 		request.always(function() {
-		    console.log("Load successfully.");
 		    divdrop.css({"background":"#fff"});
-		    // $(this).children("i").css({"trasform":"inital"});
-		    // divdrop.removeClass("loading");
+		    initializeFilter(myselfFilter.filter);
+		    // console.log(myFilter.filter);
 		});
 	}
-
-	// return false;
 
 });

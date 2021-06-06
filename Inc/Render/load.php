@@ -79,7 +79,7 @@ $sheetBody .= "</div>";
 
 $sheetBody .= "</table></div>";
 
-var_dump($Render->getStatus());
+// var_dump($Render->getStatus());
 
 if ($Render->getStatus()):
 	echo $sheetBody;

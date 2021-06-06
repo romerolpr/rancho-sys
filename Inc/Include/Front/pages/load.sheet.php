@@ -30,7 +30,9 @@ foreach ($fromDb as $key => $value):
 
 			foreach ($Filter["buttons"] as $keybuttons => $button) {
 
-				$sheetHeader .= "<td ".($Render->getFilter() ? "class=\"td-button\"><div><span data-filter=\"".$button["content"]."\" class=\"btn btn_order fright\"><i class=\"fas fa-sort-down\"></i><div class=\"sub-dropdown drop-render\"></div></span></div><div>" : ">" );
+				$content = $button["content"];
+
+				$sheetHeader .= "<td ".($Render->getFilter() ? "class=\"td-button\"><div><span data-filter=\"".$content."\" class=\"btn btn_order fright\"><i class=\"fas fa-sort-down\"></i><div class=\"sub-dropdown drop-render\"></div></span></div><div>" : ">" );
 
 				$sheetHeader .= "<span>" . $button["text"] . "</span>";
 
@@ -58,11 +60,11 @@ foreach ($fromDb as $key => $value):
 
 			$sheetBody .= "<tr data-hash=\"".$value["hash"]."\">";
 			// $sheetBody .= "<td>" . $value["hash"] . "</td>";
-			$sheetBody .= "<td>" . $value["carimbo"] . "</td>";
-			$sheetBody .= "<td>" . $value["email"] . "</td>";
-			$sheetBody .= "<td>" . $ObjDecoded["organizacao_militar"] . "</td>";
-			$sheetBody .= "<td>" . $ObjDecoded["posto_graduacao"] . "</td>";
-			$sheetBody .= "<td>" . $ObjDecoded["nome"] . "</td>";
+			$sheetBody .= "<td data-content=\"carimbo\">" . $value["carimbo"] . "</td>";
+			$sheetBody .= "<td data-content=\"email\">" . $value["email"] . "</td>";
+			$sheetBody .= "<td data-content=\"organizacao_militar\">" . $ObjDecoded["organizacao_militar"] . "</td>";
+			$sheetBody .= "<td data-content=\"posto_graduacao\">" . $ObjDecoded["posto_graduacao"] . "</td>";
+			$sheetBody .= "<td data-content=\"nome\">" . $ObjDecoded["nome"] . "</td>";
 
 			// Creating the button checkbox and text
 			for ($i=0; $i < 7 ; $i++):
@@ -145,7 +147,7 @@ foreach ($fromDb as $key => $value):
 
 		$sheetBody .= "</tr>";
 
-
+		$Render->setStatus(false);
 
 		break;
 

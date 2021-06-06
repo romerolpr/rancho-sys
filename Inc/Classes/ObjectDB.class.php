@@ -71,10 +71,10 @@ class ObjectDB
 				// echo "Inserido: ",utf8_decode($obj["nome"]),"<br>";
 			// else:
 				// echo "O registro: <strong>",utf8_decode($obj["nome"]),"</strong> já existe.<br>";
-			echo "<pre>";
-			var_dump($sql);
-			echo "</pre>";
-			var_dump($obj);
+			// echo "<pre>";
+			// var_dump($sql);
+			// echo "</pre>";
+			// var_dump($obj);
 			endif;
 
 
