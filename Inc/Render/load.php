@@ -57,10 +57,10 @@ $sheetBody .= "<p class=\"fleft d-center-items sticky\">";
 $sheetBody .= "<span class=\"fleft\"><strong>" . $Render->getDatasheetName() ."</strong></span>";
 $sheetBody .= "<span class=\"fright head_table\">";
 
-if ($Render->getFilter() !== true):
+if (!isset($get["filter"])):
 	$sheetBody .= "<a href=\"".$url."index.php?filter\" class=\"btn btn_link btn_manage\" title=\"Visualização de filtro\" id=\"power_filter\"><i class=\"fas fa-filter\"></i></a>";
 else:
-	$sheetBody .= "<a href=\"".$url."index.php?filter=none\" class=\"btn btn_link btn_manage btn_active\" title=\"Desativar modo: Visualização de filtro\"><i class=\"fas fa-filter\"></i></a>";
+	$sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage btn_active\" title=\"Desativar modo: Visualização de filtro\"><i class=\"fas fa-filter\"></i></a>";
 endif;
 $sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage\" title=\"Restaurar tabela\"><i class=\"fas fa-undo-alt\"></i></a>";
 $sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage btn_expand\" title=\"Expandir tabela\"><i class=\"fas fa-expand\"></i></a>";

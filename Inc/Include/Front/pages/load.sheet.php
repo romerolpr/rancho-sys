@@ -8,7 +8,7 @@ foreach ($fromDb as $key => $value):
 	// var_dump($value);
 
 		$ObjDecoded = array(
-			"nome" => utf8_decode(trim($value["nome"])),
+			"nome" => ucfirst(strtolower(utf8_decode(trim($value["nome"])))),
 			"posto_graduacao" => utf8_decode($value["posto_graduacao"]),
 			"organizacao_militar" => utf8_decode($value["organizacao_militar"]),
 			"refc" => array(
@@ -32,9 +32,9 @@ foreach ($fromDb as $key => $value):
 
 				$content = $button["content"];
 
-				$sheetHeader .= "<td ".($Render->getFilter() ? "class=\"td-button\"><div><span data-filter=\"".$content."\" class=\"btn btn_order fright\"><i class=\"fas fa-sort-down\"></i><div class=\"sub-dropdown drop-render\"></div></span></div><div>" : ">" );
+				$sheetHeader .= "<td ".($Render->getFilter() ? "class=\"td-button\" data-content-children=\"".$content."\"><div><span data-filter=\"".$content."\" class=\"btn btn_order fright\"><i class=\"fas fa-sort-down\"></i><div class=\"sub-dropdown drop-render\"></div></span></div><div>" : ">" );
 
-				$sheetHeader .= "<span>" . $button["text"] . "</span>";
+				$sheetHeader .= "<span class=\"title\">" . $button["text"] . "</span>";
 
 				$sheetHeader .= ($Render->getFilter() ? "</div></td>" : "</td>" );
 
@@ -49,7 +49,7 @@ foreach ($fromDb as $key => $value):
 				if ($Today == $ObjDecoded["refc"][$i][1] || isset($get["exb_all"]))
 					# 
 
-					$sheetHeader .= "<td ".($Render->getFilter() ? "class=\"td-button\"><div><span data-filter=\"refc-".strtolower(clearString($diasemana[$diasemana_numero]))."\" class=\"btn btn_order fright\" data-filter-extract=\"".$ObjDecoded["refc"][$i][1]."\"><i class=\"fas fa-sort-down\"></i><div class=\"sub-dropdown drop-render\"></div></span></div><div>" : ">" )."<span>[" . $diasemana[$diasemana_numero] . "] " .  $ObjDecoded["refc"][$i][1] . "".($Render->getFilter() ? "</span></div>" : null)."</td>";
+					$sheetHeader .= "<td ".($Render->getFilter() ? "class=\"td-button\" data-content-children=\"".$content."\"><div><span data-filter=\"refc-".strtolower(clearString($diasemana[$diasemana_numero]))."\" class=\"btn btn_order fright\" data-filter-extract=\"".$ObjDecoded["refc"][$i][1]."\"><i class=\"fas fa-sort-down\"></i><div class=\"sub-dropdown drop-render\"></div></span></div><div>" : ">" )."<span class=\"title\">[" . $diasemana[$diasemana_numero] . "] " .  $ObjDecoded["refc"][$i][1] . "".($Render->getFilter() ? "</span></div>" : null)."</td>";
 
 			endfor;
 

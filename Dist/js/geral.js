@@ -42,7 +42,6 @@ $(".btn_expand").click(function(){
 		$(this).removeClass("btn_active"); 
 		click_btn = false;
 	}
-
 });
 
 var itemsBox = [],
@@ -156,7 +155,7 @@ $('#report').on("click", function(e){
 	}
 });
 
-$(".td-button span[data-filter]").on("click", function(){
+$(".td-button span[data-filter]").on("click", function(e){
 
 	// Build dropdown
 	var divdrop = $(this).children("div.sub-dropdown"),
@@ -186,14 +185,12 @@ $(".td-button span[data-filter]").on("click", function(){
 			if (divdrop.html().length <= 0){
 				divdrop.append(data);
 			}
+			divdrop.css({"background":"#fff"});
+			initializeFilter(myselfFilter.filter);
 		});
 		request.fail(function(jqXHR, textStatus) {
+				divdrop.append("<p>Request failed: " + textStatus + "</p>");
 		    console.log("Request failed: " + textStatus);
-		});
-		request.always(function() {
-		    divdrop.css({"background":"#fff"});
-		    initializeFilter(myselfFilter.filter);
-		    // console.log(myFilter.filter);
 		});
 	}
 

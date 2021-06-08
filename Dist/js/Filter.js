@@ -60,12 +60,6 @@ function loadFilter(content, $this){
 		5: [],
 	};
 
-	// carimbo
-	// email
-	// organizacao_militar
-	// posto_graduacao
-	// nome
-
 	for (var ia = myFilter.filter["carimbo"].length - 1; ia >= 0; ia--) {
 
 		if ($this.text().toLowerCase().indexOf($("label[for="+myFilter.filter["carimbo"][ia].id+"]").text().toLowerCase()) > -1){
@@ -208,12 +202,16 @@ function applyFilter(content){
 
 function showHideColumn(content){
 	if (myFilter.hide.includes(content)){
-		$("a[data-content="+content+"]").removeClass("selected");
-		$("td[data-content="+content+"]").removeClass("hide-td");
+		$("a[data-exec=hide]").removeClass("selected");
+		$("td[data-content="+content+"], td[data-content-children="+content+"]").removeClass("hide-td");
+		// $("td[data-content-children="+content+"]").show();
+		// $("td[data-content-children="+content+"] span.title").show();
 		myFilter.hide.splice(myFilter.hide.indexOf(content), 1);
 	} else {
-		$("a[data-content="+content+"]").addClass("selected");
-		$("td[data-content="+content+"]").addClass("hide-td");
+		$("a[data-exec=hide]").addClass("selected");
+		// $("td[data-content-children="+content+"]").hide();
+		// $("td[data-content-children="+content+"] span.title").hide();
+		$("td[data-content="+content+"], td[data-content-children="+content+"]").addClass("hide-td");
 		myFilter.hide.push(content);
 	}
 }

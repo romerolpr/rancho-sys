@@ -43,7 +43,7 @@ foreach ($Filter["buttons"][$content] as $keybuttons => $button) {
 
 		foreach ($Filter["drop"][$content]["order"] as $keyorder => $order) {
 
-			$dropRender .= "<p class=\"txt-left\"><a class=\"btn txt-left order-".$order."\" href=\"index.php?filter&sort=".$order.":".urlencode($content)."\" title=\"Classificar por ".$order."\">Classificar por ".$order."</a></p>";
+			$dropRender .= "<p class=\"txt-left\"><a class=\"btn txt-left sort-".strtolower($order)."\" href=\"index.php?filter&sort=".$order.":".urlencode($content)."\" data-content=\"".$content."\" data-sort=\"".strtolower($order)."\" title=\"Classificar por ".$order."\">Classificar por ".$order."</a></p>";
 		}
 
 		if ($Filter["buttons"][$content]["drop"]):

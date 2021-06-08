@@ -12,7 +12,11 @@ define(
 define(
 	"INC", "Inc/Include/");
 define(
+	"CLASS", "Inc/Classes/");
+define(
 	"RENDER", "Inc/Render/");
+define(
+	"REPORT", "Inc/Report/");
 define(
 	"PAGES", "Inc/Include/Front/pages/");
 
@@ -80,47 +84,6 @@ $Filter = array(
 			"drop" 		=> false
 		),
 
-		// "refc-segunda_feira" => array(
-		// 	"text" 		=> "Segunda-feira",
-		// 	"content" 	=> "nome",
-		// 	"drop" 		=> false
-		// ),
-
-		// "refc-terca_feira" => array(
-		// 	"text" 		=> "Terça-feira",
-		// 	"content" 	=> "nome",
-		// 	"drop" 		=> false
-		// ),
-
-		// "refc-quarta_feira" => array(
-		// 	"text" 		=> "Quarta-feira",
-		// 	"content" 	=> "nome",
-		// 	"drop" 		=> false
-		// ),
-
-		// "refc-quinta_feira" => array(
-		// 	"text" 		=> "Quinta-feira",
-		// 	"content" 	=> "nome",
-		// 	"drop" 		=> false
-		// ),
-
-		// "refc-sexta_feira" => array(
-		// 	"text" 		=> "Sexta-feira",
-		// 	"content" 	=> "nome",
-		// 	"drop" 		=> false
-		// ),
-
-		// "refc-sabado" => array(
-		// 	"text" 		=> "Sábado",
-		// 	"content" 	=> "nome",
-		// 	"drop" 		=> false
-		// ),
-
-		// "refc-domingo" => array(
-		// 	"text" 		=> "Domingo",
-		// 	"content" 	=> "nome",
-		// 	"drop" 		=> false
-		// ),
 
 		// "refc" => array()
 

@@ -126,10 +126,8 @@ foreach ($myResp as $keyresp => $resp):
 
 			if (!empty($testArrays)):
 				array_push($listPendent, array($conf["hash"], $testArrays));
-
 			else:
 				array_push($listComplete, array($conf["hash"], $resp));
-
 			endif;
 
 		endif;
@@ -166,6 +164,8 @@ $bodyTable = "<table></table>";
 	<style>
 		.box-table { max-height: 100%; }
 	</style>
+
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -183,132 +183,62 @@ $bodyTable = "<table></table>";
 		<h2>Informações gerais</h2>
 		<ul class="list">
 			<li>Pendente: <?php echo (count($listPendent)) ?>, Realizado: <?php echo (count($listComplete)) ?></li>
-			<li>Total: <?php echo (count($listPendent) + count($listComplete)) ?></li>
+			<li>Arranchamentos totais: <?php echo (count($listPendent) + count($listComplete)) ?></li>
 		</ul>
 
 		<p class="fleft d-center-items">
 			<span class="fleft"><strong><?php echo $_SESSION["objfile"]["name"] ?></strong></span>
-
-			<span class="tab-pagination">
-			    
-			    <span>Ordernar por: </span>
-			    <select name="order_by">
-			    	<option value="<?php echo urlencode("Nenhum") ?>" <?php if(isset($get["order_by"]) && $get["order_by"] == "Nenhum") echo "selected" ?>>Nenhum</option>
->
-			    	<option value="<?php echo urlencode("B ADM AP IBIRAPUERA")?>" <?php if(isset($get["order_by"]) && $get["order_by"] == "B ADM AP IBIRAPUERA") echo "selected" ?>>B ADM AP IBIRAPUERA</option>
-			    	<option value="<?php echo urlencode("8º BPE")?>" <?php if(isset($get["order_by"]) && $get["order_by"] == "8º BPE") echo "selected" ?>>8º BPE</option>
-			    	<option value="<?php echo urlencode("AGSP") ?>" <?php if(isset($get["order_by"]) && $get["order_by"] == "AGSP") echo "selected" ?>>AGSP</option>
-			    </select>
-
-			    <script>
-			    	$(function(){
-
-			    		$("select[name=order_by]").on("change", function(){
-
-			    			var name = $(this).val();
-
-			    			url = "report.php?order_by=" + name + "<?php if(isset($get["h"])) echo "&h=".$get["h"]?>";
-			    			document.location = url;
-
-			    		});
-
-			    	});
-			    </script>
-
-			</span>
-
-			<span class="fright head_table">
-				<a href="<?php echo $url?>report.php?datasheetFile=<?php echo $_SESSION["objfile"]["name"]?>&h=1" class="btn btn_link btn_manage <?php echo (isset($get["h"]) && $get["h"] == 1 ? "btn_active" : null) ?>" title="Pendentes">Pendentes</a>
-				<a href="<?php echo $url?>report.php?datasheetFile=<?php echo $_SESSION["objfile"]["name"]?>&h=2" class="btn btn_link btn_manage <?php echo (isset($get["h"]) && $get["h"] == 2 ? "btn_active" : null) ?>" title="Realizados">Realizados</a>
-			</span>
 		</p>
 
-		<table>
-			
-			<tr class="bar-table">
-				<td <?php if(!isset($get["hash"])) echo "class='d-none'"; ?>>hash</td>
-				<td>Organização Militar</td>
-				<td>Posto/ Graduação</td>
-				<td>Nome</td>
-				<td>Arranchamento</td>
+		<aside>
+		    <nav>
+		        <ul>
+		            <li><a href="<?php echo $url?>report.php" title="Planilha de relatório individual">Planilha de relatório individual</a></li>
+		            <li><a href="<?php echo $url?>report.php?aba=dashboard" title="Indices gerais: Dashboard">Indices gerais: Dashboard</a></li>
+		        </ul>
+		    </nav>
+		</aside>
 
-			</tr>
+		<article>
 
-			<?php 
+			<div class="box-table">
 
-			$trmike = "";
+				<p class="fleft d-center-items sticky">
+					<?php if (!isset($get["aba"])): ?>
+						<span class="fleft"><strong>Planilha de relatório individual</strong></span>
+						<span class="fright head_table">
+							<?php if(isset($get["filter"])): ?>
+								<a href="report.php" class="btn btn_link btn_manage btn_active" title="Desativar modo: Visualização de filtro"><i class="fas fa-filter"></i></a>
+							<?php else: ?>
+								<a href="report.php?filter" class="btn btn_link btn_manage" title="Visualização de filtro" id="power_filter"><i class="fas fa-filter"></i></a>
+							<?php endif; ?>
+							<a href="report.php" class="btn btn_link btn_manage btn_expand" title="Expandir tabela"><i class="fas fa-expand"></i></a>
+							<!-- <input type="search" name="searchByName" class="search"> -->
+					<?php else: ?>
+						<span class="fleft"><strong>Índices gerais: Dashboard</strong></span>
+					<?php endif; ?>
+					</span>
+				</p>
 
-			if (isset($get["h"]) && $get["h"] == 2):
-					
-				foreach ($listComplete as $key => $value):
+				<?php 
 
-					foreach ($Resp as $i => $mike):
-						if ($mike["hash"] == $value[0]):
-							$nome = utf8_decode(trim($mike["nome"]));
-							$posto_graduacao = utf8_decode($mike["posto_graduacao"]);
-							$organizacao_militar = utf8_decode($mike["organizacao_militar"]);
-						endif;
-					endforeach;
+				if (!isset($get["aba"])):
 
-					$trmike .= "<td " . (!isset($get["hash"]) ? "class=\"d-none\"" : null ) .">$value[0]</td>";
-					if (!isset($get["order_by"]) or $get["order_by"] == "Nenhum" or $organizacao_militar == $get["order_by"]):
-						$trmike .= "<tr>";
-						$trmike .= "<td " . (!isset($get["hash"]) ? "class=\"d-none\"" : null ) ." >$value[0]</td>";
-						$trmike .= "<td>$organizacao_militar</td>";
-						$trmike .= "<td>$posto_graduacao</td>";
-						$trmike .= "<td>$nome</td>";
-						$trmike .= "<td>Realizado <i class='btn_link fa fa-check'></i></td>";
+					include REPORT . 'painel.inc.php';
 
-					endif;
-
-				endforeach;
-
-			else:
-
-				foreach ($listPendent as $key => $value):
-
-					foreach ($Resp as $i => $mike):
-						if ($mike["hash"] == $value[0]):
-							$nome = utf8_decode(trim($mike["nome"]));
-							$posto_graduacao = utf8_decode($mike["posto_graduacao"]);
-							$organizacao_militar = utf8_decode($mike["organizacao_militar"]);
-						endif;
-					endforeach;
-
-					if (!isset($get["order_by"]) or $get["order_by"] == "Nenhum" or $organizacao_militar == $get["order_by"]):
-						$trmike .= "<tr>";
-						$trmike .= "<td " . (!isset($get["hash"]) ? "class=\"d-none\"" : null ) ." >$value[0]</td>";
-						$trmike .= "<td>$organizacao_militar</td>";
-						$trmike .= "<td>$posto_graduacao</td>";
-						$trmike .= "<td>$nome</td>";
-						$trmike .= "<td>";
-
-						foreach ($value[1] as $arrkey => $arr):
-							$Item = explode(";", $arr); 
-
-							$trmike .= $Item[1] . " [$Item[0]]<br>";
-
-						endforeach;
-
-					endif;
-
-				endforeach;
-
-			endif;
-
-			if (!isset($get["order_by"])):
-				$trmike .= "</td>";
-
-			endif;
-
-			$trmike .= "</tr>";
+				else:
 
 
-			echo $trmike;
+					include REPORT . 'dashboard.inc.php';
 
-			?>
 
-		</table>
+				endif;
+
+				?>
+
+			</div>
+
+		</article>
 
 	</div>
 
@@ -317,6 +247,85 @@ $bodyTable = "<table></table>";
 </div>
 
 	</section>
+
+	<script><?php include 'Dist/js/Filter.js'; ?></script>
+
+	<script>
+
+		$(".btn_expand").on("click", function(e){
+			e.preventDefault();
+			// if (!clicked){
+			$(".box-table").addClass("window_fixed");
+			// window.history.pushState({url: "" + $(this).attr('href') + ""}, $(this).attr('title') , $(this).attr('href'));
+				// clicked = true;
+			//}
+		});
+
+		document.addEventListener('keydown', function (event) {
+		    if (event.keyCode == 27){
+		     	$(".box-table").removeClass("window_fixed");
+		   		$(".btn_expand").removeClass("btn_active"); 
+		    }
+		});
+		 
+		$(window).bind("popstate", function(e) {
+		  $('.main').load(e.state.url);
+		});
+
+		var click_btn = false;
+		$(".btn_expand").click(function(e){ 
+			e.preventDefault();
+			if (click_btn === false){
+				$(this).addClass("btn_active");
+					click_btn = true;
+			} else {
+				$(".box-table").removeClass("window_fixed");
+				$(this).removeClass("btn_active"); 
+				click_btn = false;
+			}
+		});
+
+		$(".td-button span[data-filter]").on("click", function(e){
+
+			// Build dropdown
+			var divdrop = $(this).children("div.sub-dropdown"),
+				request = $.ajax({
+				    url: "Inc/load.drop.php",
+				    type: "POST",
+				    data: "content=" + $(this)[0].dataset.filter,
+				    dataType: "html"
+				}),
+				myselfFilter = {
+					filter: $(this)[0].dataset.filter,
+					extract: $(this)[0].dataset.filterExtract
+				},
+				inputDate = [];
+
+			$("div.sub-dropdown").hide();
+			$(".td-button span i").removeClass("rotate180deg");
+
+			$(this).children("i").addClass("rotate180deg");
+			divdrop.show();
+
+			// divdrop.addClass("loading");
+			if (myselfFilter.filterExtract !== undefined){
+				// $(this)
+			} else {
+				request.done(function(data){
+					if (divdrop.html().length <= 0){
+						divdrop.append(data);
+					}
+					divdrop.css({"background":"#fff"});
+					initializeFilter(myselfFilter.filter);
+				});
+				request.fail(function(jqXHR, textStatus) {
+						divdrop.append("<p>Request failed: " + textStatus + "</p>");
+				    console.log("Request failed: " + textStatus);
+				});
+			}
+
+		});
+	</script>
 
 </body>
 </html>
