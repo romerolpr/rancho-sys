@@ -14,12 +14,12 @@ $Db->setter(HOST, USER, PASS, DBNAME);
 
 $Resp = $Db->return_query($Db->connect_db(), TB_RESP);
 $Conf = $Db->return_query($Db->connect_db(), TB_CONF);
+$fromDb = $Db->return_query($Db->connect_db(), TB_RESP);
 
 $myResp = array();
 $myConf = array();
 
 $varPush = "";
-
 
 // Construct and organize data
 foreach ($Resp as $key => $value):
@@ -169,6 +169,8 @@ $bodyTable = "<table></table>";
 </head>
 <body>
 
+	<div class="modal"></div>
+
 	<section class="content">
 
 		<div class="container">
@@ -195,6 +197,8 @@ $bodyTable = "<table></table>";
 		        <ul>
 		            <li><a href="<?php echo $url?>report.php" title="Planilha de relatório individual">Planilha de relatório individual</a></li>
 		            <li><a href="<?php echo $url?>report.php?aba=dashboard" title="Indices gerais: Dashboard">Indices gerais: Dashboard</a></li>
+		            <br>
+		            <li><a href="<?php echo $url?>index.php" title="Voltar">Voltar</a></li>
 		        </ul>
 		    </nav>
 		</aside>
@@ -237,6 +241,7 @@ $bodyTable = "<table></table>";
 				?>
 
 			</div>
+
 
 		</article>
 
@@ -285,7 +290,32 @@ $bodyTable = "<table></table>";
 			}
 		});
 
+		$(".btn_open_window").on("click", function(e){
+			e.preventDefault();
+			var listByHash = '<?php echo json_encode($listByHash); ?>';
+			var hash = $(this).attr("data-hash"),
+				$body = $("body"),
+				request = $.ajax({
+				    url: "Inc/window.modal.php",
+				    type: "POST",
+				    data: "hash=" + hash + "&listByHash=" + listByHash,
+				    dataType: "html"
+				});
+			// console.log(hash);
+			$body.addClass("loading");
+			request.done(function(data){
+				if ($(".window-user").length == 0)
+					$body.css({"overflow":"hidden"}).append(data);
+				$body.removeClass("loading");
+			});
+			request.fail(function(jqXHR, textStatus) {
+			    console.log("Request failed: " + textStatus);
+			});
+
+		});
 		$(".td-button span[data-filter]").on("click", function(e){
+
+
 
 			// Build dropdown
 			var divdrop = $(this).children("div.sub-dropdown"),
@@ -326,6 +356,14 @@ $bodyTable = "<table></table>";
 
 		});
 	</script>
+
+	<script>
+		$('body').addClass("loading");
+		$(document).ready(function(){
+			$('body').removeClass("loading");
+		});
+	</script>
+
 
 </body>
 </html>

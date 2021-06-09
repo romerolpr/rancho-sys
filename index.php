@@ -155,5 +155,12 @@ endif;
 	<script><?php include 'Dist/js/Filter.js'; ?></script>
 	<script><?php include 'Dist/js/geral.js'; ?></script>
 
+	<script>
+		$('body').addClass("loading");
+		$(document).ready(function(){
+			$('body').removeClass("loading");
+		});
+	</script>
+
 </body>
 </html>

@@ -3,6 +3,8 @@
 /** Url base **/
 $url = "";
 
+// $teste = "teste";
+
 /** Include path **/
 set_include_path(get_include_path() . PATH_SEPARATOR . 'Inc/Classes/');
 

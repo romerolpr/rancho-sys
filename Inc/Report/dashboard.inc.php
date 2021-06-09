@@ -24,6 +24,7 @@ $arrayNum = array(
 	"total" => (count($listPendent) + count($listComplete))
 );
 
+
 foreach ($Resp as $key => $value):
 
 	$omreal = strtolower(preg_replace(array("/(º|\/)/"), explode(" ",""), str_replace(" ", "_", utf8_decode(trim($value["organizacao_militar"])))));
@@ -36,7 +37,10 @@ foreach ($Resp as $key => $value):
 	$arrayNum["posto_graduacao"][$pgreal][1] = round(($arrayNum["posto_graduacao"][$pgreal][0] * 100) / $arrayNum["total"]);
 endforeach;
 
-$arranc = array();
+$arranc = array(
+	"a" => array(),
+	"b" => array()
+);
 
 $pendente = array(
 	'Café' 		=> array(0, 0),
@@ -44,21 +48,53 @@ $pendente = array(
 	'Jantar' 	=> array(0, 0),
 );
 
+$completo = array(
+	'Café' 		=> array(0, 0),
+	'Almoço' 	=> array(0, 0),
+	'Jantar' 	=> array(0, 0),
+);
+
+$maxValues = array(
+	"organizacao_militar" => max($arrayNum["organizacao_militar"]),
+	"posto_graduacao" => max($arrayNum["posto_graduacao"]),
+	"completo" => max($completo),
+	"pendente" => max($pendente)
+);
+
+
 foreach ($listPendent as $key => $value):
 
-	foreach ($value[1] as $valkey => $item) array_push($arranc, explode(";", $item));
+	foreach ($value[1] as $valkey => $item):
+		array_push($arranc["a"], explode(";", $item));
+	endforeach;
 
 endforeach;
 
+foreach ($Conf as $key => $value):
 
+	$data_json = json_decode($value["data_json"], true);
 
-foreach ($arranc as $key => $value):
-
-	$pendente[trim($value[0])] += 1;
+	foreach ($data_json[0]["values"] as $key => $value) {
+		$data = explode(";", $value);
+		// var_dump($data);
+		array_push($arranc["b"], $data);
+	}
 
 endforeach;
 
+// Pendentes
+foreach ($arranc["a"] as $key => $value) {
+	$pendente[$value[0]][0] += 1;
+}
 
+// Completos
+foreach ($arranc["b"] as $key => $value) {
+	$completo[$value[0]][0] += 1;
+}
+
+// foreach ($pendente as $key => $value):
+// 	var_dump($value[0]);
+// endforeach;
 
 $data = array(
  array("B ADM AP IBIRAPUERA", $arrayNum["organizacao_militar"]["b_adm_ap_ibirapuera"]), 
@@ -70,16 +106,18 @@ $data = array(
 // var_dump($arrayNum);
 
 $backgroundColors = array(
-	'rgb(255, 99, 132)',
-	'rgb(54, 162, 235)',
-	'rgb(255, 205, 86)',
-	'rgb(96, 255, 86)',
-	'rgb(96, 255, 86)',
-	'rgb(235, 221, 54)',
-	'rgb(235, 54, 54)',
-	'rgb(40, 224, 139)',
-	'rgb(187, 61, 172)',
+	'rgb(140, 212, 148)',
+	'rgb(140, 212, 148)',
+	'rgb(140, 212, 148)',
+	'rgb(140, 212, 148)',
+	'rgb(140, 212, 148)',
+	'rgb(140, 212, 148)',
+	'rgb(140, 212, 148)',
+	'rgb(140, 212, 148)',
+	'rgb(140, 212, 148)',
 );
+
+// var_dump($maxValues);
 
 ?>
 
@@ -93,30 +131,23 @@ $backgroundColors = array(
 		<div class="bg-shadow">
 			<canvas id="chart_posto_graduacao" width="400" height="400"></canvas>
 		</div>
-		<!-- <div class="no-bg">
-
-			<?php foreach ($arrayNum['posto_graduacao'] as $key => $value): ?>
-				<div class="chart graph_<?php echo $key?>" data-percent="<?php echo $value[1]?>"></div>
-			<?php endforeach; ?>
-		
-		</div> -->
 	</div>
 
 	<div class="box-board">
-		<div>
+		<div class="bg-shadow">
 			<canvas id="chart_organizacao_militar" width="400" height="400"></canvas>
 		</div>
 	</div>
 
 	<div class="box-board">
 		<div class="bg-shadow">
-			<canvas id="chart_pendentes" width="400" height="400"></canvas>
+			<canvas id="chart_comparations" width="400" height="400"></canvas>
 		</div>
 	</div>
 
 	<div class="box-board">
-		<div>
-			<canvas id="chart_concluidos" width="400" height="400"></canvas>
+		<div class="bg-shadow">
+			<canvas id="chart_max" width="400" height="400"></canvas>
 		</div>
 	</div>
 
@@ -125,7 +156,12 @@ $backgroundColors = array(
 
 <script>
 
-	var ctx = [document.getElementById('chart_organizacao_militar'), document.getElementById('chart_posto_graduacao')];
+	var ctx = [
+		document.getElementById('chart_organizacao_militar'), 
+		document.getElementById('chart_posto_graduacao'),
+		document.getElementById('chart_comparations'),
+		document.getElementById('chart_max'),
+	];
 
 	var labels = {
 		'organizacao_militar': [
@@ -146,6 +182,17 @@ $backgroundColors = array(
 		]
 	}
 
+	var labelsComparations = [];
+
+	for (var i = 0; i < labels["organizacao_militar"].length; i++) 
+		labelsComparations.push(labels["organizacao_militar"][i]);
+
+	for (var i = 0; i < labels["posto_graduacao"].length; i++) 
+		labelsComparations.push(labels["posto_graduacao"][i]);
+
+
+	// console.log(labelsComparations);
+
 	const options = [
 	{
         plugins: {
@@ -163,12 +210,29 @@ $backgroundColors = array(
             }
         }
     },
+	{
+		responsive: true,
+        plugins: {
+            title: {
+                display: true,
+                text: 'Arranchamentos Realizados x Conferidos'
+            },
+        }
+    },
+	{
+        plugins: {
+            title: {
+                display: true,
+                text: 'Maior/ Menor valor por Arranchamento'
+            },
+        }
+    },
     ]
 
 	const data_om = {
 	  labels: labels['organizacao_militar'],
 	  datasets: [{
-	    label: 'Organização Militar',
+	    label: 'Arranchados',
 	    data: [
 		<?php 
 			foreach ($arrayNum['organizacao_militar'] as $key => $value) echo $value[1] . ",\n";
@@ -191,30 +255,75 @@ $backgroundColors = array(
 	  }]
 	};
 
+	const data_comparation= {
+	  labels: ["Café", "Almoço", "Jantar"],
+	  datasets: [
+	  {
+	    label: 'Realizados',
+	    data: [
+		<?php 
+			foreach ($pendente as $key => $value) echo $value[0] . ",\n";
+		?>
+	    ],
+	    backgroundColor: "rgb(140, 169, 212)",
+	    borderColor: "rgb(140, 169, 212, 0.5)",
+	    hoverOffset: 4
+	  },
+	  {
+  	    label: 'Conferidos',
+  	    data: [
+  		<?php 
+  			foreach ($completo as $key => $value) echo $value[0] . ",\n";
+  		?>
+  	    ],
+  	    backgroundColor: "rgb(140, 212, 148)",
+  	    borderColor: "rgb(140, 212, 148, 0.5)",
+  	    hoverOffset: 4
+	  }]
+	};
+
 	const data_pg = {
 	  labels: labels['posto_graduacao'],
 	  datasets: [{
-	    label: 'Posto/ Graduação',
+	    label: 'Arranchados',
 	    data: [
 	    <?php 
 	    	foreach ($arrayNum['posto_graduacao'] as $key => $value) echo $value[1] . ",\n";
 	    ?>
 	    ],
 	    backgroundColor: [
-	      <?php 
-	      asort($backgroundColors);
-	      for ($i=0; $i <= $arrayNum['posto_graduacao'] ; $i++):
-	      	if (isset($backgroundColors[$i])):
-	      		echo "\"$backgroundColors[$i]\",\n";
-	      	else:
-	      		echo '"rgb(238, 238, 238)",';
-	      		break;
-	      	endif;
-	      endfor;
-	      ?>
+	      'rgb(140, 212, 148)'
 	    ],
 	    hoverOffset: 4
 	  }]
+	};
+
+	const data_max = {
+	  labels: ["Organização Militar", "Posto/ Graduação"],
+	  datasets: [
+	  {
+	    label: 'Máximo',
+	    data: [
+	    <?php 
+	    	foreach ($maxValues as $key => $value) echo $value[0] . ",\n";
+	    ?>
+	    ],
+	   	backgroundColor: "rgb(140, 169, 212)",
+	   	borderColor: "rgb(140, 169, 212, 0.5)",
+	    hoverOffset: 4
+	  },
+	  {
+	    label: 'Mínimo',
+	    data: [
+	    <?php 
+	    	foreach ($maxValues as $key => $value) echo $value[1] . ",\n";
+	    ?>
+	    ],
+	    backgroundColor: "rgb(140, 212, 148)",
+	    borderColor: "rgb(140, 212, 148, 0.5)",
+	    hoverOffset: 4
+	  },
+	  ]
 	};
 
 	new Chart(ctx[0], {
@@ -229,66 +338,20 @@ $backgroundColors = array(
 	    options: options[1]
 	});
 
+	new Chart(ctx[2], {
+	    type: 'bar',
+	    data: data_comparation,
+	    options: options[2],
+
+	});
+
+	new Chart(ctx[3], {
+	    type: 'bar',
+	    data: data_max,
+	    options: options[3],
+
+	});
 
 	var el = document.querySelector(".graph"); // get canvas
 
-
-	function createCanvas(el, colorPrimary){
-
-		var opt = {
-		    percent:  el.getAttribute('data-percent') || 25,
-		    size: el.getAttribute('data-size') || 220,
-		    lineWidth: el.getAttribute('data-line') || 20,
-		    rotate: el.getAttribute('data-rotate') || 0
-		}
-
-		var canvas = document.createElement('canvas');
-		var span = document.createElement('span');
-
-		canvas.className = "canvas-circle";
-		span.className = "span-circle";
-		span.textContent = opt.percent + '%';
-		    
-		if (typeof(G_vmlCanvasManager) !== 'undefined') {
-		    G_vmlCanvasManager.initElement(canvas);
-		}
-
-		var ctxCircle = canvas.getContext('2d');
-		canvas.width = canvas.height = opt.size;
-
-		el.appendChild(span);
-		el.appendChild(canvas);
-
-		ctxCircle.translate(opt.size / 2, opt.size / 2); // change center
-		ctxCircle.rotate((-1 / 2 + opt.rotate / 180) * Math.PI); // rotate -90 deg
-
-		//imd = ctxCircle.getImageData(0, 0, 240, 240);
-		var radius = (opt.size - opt.lineWidth) / 2;
-
-		var drawCircle = function(color, lineWidth, percent) {
-				percent = Math.min(Math.max(0, percent || 1), 1);
-				ctxCircle.beginPath();
-				ctxCircle.arc(0, 0, radius, 0, Math.PI * 2 * percent, false);
-				ctxCircle.strokeStyle = color;
-		        ctxCircle.lineCap = 'round'; // butt, round or square
-				ctxCircle.lineWidth = lineWidth
-				ctxCircle.stroke();
-		};
-
-		drawCircle("#efefef", opt.lineWidth, 100 / 100);
-		drawCircle("#555555", opt.lineWidth, opt.percent / 100);
-	}
-
-	<?php foreach ($arrayNum['posto_graduacao'] as $key => $value): ?>
-		createCanvas(document.querySelector('.graph_<?php echo $key?>', '<?php echo $backgroundColors[array_search($key, $arrayNum['posto_graduacao'])]?>'));
-	<?php endforeach; ?>
-
-	<?php foreach ($arrayNum['organizacao_militar'] as $key => $value): ?>
-		createCanvas(document.querySelector('.graph_<?php echo $key?>'), '<?php echo $backgroundColors[array_search($key, $arrayNum['organizacao_militar'])]?>');
-	<?php endforeach; ?>
-
 </script>
-
-
-<?php echo "<br>"; var_dump($pendente);
-?>

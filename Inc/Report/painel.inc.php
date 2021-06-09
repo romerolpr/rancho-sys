@@ -45,7 +45,7 @@
 		foreach ($listComplete as $keylist => $list) array_push($listByHash, $list[0]);
 		$trmike .= "<td>".(in_array($value["hash"], $listByHash) ? "Completo" : "Pendente" )."</td>";
 		
-		$trmike .= "<td><a href=\"report.php?details=".$value["hash"]."\" class=\"btn\">Abrir relatório</a></td>";
+		$trmike .= "<td><a href=\"report.php\" class=\"btn btn_open_window\" data-hash=\"".$value["hash"]."\">Abrir relatório</a></td>";
 
 	endforeach;
 
@@ -54,6 +54,8 @@
 	echo $trmike;
 
 	// var_dump($listComplete[2]);
+
+
 
 	?>
 
