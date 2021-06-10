@@ -62,6 +62,8 @@ class ObjectDB
 
 			
 		 	$sql = self::return_query($db, $table, array(array("nome", "posto_graduacao", "segunda_feira", "domingo"), $obj));
+
+		 	// var_dump($obj);
 				
 			if(empty($sql)):
 				$sql = "INSERT INTO $table (`id`, `hash`, `carimbo`, `email`, `posto_graduacao`, `nome`, `organizacao_militar`, `segunda_feira`, `terca_feira`, `quarta_feira`, `quinta_feira`, `sexta_feira`, `sabado`, `domingo`, `datasheet`) VALUES (:id, :hash, :carimbo, :email, :posto_graduacao, :nome, :organizacao_militar, :segunda_feira, :terca_feira, :quarta_feira, :quinta_feira, :sexta_feira, :sabado, :domingo, :datasheet_name)";

@@ -1,11 +1,15 @@
 <?php
 
-// var_dump($_SESSION["objfile"]["name"]);
+$Id = array();
 
 foreach ($fromDb as $key => $value):
 
-	if ($_SESSION["objfile"]["name"] == $value["datasheet"]):
-	// var_dump($value);
+	// var_dump($value["datasheet"]);
+
+	if ($Render->getTableName() == $value["datasheet"]):
+
+
+		$Render->setStatus(true);
 
 		$ObjDecoded = array(
 			"nome" => ucfirst(strtolower(utf8_decode(trim($value["nome"])))),
@@ -41,19 +45,27 @@ foreach ($fromDb as $key => $value):
 
 			}
 
+			// var_dump($ObjDecoded["refc"]);
+
 
 			// All days
-			for ($i=0; $i < 7; $i++):
+			foreach ($ObjDecoded["refc"] as $keyRefc => $valueRefc):
 
-				$diasemana_numero = date('w', strtotime(str_replace("/", "-", $ObjDecoded["refc"][$i][1])));
-				if ($Today == $ObjDecoded["refc"][$i][1] || isset($get["exb_all"]))
+				// var_dump($ObjDecoded["refc"]);
+
+				$diasemana_numero = date('w', strtotime(str_replace("/", "-", $valueRefc[1])));
+				if ($Today == $valueRefc[1] || isset($get["exb_all"]))
 					# 
 
-					$sheetHeader .= "<td ".($Render->getFilter() ? "class=\"td-button\" data-content-children=\"".$content."\"><div><span data-filter=\"refc-".strtolower(clearString($diasemana[$diasemana_numero]))."\" class=\"btn btn_order fright\" data-filter-extract=\"".$ObjDecoded["refc"][$i][1]."\"><i class=\"fas fa-sort-down\"></i><div class=\"sub-dropdown drop-render\"></div></span></div><div>" : ">" )."<span class=\"title\">[" . $diasemana[$diasemana_numero] . "] " .  $ObjDecoded["refc"][$i][1] . "".($Render->getFilter() ? "</span></div>" : null)."</td>";
+					$sheetHeader .= "<td ".($Render->getFilter() ? "class=\"td-button\" data-content-children=\"".$content."\"><div><span data-filter=\"refc-".strtolower(clearString($diasemana[$diasemana_numero]))."\" class=\"btn btn_order fright\" data-filter-extract=\"".$valueRefc[1]."\"><i class=\"fas fa-sort-down\"></i><div class=\"sub-dropdown drop-render\"></div></span></div><div>" : ">" )."<span class=\"title\">[" . $diasemana[$diasemana_numero] . "] " .  $valueRefc[1] . "".($Render->getFilter() ? "</span></div>" : null)."</td>";
 
-			endfor;
 
-			if ($key == 0)
+			endforeach;
+
+			if (!in_array($value["id"], $Id))
+				array_push($Id, $value["id"]);
+
+			if ($key == --$Id[0])
 				$sheetBody .= $sheetHeader;
 
 			$sheetBody .= "</tr>";
@@ -67,16 +79,17 @@ foreach ($fromDb as $key => $value):
 			$sheetBody .= "<td data-content=\"nome\">" . $ObjDecoded["nome"] . "</td>";
 
 			// Creating the button checkbox and text
-			for ($i=0; $i < 7 ; $i++):
-				if ($Today == $ObjDecoded["refc"][$i][1] || isset($get["exb_all"])):
-					$arranchamento = explode(",", $ObjDecoded["refc"][$i][0]);
+			foreach ($ObjDecoded["refc"] as $keyRefc => $valueRefc):
+
+				if ($Today == $valueRefc[1] || isset($get["exb_all"])):
+					$arranchamento = explode(",", $valueRefc[0]);
 					if (is_array($arranchamento)):
 
-						$idItem = $i.$key."_".strtolower(clearString(str_replace(" ", "_", $ObjDecoded["nome"])))."_".$value["hash"];
+						$idItem = $keyRefc.$key."_".strtolower(clearString(str_replace(" ", "_", $ObjDecoded["nome"])))."_".$value["hash"];
 
 						if (empty($arranchamento[0])):
 
-							$sheetBody .= "<td data-hash-id=\"".$value["hash"]."\" data-date=\"".$ObjDecoded["refc"][$i][1]."\">-</td>";
+							$sheetBody .= "<td data-hash-id=\"".$value["hash"]."\" data-date=\"".$valueRefc[1]."\">-</td>";
 
 						else:
 
@@ -102,27 +115,27 @@ foreach ($fromDb as $key => $value):
 
 								$checks = explode(";", $V);
 
-								if (isset($arranchamento[0]) && in_array(trim(resizeString($arranchamento[0], 10)), $checks) && $checks[1] == $ObjDecoded["refc"][$i][1]):
+								if (isset($arranchamento[0]) && in_array(trim(resizeString($arranchamento[0], 10)), $checks) && $checks[1] == $valueRefc[1]):
 									$Checked[0] = true;
 									// var_dump($arranchamento);
 
-								elseif (isset($arranchamento[1]) && in_array(trim(resizeString($arranchamento[1], 10)), $checks) && $checks[1] == $ObjDecoded["refc"][$i][1]):
+								elseif (isset($arranchamento[1]) && in_array(trim(resizeString($arranchamento[1], 10)), $checks) && $checks[1] == $valueRefc[1]):
 									$Checked[1] = true; 
 
-								elseif (isset($arranchamento[2]) && in_array(trim(resizeString($arranchamento[2], 10)), $checks) && $checks[1] == $ObjDecoded["refc"][$i][1]):
+								elseif (isset($arranchamento[2]) && in_array(trim(resizeString($arranchamento[2], 10)), $checks) && $checks[1] == $valueRefc[1]):
 									$Checked[2] = true; 
 								endif;
 							}
 
 							// var_dump($valor);
 
-							$sheetBody .= "<td data-hash-id=\"".$value["hash"]."\" data-date=\"".$ObjDecoded["refc"][$i][1]."\">" . 
+							$sheetBody .= "<td data-hash-id=\"".$value["hash"]."\" data-date=\"".$valueRefc[1]."\">" . 
 
-								(isset($arranchamento[0]) ? "<div><label for=\"1".$idItem."\">" .resizeString($arranchamento[0], 10). "</label><input ".($Checked[0] !== false ? "checked" : null)." data-date=\"".$ObjDecoded["refc"][$i][1]."\" class=\"input_checked\" type=\"checkbox\" name=\"check_refc\" value=\"".resizeString($arranchamento[0], 10)."\" id=\"1".$idItem."\"></div>" : "</div>") . 
+								(isset($arranchamento[0]) ? "<div><label for=\"1".$idItem."\">" .resizeString($arranchamento[0], 10). "</label><input ".($Checked[0] !== false ? "checked" : null)." data-date=\"".$valueRefc[1]."\" class=\"input_checked\" type=\"checkbox\" name=\"check_refc\" value=\"".resizeString($arranchamento[0], 10)."\" id=\"1".$idItem."\"></div>" : "</div>") . 
 								
-								(isset($arranchamento[1]) ? "<div><label for=\"2".$idItem."\">" . resizeString($arranchamento[1], 10) . "</label><input ".($Checked[1] !== false ? "checked" : null)." data-date=\"".$ObjDecoded["refc"][$i][1]."\" class=\"input_checked\" type=\"checkbox\" name=\"check_refc\" value=\"".resizeString($arranchamento[1], 10)."\" id=\"2".$idItem."\"></div>" : "</div>") . 
+								(isset($arranchamento[1]) ? "<div><label for=\"2".$idItem."\">" . resizeString($arranchamento[1], 10) . "</label><input ".($Checked[1] !== false ? "checked" : null)." data-date=\"".$valueRefc[1]."\" class=\"input_checked\" type=\"checkbox\" name=\"check_refc\" value=\"".resizeString($arranchamento[1], 10)."\" id=\"2".$idItem."\"></div>" : "</div>") . 
 								
-								(isset($arranchamento[2]) ? "<div><label for=\"3".$idItem."\">" .resizeString($arranchamento[2], 10). "</label><input ".($Checked[2] !== false ? "checked" : null)." data-date=\"".$ObjDecoded["refc"][$i][1]."\" class=\"input_checked\" type=\"checkbox\" name=\"check_refc\" value=\"".resizeString($arranchamento[2], 10)."\" id=\"3".$idItem."\"></div>" : "</div>") . 
+								(isset($arranchamento[2]) ? "<div><label for=\"3".$idItem."\">" .resizeString($arranchamento[2], 10). "</label><input ".($Checked[2] !== false ? "checked" : null)." data-date=\"".$valueRefc[1]."\" class=\"input_checked\" type=\"checkbox\" name=\"check_refc\" value=\"".resizeString($arranchamento[2], 10)."\" id=\"3".$idItem."\"></div>" : "</div>") . 
 
 							"</td>";
 		
@@ -131,27 +144,26 @@ foreach ($fromDb as $key => $value):
 					endif;	
 
 				endif;
-			endfor;
+
+			endforeach;
 
 			$sheetBody .= "</tr>";
 
-		// endif;
+		endif;
 
-	else:
+	// else:
 
-		$sheetBody .= "<tr>";
+	// 	$sheetBody .= "<tr>";
 
-		$Alert->setConfig("warning", "<strong>Aviso</strong>: Não foi possível importar os dados da planilha. <a href='index.php?exb=add_new' title='Adicionar novo arquivo' class='btn'>Adicionar novo arquivo</a></span>");
-		$sheetBody .= "<br class=\"clear\">";
-		$sheetBody .= $Alert->displayPrint();
+	// 	$Alert->setConfig("warning", "<strong>Aviso</strong>: Não foi possível importar os dados da planilha. <a href='index.php?exb=add_new' title='Adicionar novo arquivo' class='btn'>Adicionar novo arquivo</a></span>");
+	// 	$sheetBody .= "<br class=\"clear\">";
+	// 	$sheetBody .= $Alert->displayPrint();
 
-		$sheetBody .= "</tr>";
+	// 	$sheetBody .= "</tr>";
 
-		$Render->setStatus(false);
+	// 	break;
 
-		break;
-
-	endif;
+	// endif;
 
 endforeach;
 

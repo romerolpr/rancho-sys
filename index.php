@@ -156,10 +156,10 @@ endif;
 	<script><?php include 'Dist/js/geral.js'; ?></script>
 
 	<script>
-		$('body').addClass("loading");
-		$(document).ready(function(){
-			$('body').removeClass("loading");
-		});
+		// $('body').addClass("loading");
+		// $(document).ready(function(){
+		// 	$('body').removeClass("loading");
+		// });
 	</script>
 
 </body>

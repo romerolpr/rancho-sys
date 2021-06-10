@@ -4,6 +4,9 @@
 Send and load data
 **/
 
+// var_dump($_SESSION["objfile"]["name"]);
+// echo "<br>";
+
 $filterSubset = new MyReadFilter();
 $objReader = PHPExcel_IOFactory::createReader($inputFileName);
 $objReader->setLoadSheetsOnly($_SESSION["objfile"]["worksheetName"]);
@@ -20,18 +23,17 @@ if (isset($get["worksheetName"])):
 	$Render->powerOffInsereData(true);
 endif;
 
-if (isset($get["filter"]) && empty($get["filter"])):
-	$Render->setFilter(null, true);
-	// header("location: index.php");
-else:
-	$Render->manipuleFilter();
-endif;
+// if (isset($get["filter"]) && empty($get["filter"])):
+// 	$Render->setFilter(null, true);
+// 	// header("location: index.php");
+// else:
+// 	$Render->manipuleFilter();
+// endif;
 
 // var_dump($Render->getFilter());
 
 /* Get object data and render*/
-
-if ($Render->pushData()):
+if ($Render->pushData() !== false):
 	$Render->setStatus(true);
 else:
 	$Render->setStatus(false);
@@ -80,11 +82,13 @@ $sheetBody .= "</div>";
 $sheetBody .= "</table></div>";
 
 // var_dump($Render->getStatus());
+// var_dump($Render->getStatus());
 
 if ($Render->getStatus()):
+
 	echo $sheetBody;
 else:
-	$Alert->setConfig("warning", "<strong>Arranchamento indisponível</strong>: O arquivo selecionado não possui compatibiliade com o sistema. <a href='index.php?exb=add_new' title='Alterar arquivo' class='btn btn_click_consult'>Alterar arquivo</a></span>");
+	$Alert->setConfig("warning", "<strong>Falha na importação</strong>: O arquivo selecionado não possui compatibiliade com o sistema ou não foi possível importar os dados. <a href='index.php?exb=add_new' title='Alterar arquivo' class='btn btn_click_consult'>Alterar arquivo</a></span>");
 	echo $Alert->displayPrint();
 	// var_dump($Render->getStatus());
 	echo $Render->constructTable($sheetData);

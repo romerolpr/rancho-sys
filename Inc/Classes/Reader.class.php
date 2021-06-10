@@ -132,34 +132,6 @@ class Render
 			$returnTable = implode("", $buttons) . '<table><tr id="hide-td">';
 			$getItem = (isset($_GET["hideItem"]) ? strval($_GET["hideItem"]) : null);
 
-			// # Create [tr], buttons and lines head
-			// for ($i=0; $i < count(self::$SheetData[0]) ; $i++):
-
-			// 	$iconAdd = (isset($_GET["hideItem"]) && !empty($getItem)) ? (!in_array($i, explode(self::$PregUrl, $_GET["hideItem"]))) ? array("Esconder", "fa fa-eye-slash") : array("Mostrar", "fas fa-eye") : array("Esconder", "fa fa-eye-slash");
-			// 	$returnTable .= "<td><a data-action='".strtolower($iconAdd[0])."' class='btn btn_click_hide ".($iconAdd[0] == "Esconder" ? "red" : null)."' data-td-hide='".$i."' href='index.php?hideItem=";
-
-			// 	if(isset($_GET["hideItem"]) && !in_array($i, explode(self::$PregUrl, $_GET["hideItem"]))):
-			// 		$hideItemsUrl = $_GET["hideItem"].self::$PregUrl.$i;
-			// 	else:
-
-			// 		if (isset($_GET["hideItem"]) && !empty($getItem)):
-			// 			$arrayUrl = explode(self::$PregUrl, $_GET["hideItem"]);
-			// 			foreach ($arrayUrl as $key => $value) 
-			// 				if ($value == $i) 
-			// 					unset($arrayUrl[$key]);
-
-			// 			$hideItemsUrl = implode(self::$PregUrl, $arrayUrl);
-			// 		else:
-			// 			$hideItemsUrl = $i;
-			// 		endif;
-
-			// 	endif;
-
-			// 	$returnTable .= $hideItemsUrl . (isset($_GET["window"]) && $_GET["window"] == "expanded" ? "&window=expanded" : null) . "&worksheetName=". urlencode(self::getDatasheetName());
-			// 	$returnTable .= "' title='".$iconAdd[0]."'><i class='".$iconAdd[1]."'></i></a></td>";
-
-			// endfor;
-
 			$returnTable .= '</tr>';
 
 			# Create [td] and values
@@ -234,15 +206,16 @@ class Render
 		return $n;
 	}
 
+	public function cut($string, $i){
+		$newString = strtolower(str_replace("-", "_", preg_replace(array("/(á|à|ã|â|ä)/","/(Á|À|Ã|Â|Ä)/","/(é|è|ê|ë)/","/(É|È|Ê|Ë)/","/(í|ì|î|ï)/","/(Í|Ì|Î|Ï)/","/(ó|ò|õ|ô|ö)/","/(Ó|Ò|Õ|Ô|Ö)/","/(ú|ù|û|ü)/","/(Ú|Ù|Û|Ü)/","/(ñ)/","/(Ñ)/", "/Ç/", "/ç/"), explode(" ","a A e E i I o O u U n N c C"),$string[$i])));
+		preg_match("/\[(.*)\]/", $newString, $match);
+		$match = explode(" ", end($match));
+		return end($match);
+	}
+
 	public function pushData(){
 
-		try {
-			function cut($string, $i){
-				$newString = strtolower(str_replace("-", "_", preg_replace(array("/(á|à|ã|â|ä)/","/(Á|À|Ã|Â|Ä)/","/(é|è|ê|ë)/","/(É|È|Ê|Ë)/","/(í|ì|î|ï)/","/(Í|Ì|Î|Ï)/","/(ó|ò|õ|ô|ö)/","/(Ó|Ò|Õ|Ô|Ö)/","/(ú|ù|û|ü)/","/(Ú|Ù|Û|Ü)/","/(ñ)/","/(Ñ)/", "/Ç/", "/ç/"), explode(" ","a A e E i I o O u U n N c C"),$string[$i])));
-				preg_match("/\[(.*)\]/", $newString, $match);
-				$match = explode(" ", end($match));
-				return end($match);
-			}
+		// try {
 
 			$Db = new ObjectDB();
 			$Db->setter(HOST, USER, PASS, DBNAME);
@@ -267,13 +240,28 @@ class Render
 					"posto_graduacao" => (isset($value[3]) ? utf8_encode($value[3]) : null ),
 					"nome" => (isset($value[4]) ? utf8_encode($value[4]) : null),
 					"organizacao_militar" => (isset($value[2]) ? utf8_encode($value[2]) : null),
-					"segunda_feira" => (isset($value[5]) ? utf8_encode($value[5]) . "&&" . cut($cabecalho, 5) : null),
-					"terca_feira" => (isset($value[6]) ? utf8_encode($value[6]) . "&&" . cut($cabecalho, 6) : null ),
-					"quarta_feira" => (isset($value[7]) ? utf8_encode($value[7]) . "&&" . cut($cabecalho, 7) : null ),
-					"quinta_feira" => (isset($value[8]) ? utf8_encode($value[8]) . "&&" . cut($cabecalho, 8) : null ),
-					"sexta_feira" => (isset($value[9]) ? utf8_encode($value[9]) . "&&" . cut($cabecalho, 9) : null ),
-					"sabado" => (isset($value[10]) ? utf8_encode($value[10]) . "&&" . cut($cabecalho, 10) : null ),
-					"domingo" => (isset($value[11]) ? utf8_encode($value[11]) . "&&" . cut($cabecalho, 11) : null ),
+
+					"segunda_feira" => 
+					(isset($value[5]) ? utf8_encode($value[5]) . "&&" . self::cut($cabecalho, 5) : "&&" . self::cut($cabecalho, 5) ),
+
+					"terca_feira" => 
+					(isset($value[6]) ? utf8_encode($value[6]) . "&&" . self::cut($cabecalho, 6) : "&&" . self::cut($cabecalho, 6) ),
+
+					"quarta_feira" => 
+					(isset($value[7]) ? utf8_encode($value[7]) . "&&" . self::cut($cabecalho, 7) : "&&" . self::cut($cabecalho, 7) ),
+
+					"quinta_feira" => 
+					(isset($value[8]) ? utf8_encode($value[8]) . "&&" . self::cut($cabecalho, 8) : "&&" . self::cut($cabecalho, 8) ),
+
+					"sexta_feira" => 
+					(isset($value[9]) ? utf8_encode($value[9]) . "&&" . self::cut($cabecalho, 9) : "&&" . self::cut($cabecalho, 9) ),
+
+					"sabado" => 
+					(isset($value[10]) ? utf8_encode($value[10]) . "&&" . self::cut($cabecalho, 10) : "&&" . self::cut($cabecalho, 10) ),
+
+					"domingo" => 
+					(isset($value[11]) ? utf8_encode($value[11]) . "&&" . self::cut($cabecalho, 11) : "&&" . self::cut($cabecalho, 11) ),
+
 					"datasheet_name" => self::getTableName(),
 				);
 				array_push($Items, $myObject);
@@ -287,11 +275,20 @@ class Render
 				foreach ($Items as $key => $value):
 
 					$Db->insert_query($Db->connect_db(), TB_RESP, $value);
-					$sql = $Db->return_query($Db->connect_db(), TB_CONF, null, true);
+					$db = $Db->connect_db();
+					// $sql = $Db->return_query(, TB_CONF, null, true);
+					$table = TB_CONF;
+					$datasheet_name = self::getTableName();
+					$hash =  $value["hash"];
+
+					$stt = $db->prepare('SELECT * FROM '.$table.' WHERE datasheet="'.$datasheet_name.'" AND hash_id="'.$hash.'"');
+					$stt->execute();
+					$sql = $stt->fetchAll(PDO::FETCH_ASSOC);
+
 					$insert[0] = true;
 
 					// var_dump($sql);
-					if (count($sql) < count($Items)):
+					if (empty($sql)):
 						$db = $Db->connect_db();
 						$objData = array(
 							'id' => null,
@@ -329,10 +326,14 @@ class Render
 			endif;
 
 			self::setStatus(true);
+			return true;
 
-		} catch (Exception $e) {
-			return $e;
-		}
+		// } catch (Exception $e) {
+
+		// 	self::consoleLog("Request failed: " . $e);
+
+		// 	return false;
+		// }
 	}
 
 	public function consoleLog($txt){

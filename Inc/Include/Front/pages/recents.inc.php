@@ -32,7 +32,11 @@ echo "</tr>";
 			endif;
 
 			echo "<tr>";
-			echo "<td><a class=\"btn\" href=\"index.php?new=".$value["name"]."\">",$value["name"],"</a></td>";
+			if (isset($_SESSION["objfile"]) && $_SESSION["objfile"]["name"] == $value["name"]):
+				echo "<td><a class=\"btn\" href=\"index.php?new=".$value["name"]."\"><strong>",$value["name"],"</strong></a></td>";
+			else:
+				echo "<td><a class=\"btn\" href=\"index.php?new=".$value["name"]."\">",$value["name"],"</a></td>";
+			endif;
 			echo "<td><i>",$dataFinal,"</i></td>";
 			echo "<td><i>",round($value["file"]["size"])," KB</i></td>";
 			echo "<td><a data-action='excluir' class='btn btn_click_consult red' href='".$url."?unlink&path=".$value["tmp_name"]."' title='Excluir'><i class='fa fa-times'></i></a></td>";

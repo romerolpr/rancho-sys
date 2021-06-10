@@ -28,6 +28,10 @@ if (isset($_POST["Envia"]) && !empty($_POST["Envia"])):
 
 			if(move_uploaded_file($ObjLoad["tmp_name"], $dir)):
 				$ObjLoad["tmp_name"] = $dir;
+
+				if (isset($_SESSION["objfile"]))
+					unset($_SESSION["objfile"]);
+				
 				$_SESSION["objfile"] = $ObjLoad;
 				header("location: ".$url."index.php");
 			else:

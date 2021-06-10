@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 require_once '../Inc/Classes/ObjectDB.class.php';
 require_once '../Inc/define.inc.php';
 
@@ -24,11 +26,12 @@ function insertOn($db, $hash, $JSONData){
 		'id' => null,
 		'hash_id' => $hash,
 		'data_json' => json_encode($JSONData, true),
+		'datasheet' => $_SESSION['objfile']['name']
 	);
 
 	array_unique($JSONData);
 
-	$sql = "INSERT INTO `tb_conf` (`id`, `hash_id`, `data_json`) VALUES (:id ,:hash_id, :data_json)";
+	$sql = "INSERT INTO `tb_conf` (`id`, `hash_id`, `data_json`, `datasheet`) VALUES (:id ,:hash_id, :data_json, :datasheet)";
 	$stmt = $db->prepare($sql);
 	$stmt->execute($obj);
 	
@@ -37,10 +40,11 @@ function insertOn($db, $hash, $JSONData){
 function updateOn($Db, $db, $hash, $JSONData){
 	$obj = array(
 		'hash_id' => $hash,
-		'data_json' => json_encode($JSONData, true)
+		'data_json' => json_encode($JSONData, true),
+		'datasheet' => $_SESSION['objfile']['name']
 	);
 
-	$sql = "UPDATE `tb_conf` SET `data_json`=:data_json WHERE `hash_id`=:hash_id";
+	$sql = "UPDATE `tb_conf` SET `data_json`=:data_json WHERE `hash_id`=:hash_id AND `datasheet`=:datasheet";
 	$stmt = $db->prepare($sql);
 	$stmt->execute($obj);	
 }

@@ -16,8 +16,8 @@ if(!isset($get["exb"])):
 		echo "</ul>";
 		echo "<br>";
 
-		echo "<p>Arquivos recentes</p>";
-		echo "<span class=\"divider\"></span>";
+		// echo "<p>Arquivos recentes</p>";
+		// echo "<span class=\"divider\"></span>";
 
 		include PAGES . 'recents.inc.php';
 
