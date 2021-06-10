@@ -19,6 +19,7 @@ if(!isset($get["exb"])):
 		// echo "<p>Arquivos recentes</p>";
 		// echo "<span class=\"divider\"></span>";
 
+		// $nonTitle = true;
 		include PAGES . 'recents.inc.php';
 
 		// var_dump($Files);
@@ -51,6 +52,7 @@ if(!isset($get["exb"])):
 else:
 
 	if ($get["exb"] == "recents"):
+		$nonTitle = true;
 		include PAGES . 'recents.inc.php';
 	else:
 

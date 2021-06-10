@@ -1,6 +1,7 @@
-<h1>Arquivos recentes</h1>
-
-<?php
+<?php if (!isset($nonTitle) or $nonTitle !== true): ?>
+	<h1>Arquivos recentes</h1>
+<?php 
+endif;
 
 echo "<table>";
 echo "<tr class=\"bar-table\">";
