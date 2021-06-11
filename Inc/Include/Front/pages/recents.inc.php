@@ -3,17 +3,16 @@
 <?php 
 endif;
 
-echo "<table>";
-echo "<tr class=\"bar-table\">";
-echo "<td>Alocação</td>";
-echo "<td>Última modificação</td>";
-echo "<td>Tamanho</td>";
-echo "<td>Ação</td>";
-echo "</tr>";
-	if (!empty($Files)):
+if (!empty($Files)):
+	echo "<table>";
+	echo "<tr class=\"bar-table\">";
+	echo "<td>Alocação</td>";
+	echo "<td>Última modificação</td>";
+	echo "<td>Tamanho</td>";
+	echo "<td>Ação</td>";
+	echo "</tr>";
+	
 		foreach ($Files as $key => $value):
-
-			// var_dump($value);
 
 			$dateFile = date("d-m-Y H:i:s", $value["file"]["mtime"]);
 
@@ -44,12 +43,17 @@ echo "</tr>";
 			echo "</tr>";
 
 		endforeach;
-	else:
-		echo "<tr>";
-		echo "<td>-</td>";
-		echo "<td>-</td>";
-		echo "<td>-</td>";
-		echo "<td>-</td>";
-		echo "</tr>";
-	endif;
-echo "</ul>";
+
+echo "</table>";
+
+else:
+	echo "<table>";
+	echo "<tr class=\"bar-table\">";
+	echo "<td>Alocação</td>";
+	echo "<td>Última modificação</td>";
+	echo "<td>Tamanho</td>";
+	echo "<td>Ação</td>";
+	echo "</tr>";
+	echo "</table>";
+	echo "<p class=\"txt-center p-label\">Não existem arquivos recententes no sistema.</p>";
+endif;

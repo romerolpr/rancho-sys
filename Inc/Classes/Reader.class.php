@@ -12,10 +12,11 @@ class Render
 	static $unset;
 	static $Object;
 	static $PregUrl;
-	static $InsereData;
 	static $Status;
 	static $Filter;
-	static $Teste;
+
+	static $InsereData = false;
+	static $CountElem = false;
 	
 	/** 
 	Getter and Setter 
@@ -39,8 +40,11 @@ class Render
 	public function getTableName(){
 		return self::$TableName;
 	}
-	public function getTeste(){
-		return self::$Teste;
+	public function getCountElem(){
+		return self::$CountElem;
+	}
+	public function getInsereOnDb(){
+		return self::$InsereOnDb;
 	}
 	public function getFilter(){
 		return self::$Filter;
@@ -75,8 +79,11 @@ class Render
 	public function setUnset($newUnset){
 		self::$unset = $newUnset;
 	}
-	public function setTeste($newUnset){
-		self::$Teste = $newUnset;
+	public function setCountElem($newCountElem){
+		self::$CountElem = $newCountElem;
+	}
+	public function setInsereOnDb($newInsereOnDb){
+		self::$InsereOnDb = $newInsereOnDb;
 	}
 	public function setDatasheetName($newDatasheetName){
 		self::$DatasheetName = $newDatasheetName;

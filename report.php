@@ -4,6 +4,10 @@ session_start();
 
 // var_dump($_SESSION['objfile']);
 
+if (!isset($_SESSION["objfile"]) || !isset($_SESSION["user_login"])):
+	header("location: index.php");
+endif;
+
 include_once 'Inc/geral.inc.php';
 
 $Render = new Render();
@@ -103,27 +107,7 @@ foreach ($myResp as $keyresp => $resp):
 		
 		if ($conf["hash"] == $resp["hash_id"]):
 
-			// echo $resp["hash_id"];
-			// var_dump($resp["data_json"]["values"]);
-			// var_dump($conf[0]["values"]);
-
-			// echo "<br><br>";
-
 			$testArrays = testListValues($resp["data_json"]["values"], $conf[0]["values"]);
-
-			// if ($conf["hash"] == "2acdb3e034ef5540cbc448f6f9433590"):
-			// 	echo $conf["hash"];
-			// 	echo "<br>Resp:";
-			// 	var_dump($resp["data_json"]["values"]);
-			// 		echo "<br><br>";
-			// 	echo "Conf:";
-			// 	var_dump($conf[0]["values"]);
-			// 		echo "<br><br>";
-			// 		echo "Tester:";
-			// 	var_dump($testArrays);
-			// 		echo "<br><br>";
-			// endif;
-
 			if (!empty($testArrays)):
 				array_push($listPendent, array($conf["hash"], $testArrays));
 			else:
@@ -165,7 +149,7 @@ $bodyTable = "<table></table>";
 		.box-table { max-height: 100%; }
 	</style>
 
-	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script src="Dist/js/chart.js"></script>
 </head>
 <body>
 
@@ -182,11 +166,11 @@ $bodyTable = "<table></table>";
 
 	<div class="box-table">
 
-		<h2>Informações gerais</h2>
+<!-- 		<h2>Informações gerais</h2>
 		<ul class="list">
 			<li>Pendente: <?php echo (count($listPendent)) ?>, Realizado: <?php echo (count($listComplete)) ?></li>
 			<li>Arranchamentos totais: <?php echo (count($listPendent) + count($listComplete)) ?></li>
-		</ul>
+		</ul> -->
 
 		<p class="fleft d-center-items">
 			<span class="fleft"><strong><?php echo $_SESSION["objfile"]["name"] ?></strong></span>
@@ -195,8 +179,11 @@ $bodyTable = "<table></table>";
 		<aside>
 		    <nav>
 		        <ul>
-		            <li><a href="<?php echo $url?>report.php" title="Planilha de relatório individual">Planilha de relatório individual</a></li>
-		            <li><a href="<?php echo $url?>report.php?aba=dashboard" title="Indices gerais: Dashboard">Indices gerais: Dashboard</a></li>
+		            <li><a href="<?php echo $url?>report.php?aba=dailyVoucher" title="Vale diário">Vale diário</a></li>
+		            <li><a href="<?php echo $url?>report.php?aba=missing" title="Relatório: Faltantes">Relatório: Faltantes</a></li>
+		            <li><a href="<?php echo $url?>report.php?aba=gift" title="Relatório: Presentes">Relatório: Presentes</a></li>
+		            <!-- <li><a href="<?php echo $url?>report.php" title="Planilha de relatório individual">Planilha de relatório individual</a></li> -->
+		            <li><a href="<?php echo $url?>report.php?aba=dashboard" title="Relatórios gerais: Dashboard">Relatórios gerais: Dashboard</a></li>
 		            <br>
 		            <li><a href="<?php echo $url?>index.php" title="Voltar">Voltar</a></li>
 		        </ul>
@@ -218,8 +205,16 @@ $bodyTable = "<table></table>";
 							<?php endif; ?>
 							<a href="report.php" class="btn btn_link btn_manage btn_expand" title="Expandir tabela"><i class="fas fa-expand"></i></a>
 							<!-- <input type="search" name="searchByName" class="search"> -->
-					<?php else: ?>
+					<?php elseif ($get["aba"] == "dashboard"): ?>
 						<span class="fleft"><strong>Índices gerais: Dashboard</strong></span>
+					<?php elseif ($get["aba"] == "dailyVoucher"): ?>
+						<span class="fleft"><strong>Vale diário</strong></span>
+					<?php elseif ($get["aba"] == "missing"): ?>
+						<span class="fleft"><strong>Relatório: Faltantes</strong></span>
+					<?php elseif ($get["aba"] == "gift"): ?>
+						<span class="fleft"><strong>Relatório: Presentes</strong></span>
+					<?php else: ?>
+						<span class="fleft"><strong>undefined</strong></span>
 					<?php endif; ?>
 					</span>
 				</p>
@@ -232,8 +227,11 @@ $bodyTable = "<table></table>";
 
 				else:
 
+					if ($get["aba"] == "dashboard")
+						include REPORT . 'dashboard.inc.php';
 
-					include REPORT . 'dashboard.inc.php';
+					if (in_array($get["aba"], array('faltantes', 'presentes')))
+						include REPORT . 'relatorios.inc.php';
 
 
 				endif;
@@ -314,9 +312,6 @@ $bodyTable = "<table></table>";
 
 		});
 		$(".td-button span[data-filter]").on("click", function(e){
-
-
-
 			// Build dropdown
 			var divdrop = $(this).children("div.sub-dropdown"),
 				request = $.ajax({
@@ -354,6 +349,15 @@ $bodyTable = "<table></table>";
 				});
 			}
 
+		});
+
+		var $rows = $('#table-filter tr');
+		$("#searchbar").on("keyup", function(){
+			var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+			$rows.show().filter(function() {
+		        var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+		        return !~text.indexOf(val);
+		    }).hide();
 		});
 	</script>
 

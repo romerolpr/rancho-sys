@@ -26,3 +26,26 @@ function replaceUrl($urlString){
     return str_replace($urlString, "", $current) . $urlString;
     
 } 
+
+function aasort (&$array, $order, $key) {
+
+    $sorter = array();
+    $ret = array();
+    reset($array);
+
+    foreach ($array as $ii => $va):
+        $sorter[$ii] = $va[$key];
+    endforeach;
+
+    if ($order == "A-Z"):
+        asort($sorter);
+    else:
+        arsort($sorter);
+    endif;
+
+    foreach ($sorter as $ii => $va):
+        $ret[$ii] = $array[$ii];
+    endforeach;
+
+    $array = $ret;
+}

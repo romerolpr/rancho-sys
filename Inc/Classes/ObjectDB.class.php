@@ -29,18 +29,19 @@ class ObjectDB
 
 	}
 
-	public static function return_query($db, $table, $where = null, $gettable = false)
+	public static function return_query($db, $table, $where = null, $gettable = false, $limit = null)
 	{	
 		try 
 		{
 			// var_dump($where);
 			if (!isset($gettable) || !$gettable):
-				$stt = $db->prepare('SELECT * FROM ' . $table . (!is_null($where) ? " WHERE " . $where[0][0] . "=\"" . $where[1][$where[0][0]] . "\" AND " . $where[0][1] . "=\"" . $where[1][$where[0][1]] . "\" AND " . $where[0][2] . "=\"" . $where[1][$where[0][2]] . "\" AND " . $where[0][3] . "=\"" . $where[1][$where[0][3]] . "\""  : null));
+				$stt = $db->prepare('SELECT * FROM ' . $table . (!is_null($where) ? " WHERE " . $where[0][0] . "=\"" . $where[1][$where[0][0]] . "\" AND " . $where[0][1] . "=\"" . $where[1][$where[0][1]] . "\" AND " . $where[0][2] . "=\"" . $where[1][$where[0][2]] . "\" AND " . $where[0][3] . "=\"" . $where[1][$where[0][3]] . "\""  : null) . (!is_array($limit) ? (!is_null($limit) ? ' LIMIT ' . $limit : null) : ( ' LIMIT ' . $limit[0] . ', ' . $limit[0] )));
 				// var_dump($stt);
 			else:
 				if (!is_null($where)):
 					$stt = $db->prepare('SELECT * FROM $table WHERE datasheet_name="$where"');
 				else:
+					
 					$stt = $db->prepare('SELECT * FROM ' . $table);
 				endif;
 			endif;

@@ -22,7 +22,7 @@ endif;
 if (isset($get["action"]) && $get["action"] == "generateReport"):
 
 	if (isset($_SESSION["objfile"])):
-		header("location: report.php?datasheetFile=" . $_SESSION["objfile"]["name"] . "&h=1");
+		header("location: report.php?datasheetFile=" . $_SESSION["objfile"]["name"]);
 	endif;
 
 endif;
@@ -151,16 +151,30 @@ endif;
 
 	</section>
 
+
+	<script>
+		
+		function searchOnTable(){
+			var $rows = $('#table-filter tr:not(.bar-table)');
+			$("#searchbar").on("keyup", function(){
+				var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+				$rows.show().filter(function() {
+			        var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+			        return !~text.indexOf(val);
+			    }).hide();
+			});
+		}
+
+	</script>
+
 	<!-- Events, functions js -->
 	<script><?php include 'Dist/js/Filter.js'; ?></script>
 	<script><?php include 'Dist/js/geral.js'; ?></script>
 
 	<script>
-		// $('body').addClass("loading");
-		// $(document).ready(function(){
-		// 	$('body').removeClass("loading");
-		// });
+		searchOnTable();
 	</script>
+
 
 </body>
 </html>

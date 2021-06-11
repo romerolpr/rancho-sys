@@ -107,14 +107,14 @@ $data = array(
 
 $backgroundColors = array(
 	'rgb(140, 212, 148)',
-	'rgb(140, 212, 148)',
-	'rgb(140, 212, 148)',
-	'rgb(140, 212, 148)',
-	'rgb(140, 212, 148)',
-	'rgb(140, 212, 148)',
-	'rgb(140, 212, 148)',
-	'rgb(140, 212, 148)',
-	'rgb(140, 212, 148)',
+	'rgb(140, 169, 212)',
+	'rgb(220, 151, 102)',
+	'rgb(186, 102, 220)',
+	'rgb(220, 178, 102)',
+	'rgb(220, 102, 102)',
+	'rgb(98, 193, 74)',
+	'rgb(186, 193, 74)',
+	'rgb(193, 74, 74)',
 );
 
 // var_dump($maxValues);
@@ -292,7 +292,17 @@ $backgroundColors = array(
 	    ?>
 	    ],
 	    backgroundColor: [
-	      'rgb(140, 212, 148)'
+	      <?php 
+	      sort($backgroundColors);
+	      for ($i=0; $i <= $arrayNum['posto_graduacao'] ; $i++):
+	      	if (isset($backgroundColors[$i])):
+	      		echo "\"$backgroundColors[$i]\",\n";
+	      	else:
+	      		echo '"rgb(238, 238, 238)",';
+	      		break;
+	      	endif;
+	      endfor;
+	      ?>
 	    ],
 	    hoverOffset: 4
 	  }]
@@ -327,13 +337,13 @@ $backgroundColors = array(
 	};
 
 	new Chart(ctx[0], {
-	    type: 'bar',
+	    type: 'pie',
 	    data: data_om,
 	    options: options[0]
 	});
 
 	new Chart(ctx[1], {
-	    type: 'bar',
+	    type: 'pie',
 	    data: data_pg,
 	    options: options[1]
 	});

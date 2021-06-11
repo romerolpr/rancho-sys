@@ -34,6 +34,8 @@ define(
 	"DBNAME", "dbranch");
 define(
 	"ALIAS", "dbranch");
+define(
+	"LIMIT", 50);
 
 /** 
 	Db TABLES
@@ -57,31 +59,36 @@ $Filter = array(
 		"carimbo" => array(
 			"text" 		=> "Carimbo de data/hora",
 			"content"	=> "carimbo",
-			"drop" 		=> false
+			"drop" 		=> false,
+			"hided"		=> (!isset($_GET["exb_all"]) ? true : false),
 		),
 
 		"email" => array(
 			"text" 		=> "Endereço de e-mail",
 			"content"	=> "email",
-			"drop" 		=> false
+			"drop" 		=> false,
+			"hided"		=> (!isset($_GET["exb_all"]) ? true : false),
 		),
 
 		"organizacao_militar" => array(
 			"text" 		=> "Organização Militar",
 			"content" 	=> "organizacao_militar",
-			"drop" 		=> true
+			"drop" 		=> true,
+			"hided"		=> (!isset($_GET["exb_all"]) ? false : false),
 		),
 
 		"posto_graduacao" => array(
 			"text" 		=> "Posto/Graduação",
 			"content" 	=> "posto_graduacao",
-			"drop" 		=> true
+			"drop" 		=> true,
+			"hided"		=> (!isset($_GET["exb_all"]) ? false : false),
 		),
 
 		"nome" => array(
 			"text" 		=> "Nome de guerra",
 			"content" 	=> "nome",
-			"drop" 		=> false
+			"drop" 		=> false,
+			"hided"		=> (!isset($_GET["exb_all"]) ? false : false),
 		),
 
 

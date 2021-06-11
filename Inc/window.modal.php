@@ -1,21 +1,5 @@
-
 <?php 
 
-
-function testListValues($lista1, $lista2){	
-	$clearArray = array(
-		0 => array(),
-		1 => array()
-	);
-	foreach ($lista1 as $key => $value) 
-		array_push($clearArray[0], $value);
-	foreach ($lista2 as $key => $value) 
-		array_push($clearArray[1], $value);
-
-	return array_diff($clearArray[0], $clearArray[1]);
-}
-
-// include_once 'Inc/geral.inc.php';
 include 'Classes/DisplayAlert.class.php';
 include 'Classes/ObjectDB.class.php';
 include 'Classes/Reader.class.php';
@@ -138,13 +122,13 @@ $myUser['status'] = (in_array($hash, $listByHash) ? "Completo" : "Pendente");
 
 				</div>
 				<div>
-					<span class="label">Posto/ Graduação</span>
+					<span class="label">Posto/ Graduação:</span>
 					<p><?php echo $myUser["posto_graduacao"]; ?></p>
 
-					<span class="label">Carimbo/ Hora</span>
+					<span class="label">Carimbo/ Hora:</span>
 					<p><?php echo $myUser["carimbo"]; ?></p>
 
-					<span class="label">Status</span>
+					<span class="label">Status:</span>
 					<p><?php echo $myUser["status"]; ?></p>
 				</div>
 			</div>
@@ -165,34 +149,131 @@ $myUser['status'] = (in_array($hash, $listByHash) ? "Completo" : "Pendente");
 
 						$returnTable = null;
 						$indice = 0;
-						foreach (
-							array(
-								"segunda_feira" => "Segunda",
-								"terca_feira" => "Terça",
-								"quarta_feira" => "Quarta",
-								"quinta_feira" => "Quinta",
-								"sexta_feira" => "Sexta",
-								"sabado" => "Sábado",
-								"domingo" => "Domingo"
-							) 
-							as $day => $dayValue):
-							$indice++;
-							$returnTable .= "<tr>";
-							$returnTable .= "<td>".$dayValue."</td>";
-							for ($i=0; $i <= 2; $i++): 
+						$diasemana = array('Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado');
+						$refeicao = array('Café', 'Almoço', 'Jantar');
+						$myConfDataRefc = array();
 
-								$returnTable .= "<td>";
-								if ($myUser["status"] != "Pendente"):
-									$returnTable .= "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i>";
-								else:
-									$returnTable .= "<span class=\"btn btn-table red\"><i class=\"fa fa-times\"></i>";
-								endif;
-								$returnTable .= "</td>";
+						foreach ($myConf as $key => $valueConf):
+							if ($valueConf["hash"] == $hash):
 
-							endfor;
-							$returnTable .= "</tr>";
+								foreach ($valueConf[0]["values"] as $keyvalue => $value):
 
+									$explodeString = explode(";", $value);
+
+									$newvalue = $diasemana[date('w', strtotime(str_replace("/", "-", $explodeString[1])))];
+									$explodeString[1] = $newvalue;
+
+									array_push($myConfDataRefc, $explodeString);
+
+								endforeach;
+
+							endif;
 						endforeach;
+
+
+						// var_dump($arrayRefc);
+
+						// if ($myUser["status"] == "Concluído"):
+
+							foreach (
+								array(
+									"domingo" => "Domingo",
+									"segunda_feira" => "Segunda",
+									"terca_feira" => "Terça",
+									"quarta_feira" => "Quarta",
+									"quinta_feira" => "Quinta",
+									"sexta_feira" => "Sexta",
+									"sabado" => "Sábado",
+								) 
+								as $day => $dayValue):
+								$indice++;
+								$returnTable .= "<tr>";
+								$returnTable .= "<td>".$dayValue."</td>";
+
+								for ($i=0; $i <= 2; $i++): 
+
+									$returnTable .= "<td>";
+									// $returnTable .= "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i>";
+									$returnTable .= "-";
+									$returnTable .= "</td>";
+
+								endfor;
+								
+								// 	$returnTable .= "<td>";
+								// 	if ($refeicao[$i] == $value[0]):
+								// 		$returnTable .= "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>"; 
+								// 	else:
+								// 		$returnTable .= "<span class=\"btn btn-table red\"><i class=\"fa fa-times\"></i>";
+								// 	endif;
+								// 	$returnTable .= "</td>";
+								// }
+
+								$returnTable .= "</tr>";
+
+							endforeach;
+
+						// else:
+
+							// var_dump($myConfDataRefc);
+
+							// foreach ($myConfDataRefc as $key => $Refc) {
+
+							// 	var_dump($Refc);
+								
+							// 	$returnTable .= "<tr>";
+							// 	$returnTable .= "<td>Domingo</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Domingo" && $Refc[0] == "Café" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Domingo" && $Refc[0] == "Almoço" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Domingo" && $Refc[0] == "Jantar" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "</tr>";
+
+							// 	$returnTable .= "<tr>";
+							// 	$returnTable .= "<td>Segunda</td>";
+
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Segunda" && $Refc[0] == "Café" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Segunda" && $Refc[0] == "Almoço" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Segunda" && $Refc[0] == "Jantar" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "</tr>";
+
+							// 	$returnTable .= "<tr>";
+							// 	$returnTable .= "<td>Terça</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Terça" && $Refc[0] == "Café" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Terça" && $Refc[0] == "Almoço" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Terça" && $Refc[0] == "Jantar" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "</tr>";
+
+							// 	$returnTable .= "<tr>";
+							// 	$returnTable .= "<td>Quarta</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Quarta" && $Refc[0] == "Café" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Quarta" && $Refc[0] == "Almoço" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Quarta" && $Refc[0] == "Jantar" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "</tr>";
+
+							// 	$returnTable .= "<tr>";
+							// 	$returnTable .= "<td>Quinta</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Quinta" && $Refc[0] == "Café" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Quinta" && $Refc[0] == "Almoço" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Quinta" && $Refc[0] == "Jantar" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "</tr>";
+
+							// 	$returnTable .= "<tr>";
+							// 	$returnTable .= "<td>Sexta</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Sexta" && $Refc[0] == "Café" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Sexta" && $Refc[0] == "Almoço" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Sexta" && $Refc[0] == "Jantar" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "</tr>";
+
+							// 	$returnTable .= "<tr>";
+							// 	$returnTable .= "<td>Sábado</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Sábado" && $Refc[0] == "Café" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Sábado" && $Refc[0] == "Almoço" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "<td>" . ( $Refc[1] == "Sábado" && $Refc[0] == "Jantar" ? "<span class=\"btn btn-table\"><i class=\"fa fa-check\"></i></span>" : "-") . "</td>";
+							// 	$returnTable .= "</tr>";
+
+							// }
+
+
+						// endif;
 
 						echo $returnTable;
 

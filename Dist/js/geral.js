@@ -79,65 +79,7 @@ function mescleItems(){
 	return [mescleItemsVar, trdad];
 }
 
-
-$('.input_checked').on('change', function () {
-
-	let elem = $(this).parent().parent(),
-		hash = elem.attr("data-hash-id")
-		label = $("td[data-hash-id=" + hash + "]").children("div").children("input");
-
- 	var	values = {
- 		'timestamp': new Date().getTime(),
-		'hash': hash,
-		'value': []
-	}
-
-	for (var i = label.length-1; i >= 0; i--) {
-		if (label[i].checked !== false) {
-			if( label[i].dataset.date == elem.attr("data-date")) {
-				values['value'].push(label[i].value.trim() + ";" + elem.attr("data-date"));
-			} else {
-				values['value'].push(label[i].value.trim() + ";" + label[i].dataset.date);
-			}
-		} else {
-			is_empty.push(label[i]);
-		}
-	}
-
- 	itemsBox.push(values);
- 	$("button#saveAll").text("Salvar alterações");
- 	(itemsBox.length > 0) ? $("button#saveAll").prop("disabled", false).show() : $("button#saveAll").prop("disabled", true).hide();
-
-	// console.log(is_empty);
-	// console.log(label);
-});
-
-$('#saveAll').on("click", function(e){
-	e.preventDefault();
-	var data = JSON.stringify(itemsBox),
-		$body = $("body"),
-		request = $.ajax({
-	    url: "Transfer/save.form.php",
-	    type: "POST",
-	    data: "values=" + data,
-	    dataType: "html"
-	});
-
-	$body.addClass("loading");
-	request.done(function(response){
-		$("button#saveAll").text("Salvando...");
-		console.log(response);
-	});
-	request.fail(function(jqXHR, textStatus) {
-	    console.log("Request failed: " + textStatus);
-	});
-	request.always(function() {
-	    $("button#saveAll").prop("disabled", true).text("Salvo!");
-	    console.log("Saved successfully.");
-	    $body.removeClass("loading");
-	});
-
-});	
+InputChange();
 
 $('#report').on("click", function(e){
 	e.preventDefault();
@@ -155,43 +97,39 @@ $('#report').on("click", function(e){
 	}
 });
 
-$(".td-button span[data-filter]").on("click", function(e){
+$('#getMoreItems').on('click', function(){
+	// e.preventDefault();
 
-	// Build dropdown
-	var divdrop = $(this).children("div.sub-dropdown"),
-		request = $.ajax({
-		    url: "Inc/load.drop.php",
+	var newLimit = $(this).attr("data-limit"),
+		 	maxElem = $(this).attr("data-maxElem"),
+			countElem = $("#table-filter tr:not(.bar-table)"),
+			$body = $('body');
+			request = $.ajax({
+		    url: "Inc/get.inc.php",
 		    type: "POST",
-		    data: "content=" + $(this)[0].dataset.filter,
+		    data: "newLimit=" + newLimit + "&countElem=" + countElem.length,
 		    dataType: "html"
-		}),
-		myselfFilter = {
-			filter: $(this)[0].dataset.filter,
-			extract: $(this)[0].dataset.filterExtract
-		},
-		inputDate = [];
-
-	$("div.sub-dropdown").hide();
-	$(".td-button span i").removeClass("rotate180deg");
-
-	$(this).children("i").addClass("rotate180deg");
-	divdrop.show();
-
-	// divdrop.addClass("loading");
-	if (myselfFilter.filterExtract !== undefined){
-		// $(this)
-	} else {
-		request.done(function(data){
-			if (divdrop.html().length <= 0){
-				divdrop.append(data);
-			}
-			divdrop.css({"background":"#fff"});
-			initializeFilter(myselfFilter.filter);
 		});
-		request.fail(function(jqXHR, textStatus) {
-				divdrop.append("<p>Request failed: " + textStatus + "</p>");
-		    console.log("Request failed: " + textStatus);
-		});
+
+	if (countElem.length >= maxElem){
+		// $(this).prop("disabled", true);
 	}
 
-});
+	console.log(countElem.length);
+	$body.addClass("loading");
+
+	request.done(function(data){
+		$body.removeClass("loading");
+		$('#table-filter').append(data);
+		InputChange();
+	});
+	request.fail(function(jqXHR, textStatus) {
+	    console.log("Request failed: " + textStatus);
+	    $(".modal").append("<span class=\"message\">Request failed: "+textStatus+"</span>");
+	    setTimeout(function(){
+	    	$body.removeClass("loading");
+	    }, 2500);
+	});
+
+	searchOnTable();
+});	

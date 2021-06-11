@@ -172,6 +172,8 @@ article h1 {
     font-weight: 400;
     /* line-height: 36px; */
     border-bottom: 1px solid #c0c1c1;
+    box-sizing: border-box;
+    padding-bottom: .4em;
 }
 
 .main {
@@ -258,6 +260,11 @@ article h1 {
     font-size: .8em;
     color: #666;
     float: right;
+}
+
+span.label {
+    font-size: .8em;
+    color: #666;
 }
 
 .form-post input[type=submit],
@@ -580,6 +587,10 @@ td > div {
     border: 0;
 }
 
+.mb-2 {
+    margin-bottom: 1em;
+}
+
 .box-align div {
     width: 100%;
     height: 100%;
@@ -602,7 +613,14 @@ td > div {
 }
 
 .btn {
+    float: left;
     color: #248636; 
+}
+
+.d-center {
+    display: flex;
+    width: 100%;
+    justify-content: center;
 }
 
 
@@ -642,6 +660,7 @@ button[disabled], .disabled {
     background: #d4f7d8;
     padding: .3em;
     border-radius: 3px;
+    text-align: center;
 }
 
 .btn_active {
@@ -661,6 +680,7 @@ button[disabled], .disabled {
 }
 
 .head_table {
+    display: flex;
     margin: 1em 0;
 }
 
@@ -709,6 +729,7 @@ button[disabled], .disabled {
 }*/
 
 span.alert {
+    float: left;
     display: block;
     padding: .6em;
     border-radius: 3px;
@@ -777,6 +798,14 @@ footer p {
     50% 50% 
     no-repeat;
     background-size: 5%;
+    /*display: flex;*/
+    justify-content: center;
+    align-items: center;
+}
+
+.modal span.message {
+    font-size: .9em;
+    color: #444;
 }
 
 /* enquanto estiver carregando, o scroll da página estará desativado */
@@ -786,7 +815,7 @@ body.loading {
 
 /* a partir do momento em que o body estiver com a classe loading,  o modal aparecerá */
 body.loading .modal {
-    display: block!important;
+    display: flex!important;
 }
 
 #filter{
@@ -1041,6 +1070,20 @@ ul.active #filter::after{
     /*filter: opacity(100%);*/
 }
 
+.p-label {
+    font-size: .7em;
+    /*line-height: 24px;*/
+    color: #444;
+}
+
+.searchbar {
+    border: none;
+    padding: .2em;
+    border: 1px solid #c1c1c1;
+    margin-right: .5em;
+    border-radius: 3px;
+}
+
 @media (max-width: 767px) { 
     .content article, aside { width: 100%!important; }
 
@@ -1058,5 +1101,43 @@ ul.active #filter::after{
 
     .window-user .modal-box {
         width: 90%!important;
+    }
+
+    .main {
+        box-sizing: border-box;
+        padding: 1em;
+    }
+
+    .btn_manage {
+        display: block;
+        margin: .2em!important;
+    }
+
+    .head_table .separator {
+        display: none;
+    }
+
+    .head_table {
+        max-height: 20vh;
+        overflow-y: auto;
+    }
+
+    * {
+        word-break: break-word;
+    }
+
+    .content aside,
+    .content aside, .content article {
+        margin: 0;
+        padding: 0;
+    }
+
+    .box-board {
+        width: 100%;
+    }
+
+    .box-bg-board 
+    {
+        padding: 0;
     }
 }

@@ -4,50 +4,46 @@
 Send and load data
 **/
 
-// var_dump($_SESSION["objfile"]["name"]);
-// echo "<br>";
-
-$filterSubset = new MyReadFilter();
-$objReader = PHPExcel_IOFactory::createReader($inputFileName);
-$objReader->setLoadSheetsOnly($_SESSION["objfile"]["worksheetName"]);
-$objReader->setReadFilter($filterSubset);
-$objPHPExcel = $objReader->load($inputTmp);
-$sheetData = $objPHPExcel->getActiveSheet()->toArray();
-
-// var_dump($sheetData);
-$Render->setSheetData($sheetData);
-$Render->setUnset(true);
-$Render->setTableName($_SESSION["objfile"]["name"]);
+$Render->setStatus(true);
 
 if (isset($get["worksheetName"])):
+
+	$filterSubset = new MyReadFilter();
+	$objReader = PHPExcel_IOFactory::createReader($inputFileName);
+	$objReader->setLoadSheetsOnly($_SESSION["objfile"]["worksheetName"]);
+	$objReader->setReadFilter($filterSubset);
+	$objPHPExcel = $objReader->load($inputTmp);
+	$sheetData = $objPHPExcel->getActiveSheet()->toArray();
+	$Render->setSheetData($sheetData);
+
+	
+	$Render->setUnset(true);
+	$Render->setTableName($_SESSION["objfile"]["name"]);
 	$Render->powerOffInsereData(true);
+
+	if ($Render->pushData() !== false):
+		$Render->setStatus(true);
+		header("location: index.php");
+
+	else:
+		$Render->setStatus(false);
+
+		$Alert->setConfig("danger", "<strong>Erro inesperado</strong>: Não foi possível importar os dados da planilha.</span>");
+		echo $Alert->displayPrint();
+
+	endif;
+
 endif;
 
-// if (isset($get["filter"]) && empty($get["filter"])):
-// 	$Render->setFilter(null, true);
-// 	// header("location: index.php");
-// else:
-// 	$Render->manipuleFilter();
-// endif;
 
-// var_dump($Render->getFilter());
-
-/* Get object data and render*/
-if ($Render->pushData() !== false):
-	$Render->setStatus(true);
-else:
-	$Render->setStatus(false);
-endif;
-
-$getSheetBody = $Render->getSheetData();
-$getSheetBody = count($getSheetBody[0]) - 2;
-
+if (isset($get["filter"]) && empty($get["filter"])):
+	$Render->setFilter(null, true);
 	// header("location: index.php");
-// endif;
+else:
+	$Render->manipuleFilter();
+endif;
 
-// var_dump($Render->getSheetData());
-
-$fromDb = $Db->return_query($Db->connect_db(), TB_RESP);
+$fromDb = $Db->return_query($Db->connect_db(), TB_RESP, null, false, LIMIT);
 
 // var_dump($fromDb);
 
@@ -64,16 +60,32 @@ if (!isset($get["filter"])):
 else:
 	$sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage btn_active\" title=\"Desativar modo: Visualização de filtro\"><i class=\"fas fa-filter\"></i></a>";
 endif;
+
 $sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage\" title=\"Restaurar tabela\"><i class=\"fas fa-undo-alt\"></i></a>";
+
 $sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage btn_expand\" title=\"Expandir tabela\"><i class=\"fas fa-expand\"></i></a>";
+
 $sheetBody .= "<a href=\"". (isset($get) ? replaceUrl("&worksheetName=None") : replaceUrl("worksheetName=None"))."\" class=\"btn btn_link btn_manage\" title=\"Alterar Datasheet\"><i class=\"fas fa-exchange-alt\"></i></a>";
-$sheetBody .= "<a href=\"". (!isset($get["exb_all"]) ? (isset($get) ? replaceUrl("&exb_all") : replaceUrl("exb_all")) : "") ."\" class=\"btn btn_link btn_manage ". (isset($get["exb_all"]) ? "btn_active" : null) ."\" title=\"Exibir todos os dias\"><i class=\"fas fa-globe\"></i></a>";
-$sheetBody .= "<a href=\"".$url."index.php?action=generateReport\" class=\"btn btn_link btn_manage\" title=\"Gerar relatório\" id=\"report\"><i class=\"far fa-file-alt\"></i></a>";
+
+$sheetBody .= "<a href=\"". (!isset($get["exb_all"]) ? (isset($get) ? replaceUrl("&exb_all") : replaceUrl("exb_all")) : (isset($get["filter"]) ? '?filter' : "index.php")) ."\" class=\"btn btn_link btn_manage ". (isset($get["exb_all"]) ? "btn_active" : null) ."\" title=\"Exibir todos os dias\"><i class=\"fas fa-globe\"></i></a>";
+
+$sheetBody .= "<a target=\"_blank\" href=\"".$url."index.php?action=generateReport\" class=\"btn btn_link btn_manage\" title=\"Gerar relatório\"><i class=\"far fa-file-alt\"></i></a>";
 $sheetBody .= "<span class=\"separator\">|</span>";
+
 $sheetBody .= "<a href=\"".$url."index.php?exit=session_obj\" class=\"btn btn_link btn_manage btn_click_consult\" title=\"Fechar arquivo\" data-action=\"fechar\"><i class=\"fas fa-power-off\"></i></a>";
+
 $sheetBody .= "<button class=\"btn btn_link btn_manage\" title=\"Salvar alterações\" disabled id=\"saveAll\">Salvar alterações</button>";
 
-$sheetBody .= "<table data-exb=\"".((!isset($get["exb_all"])) ? "default" : "exb_all")."\">";
+$sheetBody .= "<table id=\"table-filter\" data-exb=\"".((!isset($get["exb_all"])) ? "default" : "exb_all")."\">";
+
+if(isset($get["filter"])): 
+	$sheetBody .= '<div class="fright mb-2">';
+		$sheetBody .= '<div class="box">';
+			$sheetBody .= '<span class="label">Filtrar por: </span>';
+			$sheetBody .= '<input type="text" name="searchByName" class="searchbar" id="searchbar" placeholder="Nome, arranchamento...">';
+		$sheetBody .= '</div>';
+	$sheetBody .= '</div>';
+endif;
 
 $sheetBody .= "<div id=\"load_sheet_data\">";
 include FRONT . "pages/load.sheet.php";
@@ -93,5 +105,11 @@ else:
 	// var_dump($Render->getStatus());
 	echo $Render->constructTable($sheetData);
 endif;
+
+$countElem 		= count($fromDb);
+$countElemMax 	= count($Db->return_query($Db->connect_db(), TB_RESP, null, false, null));
+$resultCount = $countElem + LIMIT;
+$newLimit = ( $resultCount <= $countElem ? $resultCount : $countElemMax );
+echo "<div class=\"d-center\"><span class=\"btn btn-bg\" data-maxElem=\"".$countElemMax."\" data-limit=\"". $newLimit ."\" id=\"getMoreItems\">Exibir mais ".LIMIT." linhas</span></div>";
 
 ?>

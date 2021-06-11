@@ -1,19 +1,31 @@
-<?php
+<?php 
 
-$Id = array();
-$fromDbComplete = $Db->return_query($Db->connect_db(), TB_RESP, null, false, null);
+session_start();
 
-if (isset($get["sort"])):
-	$getSort = explode(":", $get["sort"]);
-	aasort($fromDb, $getSort[0], $getSort[1]);
-endif;
+$newLimit = $_POST["newLimit"];
+$countElem = $_POST["countElem"];
+
+// var_dump($countElem);
+
+include 'Classes/ObjectDB.class.php';
+include 'Classes/Reader.class.php';
+include 'define.inc.php';
+include 'functions.inc.php';
+
+$Render = new Render();
+$Db = new ObjectDB();
+$Db->setter(HOST, USER, PASS, DBNAME);
+$fromDb = $Db->return_query($Db->connect_db(), TB_RESP, null, false, array($countElem, $newLimit));
+$date = new DateTime();
+$Today  = $date->format("d/m/Y");
+
+$sheetBody = null;
 
 foreach ($fromDb as $key => $value):
 
+	// var_dump($value["datasheet"]);
 
-	if ($_SESSION['objfile']['name'] == $value["datasheet"]):
-
-		// var_dump($value["datasheet"]);
+	if ($_SESSION["objfile"]["name"] == $value["datasheet"]):
 
 		$Render->setStatus(true);
 
@@ -32,54 +44,8 @@ foreach ($fromDb as $key => $value):
 			)
 		);
 
-			// Td base, header
-			$sheetHeader = null;
-			$sheetHeader .= "<tr class=\"bar-table\">";
-
-			// var_dump($Filter["buttons"]);
-
-			foreach ($Filter["buttons"] as $keybuttons => $button) {
-
-				$content = $button["content"];
-
-				if ($button["hided"] !== true):
-					$sheetHeader .= "<td ".($Render->getFilter() ? "class=\"td-button\" data-content-children=\"".$content."\"><div><span data-filter=\"".$content."\" class=\"btn btn_order fright\"><i class=\"fas fa-sort-down\"></i><div class=\"sub-dropdown drop-render\"></div></span></div><div>" : ">" );
-
-					$sheetHeader .= "<span class=\"title\">" . $button["text"] . "</span>";
-					$sheetHeader .= ($Render->getFilter() ? "</div></td>" : "</td>" );
-				endif;
-
-			}
-
-			// var_dump($ObjDecoded["refc"]);
-
-
-			// All days
-			foreach ($ObjDecoded["refc"] as $keyRefc => $valueRefc):
-
-				// var_dump($ObjDecoded["refc"]);
-
-				$diasemana_numero = date('w', strtotime(str_replace("/", "-", $valueRefc[1])));
-				if ($Today == $valueRefc[1] || isset($get["exb_all"]))
-					# 
-
-					$sheetHeader .= "<td ". $Render->getFilter() ."><span class=\"title\">[" . $diasemana[$diasemana_numero] . "] " .  $valueRefc[1] . "".($Render->getFilter() ? "</span></div>" : null)."</td>";
-
-
-			endforeach;
-
-			if (!in_array($value["id"], $Id))
-				array_push($Id, array($value["id"], $value["datasheet"]));
-
-			if (!isset($added))
-				$sheetBody .= $sheetHeader;
-				$added = true;
-
-			$sheetBody .= "</tr>";
-
 			$sheetBody .= "<tr data-hash=\"".$value["hash"]."\">";
-			// $sheetBody .= "<td>" . $value["hash"] . "</td>";
-			
+
 			if ($Filter["buttons"]["carimbo"]["hided"] !== true)
 				$sheetBody .= "<td data-content=\"carimbo\">" . $value["carimbo"] . "</td>";
 
@@ -98,7 +64,7 @@ foreach ($fromDb as $key => $value):
 			// Creating the button checkbox and text
 			foreach ($ObjDecoded["refc"] as $keyRefc => $valueRefc):
 
-				if ($Today == $valueRefc[1] || isset($get["exb_all"])):
+				if ($Today == $valueRefc[1] || isset($_GET["exb_all"])):
 					$arranchamento = explode(",", $valueRefc[0]);
 					if (is_array($arranchamento)):
 
@@ -170,5 +136,6 @@ foreach ($fromDb as $key => $value):
 
 endforeach;	
 
+echo $sheetBody;
 
 ?>
