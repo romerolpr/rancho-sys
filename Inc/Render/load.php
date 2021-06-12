@@ -43,22 +43,23 @@ else:
 	$Render->manipuleFilter();
 endif;
 
-$fromDb = $Db->return_query($Db->connect_db(), TB_RESP, null, false, LIMIT);
+$paramLimit = (isset($get["filter"]) || isset($get["exb_all"]) ? null : LIMIT);
+$fromDb = $Db->return_query($Db->connect_db(), TB_RESP, null, false, $paramLimit);
 
 // var_dump($fromDb);
 
 $Today  = $date->format("d/m/Y");
 $diasemana = array('Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sabado');
 
-$sheetBody = "<div class=\"box-table\">";
+$sheetBody = "<div class=\"box-table ". (isset($get["filter"]) || isset($get["exb_all"]) ? 'exbAll' : null) ."\">";
 $sheetBody .= "<p class=\"fleft d-center-items sticky\">";
 $sheetBody .= "<span class=\"fleft\"><strong>" . $Render->getDatasheetName() ."</strong></span>";
 $sheetBody .= "<span class=\"fright head_table\">";
 
 if (!isset($get["filter"])):
-	$sheetBody .= "<a href=\"".$url."index.php?filter\" class=\"btn btn_link btn_manage\" title=\"Visualização de filtro\" id=\"power_filter\"><i class=\"fas fa-filter\"></i></a>";
+	$sheetBody .= "<a href=\"".$url."index.php?filter".(isset($get["exb_all"]) ? "&exb_all" : null)."\" class=\"btn btn_link btn_manage\" title=\"Visualização de filtro\" id=\"power_filter\"><i class=\"fas fa-filter\"></i></a>";
 else:
-	$sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage btn_active\" title=\"Desativar modo: Visualização de filtro\"><i class=\"fas fa-filter\"></i></a>";
+	$sheetBody .= "<a href=\"".$url."index.php".(isset($get["exb_all"]) ? "?exb_all" : null)."\" class=\"btn btn_link btn_manage btn_active\" title=\"Desativar modo: Visualização de filtro\"><i class=\"fas fa-filter\"></i></a>";
 endif;
 
 $sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage\" title=\"Restaurar tabela\"><i class=\"fas fa-undo-alt\"></i></a>";
@@ -107,9 +108,16 @@ else:
 endif;
 
 $countElem 		= count($fromDb);
-$countElemMax 	= count($Db->return_query($Db->connect_db(), TB_RESP, null, false, null));
+$countElemMax 	= array($Db->return_query($Db->connect_db(), TB_RESP, null, false, null), $Db->return_query($Db->connect_db(), TB_RESP, null, false, LIMIT));
+$row = 0;
+foreach ($countElemMax[0] as $key => $value) {
+	if ($value["datasheet"] == $Render->getTableName())
+		$row += 1;
+}
 $resultCount = $countElem + LIMIT;
-$newLimit = ( $resultCount <= $countElem ? $resultCount : $countElemMax );
-echo "<div class=\"d-center\"><span class=\"btn btn-bg\" data-maxElem=\"".$countElemMax."\" data-limit=\"". $newLimit ."\" id=\"getMoreItems\">Exibir mais ".LIMIT." linhas</span></div>";
+$newLimit = ( $resultCount <= $countElem ? $resultCount : count($countElemMax[1]) );
+echo "<div class=\"d-center bg-loading\" data-maxElem=\"".$row."\" data-limit=\"". $newLimit ."\"></div>";
+
+
 
 ?>

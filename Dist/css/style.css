@@ -119,6 +119,7 @@ h2 {
     padding: 1em .5em;
     box-sizing: border-box;
     margin: 1em 0;
+    margin-bottom: 0;
 }
 
 .content aside {
@@ -1082,6 +1083,15 @@ ul.active #filter::after{
     border: 1px solid #c1c1c1;
     margin-right: .5em;
     border-radius: 3px;
+}
+
+.bg-loading {
+    display: none;
+    background: rgba( 255, 255, 255, 1 )
+    url(../image/sheet/loading.gif) no-repeat;
+    background-size: 10%;
+    background-position: center;
+    padding: 1.5em 0;
 }
 
 @media (max-width: 767px) { 

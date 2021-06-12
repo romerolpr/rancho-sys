@@ -13,12 +13,11 @@ include_once 'Inc/geral.inc.php';
 $Render = new Render();
 $Alert = new DisplayAlert();
 $Db = new ObjectDB();
-
 $Db->setter(HOST, USER, PASS, DBNAME);
 
-$Resp = $Db->return_query($Db->connect_db(), TB_RESP);
-$Conf = $Db->return_query($Db->connect_db(), TB_CONF);
-$fromDb = $Db->return_query($Db->connect_db(), TB_RESP);
+$Resp = $Db->return_query($Db->connect_db(), TB_RESP, null, false, null);
+$Conf = $Db->return_query($Db->connect_db(), TB_CONF, null, false, null);
+$fromDb = $Db->return_query($Db->connect_db(), TB_RESP, null, false, null);
 
 $myResp = array();
 $myConf = array();
@@ -179,7 +178,7 @@ $bodyTable = "<table></table>";
 		<aside>
 		    <nav>
 		        <ul>
-		            <li><a href="<?php echo $url?>report.php?aba=dailyVoucher" title="Vale diário">Vale diário</a></li>
+		            <li><a href="<?php echo $url?>report.php?aba=daily-voucher" title="Vale diário">Vale diário</a></li>
 		            <li><a href="<?php echo $url?>report.php?aba=missing" title="Relatório: Faltantes">Relatório: Faltantes</a></li>
 		            <li><a href="<?php echo $url?>report.php?aba=gift" title="Relatório: Presentes">Relatório: Presentes</a></li>
 		            <!-- <li><a href="<?php echo $url?>report.php" title="Planilha de relatório individual">Planilha de relatório individual</a></li> -->
@@ -196,42 +195,51 @@ $bodyTable = "<table></table>";
 
 				<p class="fleft d-center-items sticky">
 					<?php if (!isset($get["aba"])): ?>
-						<span class="fleft"><strong>Planilha de relatório individual</strong></span>
-						<span class="fright head_table">
+						<span class="fleft"><strong>Índices gerais: Dashboard</strong></span>
+						<!-- <span class="fright head_table">
 							<?php if(isset($get["filter"])): ?>
 								<a href="report.php" class="btn btn_link btn_manage btn_active" title="Desativar modo: Visualização de filtro"><i class="fas fa-filter"></i></a>
 							<?php else: ?>
 								<a href="report.php?filter" class="btn btn_link btn_manage" title="Visualização de filtro" id="power_filter"><i class="fas fa-filter"></i></a>
 							<?php endif; ?>
 							<a href="report.php" class="btn btn_link btn_manage btn_expand" title="Expandir tabela"><i class="fas fa-expand"></i></a>
-							<!-- <input type="search" name="searchByName" class="search"> -->
+							<input type="search" name="searchByName" class="search"> -->
 					<?php elseif ($get["aba"] == "dashboard"): ?>
 						<span class="fleft"><strong>Índices gerais: Dashboard</strong></span>
-					<?php elseif ($get["aba"] == "dailyVoucher"): ?>
+					<?php elseif ($get["aba"] == "daily-voucher"): ?>
 						<span class="fleft"><strong>Vale diário</strong></span>
 					<?php elseif ($get["aba"] == "missing"): ?>
 						<span class="fleft"><strong>Relatório: Faltantes</strong></span>
 					<?php elseif ($get["aba"] == "gift"): ?>
 						<span class="fleft"><strong>Relatório: Presentes</strong></span>
 					<?php else: ?>
-						<span class="fleft"><strong>undefined</strong></span>
+						<span class="fleft"><strong>404: Não encontrado</strong></span>
 					<?php endif; ?>
-					</span>
+					<!-- </span> -->
 				</p>
 
 				<?php 
 
 				if (!isset($get["aba"])):
 
-					include REPORT . 'painel.inc.php';
+					// include REPORT . 'painel.inc.php';
+					include REPORT . 'dashboard.inc.php';
 
 				else:
 
-					if ($get["aba"] == "dashboard")
+					if ($get["aba"] == "daily-voucher"):
+						include REPORT . 'daily-voucher.php';
+
+					elseif ($get["aba"] == "dashboard"):
 						include REPORT . 'dashboard.inc.php';
 
-					if (in_array($get["aba"], array('faltantes', 'presentes')))
+					elseif (in_array($get["aba"], array('faltantes', 'presentes'))):
 						include REPORT . 'relatorios.inc.php';
+
+					else:
+						include REPORT . '404.php';
+
+					endif;
 
 
 				endif;

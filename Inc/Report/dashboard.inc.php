@@ -198,7 +198,7 @@ $backgroundColors = array(
         plugins: {
             title: {
                 display: true,
-                text: 'Arranchamento por Organização militar'
+                text: 'Organização militar'
             }
         }
     },
@@ -206,7 +206,7 @@ $backgroundColors = array(
         plugins: {
             title: {
                 display: true,
-                text: 'Arranchamento por Posto/ Graduação'
+                text: 'Posto/ Graduação'
             }
         }
     },

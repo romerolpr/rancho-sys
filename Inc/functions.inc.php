@@ -49,3 +49,74 @@ function aasort (&$array, $order, $key) {
 
     $array = $ret;
 }
+
+function encodeRegexPg($p_g){
+    return strtolower(preg_replace(array("/(º|\/)/"), explode(" ",""), str_replace(" ", "_", utf8_decode(trim($p_g)))));
+}
+
+
+
+function getRefc($posto_graduacao, $refc, $returnCount = true, $table = TB_RESP) {
+
+    $count = 0;
+    $militar = array();
+
+    $Db = new ObjectDB();
+    $Db->setter(HOST, USER, PASS, DBNAME);
+
+    $datasheet = (isset($_SESSION["objfile"]) ? $_SESSION["objfile"]["name"] : null);
+    $formDb = $Db->return_query($Db->connect_db(), $table, null, false, null);
+
+    foreach ($formDb as $key => $value):
+
+        if ($value["datasheet"] == $datasheet):
+
+            foreach ($posto_graduacao as $keypg => $p_g):
+                
+                if ($p_g == encodeRegexPg($value["posto_graduacao"])):
+
+                    // var_dump($p_g);
+
+                    $foreachPg = array(
+                        "segunda_feira" => explode("&&", utf8_decode($value["segunda_feira"])),
+                        "terca_feira" => explode("&&", utf8_decode($value["terca_feira"])),
+                        "quarta_feira" => explode("&&", utf8_decode($value["quarta_feira"])),
+                        "quinta_feira" => explode("&&", utf8_decode($value["quinta_feira"])),
+                        "sexta_feira" => explode("&&", utf8_decode($value["sexta_feira"])),
+                        "sabado" => explode("&&", utf8_decode($value["sabado"])),
+                        "domingo" => explode("&&", utf8_decode($value["domingo"])),
+                    );
+
+                    // $count += calcValuesByPg($foreachPg, $refc);
+
+                    foreach ($foreachPg as $key => $valDia):
+
+                        $foreachValue = explode(",", $valDia[0]);
+
+                        foreach ($foreachValue as $keyforeach => $foreach):
+
+                            if (preg_match("/$refc/", trim($foreach))):
+
+                                $count += 1;
+                                if (!in_array($value, $militar))
+                                    array_push($militar, $value);
+
+                            endif;
+
+                        endforeach;
+
+                        
+
+                    endforeach;
+
+                endif;
+
+             endforeach;
+
+        endif;
+
+    endforeach;
+
+    return array(intval($count), $militar);
+
+}

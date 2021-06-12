@@ -36,7 +36,7 @@ function search(value, targetSelector){
 
 	$("tr[data-hash]").filter(function() {
 		$(this).hide();
-    if ($(this).text().toLowerCase().indexOf(value) > -1){
+    if ($(this).text().toLowerCase() == value){
     	$(this).show();
     }
   });
