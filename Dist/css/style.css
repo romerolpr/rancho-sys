@@ -168,9 +168,15 @@ p {
     box-sizing: border-box;
 }
 
-.breadcrumb strong { text-decoration: underline; font-weight: 400;}
+.breadcrumb strong { 
+    text-decoration: underline; 
+    font-weight: 400;
+}
+
 .breadcrumb span, 
-.breadcrumb strong { color: #1f752a}
+.breadcrumb strong { 
+    color: #1f752a
+}
 
 article h1 {
     font-size: 1.2em;

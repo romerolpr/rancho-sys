@@ -11,7 +11,10 @@ if (isset($_POST["Envia"]) && !empty($_POST["Envia"])):
 			"inputFileType" => $_FILES["file"]["type"],
 			"ExcelFileType" => "Excel2007",
 			"worksheetName" => null,
-			"file" => array("size" => $_FILES["file"]["size"], filemtime($_FILES["file"]))
+			"file" => array(
+				"size" => $_FILES["file"]["size"], 
+				null
+			)
 		);
 
 		$format = explode(".", $ObjLoad["name"]);
@@ -25,7 +28,7 @@ if (isset($_POST["Envia"]) && !empty($_POST["Envia"])):
 
 			$ObjLoad["name"] = $timestamp . "_" . $newfilename;
 			$dir = TRANSFER . $ObjLoad["name"];
-
+			$ObjLoad["file"][1] = filemtime($_FILES["file"]);
 			if(move_uploaded_file($ObjLoad["tmp_name"], $dir)):
 				$ObjLoad["tmp_name"] = $dir;
 
