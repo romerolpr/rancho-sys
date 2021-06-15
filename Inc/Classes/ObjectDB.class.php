@@ -58,8 +58,8 @@ class ObjectDB
 
 	public static function insert_query($db, $table, $obj)
 	{
-		// try 
-		// {	
+		try 
+		{	
 
 			
 		 	$sql = self::return_query($db, $table, array(array("nome", "posto_graduacao", "segunda_feira", "domingo"), $obj));
@@ -81,10 +81,10 @@ class ObjectDB
 			endif;
 
 
-		// } catch (PDOException $e)
-		// {
-		// 	return "Impossível inserir novo registro";
-		// }
+		} catch (PDOException $e)
+		{
+			return false;
+		}
 	}
 
 	public static function insert_data($db, $table, $obj)

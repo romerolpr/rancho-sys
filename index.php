@@ -133,7 +133,7 @@ endif;
 
 				else: 
 
-					if (isset($_SESSION["objfile"])):
+					if (isset($_SESSION["objfile"]["name"])):
 						$Alert->setConfig("warning", "<strong>Aviso</strong>: O arquivo \"".$_SESSION["objfile"]["name"]."\" permanece aberto. <a href='index.php?exit=session_obj' title='Fechar arquivo' class='btn btn_click_consult'>Fechar arquivo</a></span>");
 						echo ($Alert->displayPrint());
 					endif;

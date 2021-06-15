@@ -28,7 +28,7 @@ if (isset($get["worksheetName"])):
 	else:
 		$Render->setStatus(false);
 
-		$Alert->setConfig("danger", "<strong>Erro inesperado</strong>: Não foi possível importar os dados da planilha.</span>");
+		$Alert->setConfig("danger", "<strong>Erro inesperado</strong>: Não foi possível importar 1 ou mais dados da planilha.</span>");
 		echo $Alert->displayPrint();
 
 	endif;

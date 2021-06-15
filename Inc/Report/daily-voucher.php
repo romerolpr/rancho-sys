@@ -12,7 +12,7 @@ $arrayNum = array(
 			"3_sgt" => array(0, 0),
 			"civil" => array(0, 0),
 			"cb_sd" => array(0, 0),
-			"total" => (count($listPendent) + count($listComplete))
+			"total" => 0
 		),
 
 	"valor_final" => array(
@@ -40,11 +40,17 @@ $arrayNum = array(
 
 );
 
+
+
 // Calc by pt
 foreach ($Resp as $key => $value):
-	$pgreal = strtolower(preg_replace(array("/(º|\/)/"), explode(" ",""), str_replace(" ", "_", utf8_decode(trim($value["posto_graduacao"])))));
-	$arrayNum["posto_graduacao"][$pgreal][0] += 1;
-	$arrayNum["posto_graduacao"][$pgreal][1] = round(($arrayNum["posto_graduacao"][$pgreal][0] * 100) / $arrayNum["posto_graduacao"]["total"]);
+	if ($value["datasheet"] == $_SESSION["objfile"]["name"]):
+		$pgreal = strtolower(preg_replace(array("/(º|\/)/"), explode(" ",""), str_replace(" ", "_", utf8_decode(trim($value["posto_graduacao"])))));
+		$arrayNum["posto_graduacao"][$pgreal][0] += 1;
+		$arrayNum["posto_graduacao"]["total"] += 1;
+
+		$arrayNum["posto_graduacao"][$pgreal][1] = round(($arrayNum["posto_graduacao"][$pgreal][0] * 100) / $arrayNum["posto_graduacao"]["total"]);
+	endif;	
 endforeach;
 
 // Calc total values by pt
@@ -84,9 +90,13 @@ $arrayNum["valor_final"]["total"]["refc"][2] = ($arrayNum["valor_final"]["oficia
 
 $arrayNum["valor_final"]["total"]["refc"]["total"] = $arrayNum["valor_final"]["total"]["refc"][0] + $arrayNum["valor_final"]["total"]["refc"][1] + $arrayNum["valor_final"]["total"]["refc"][2];
 
+
+
 ?>
 
 <!-- <p>Daily Voucher</p> -->
+
+
 
 <table>
 	
@@ -127,95 +137,85 @@ $arrayNum["valor_final"]["total"]["refc"]["total"] = $arrayNum["valor_final"]["t
 
 <br>
 
+<p>Exibir militar por Cassino</p>
 <select name="change_cassino" data-href="<?php echo "report.php?aba=daily-voucher&cassino="?>">
 	<option value="oficial" selected <?php echo (isset($get["cassino"]) && $get["cassino"] == "oficial" ? "selected" : null ) ?> >Oficial</option>
 	<option value="st_sgt" <?php echo (isset($get["cassino"]) && $get["cassino"] == "st_sgt" ? "selected" : null )?> >St/ Sgt</option>
 	<option value="cb_sd" <?php echo (isset($get["cassino"]) && $get["cassino"] == "cb_sd" ? "selected" : null )?> >Cb/ Sd</option>
 </select>
 
-<?php if(isset($get["cassino"])): ?>
-	<table>
-		<tr class="bar-table">
-			<td>#</td>
-			<td>Nome</td>
-			<td>Organização Militar</td>
-			<td>Posto/ Graduação</td>
-			<td>Refeição</td>
-		</tr>
+<table>
+	<tr class="bar-table">
+		<td>#</td>
+		<td>Nome</td>
+		<td>Organização Militar</td>
+		<td>Posto/ Graduação</td>
+		<td>Refeição</td>
+	</tr>
 
 		<?php
 
-		$cassino = $get["cassino"];
 		$sheetBody = null;
-		if (!empty($cassino)):
-			foreach ($arrayNum["valor_final"][$cassino][2][1][1] as $key => $value):
-				
-				
-				$refeicoes = array();
-				$ObjDecoded = array(
-					"nome" => ucfirst(strtolower(utf8_decode(trim($value["nome"])))),
-					"posto_graduacao" => utf8_decode($value["posto_graduacao"]),
-					"organizacao_militar" => utf8_decode($value["organizacao_militar"]),
-					"refc" => array(
-						explode("&&", utf8_decode($value["segunda_feira"])),
-						explode("&&", utf8_decode($value["terca_feira"])),
-						explode("&&", utf8_decode($value["quarta_feira"])),
-						explode("&&", utf8_decode($value["quinta_feira"])),
-						explode("&&", utf8_decode($value["sexta_feira"])),
-						explode("&&", utf8_decode($value["sabado"])),
-						explode("&&", utf8_decode($value["domingo"])),
-					)
-				);
 
-				$sheetBody .= "<tr data-hash=\"".$value["hash"]."\">";
+		$param = (isset($get["cassino"]) && !empty($get["cassino"]) ? $get["cassino"] : "oficial");
 
-				$sheetBody .= "<td>" . ++$key . "</td>";
-				$sheetBody .= "<td data-content=\"nome\">" . $ObjDecoded["nome"] . "</td>";
-				$sheetBody .= "<td data-content=\"organizacao_militar\">" . $ObjDecoded["organizacao_militar"] . "</td>";
-				$sheetBody .= "<td data-content=\"posto_graduacao\">" . $ObjDecoded["posto_graduacao"] . "</td>";
-				
+		foreach ($arrayNum["valor_final"][$param][2][1][1] as $key => $value):
+			
+			$refeicoes = array();
+			$ObjDecoded = array(
+				"nome" => ucfirst(strtolower(utf8_decode(trim($value["nome"])))),
+				"posto_graduacao" => utf8_decode($value["posto_graduacao"]),
+				"organizacao_militar" => utf8_decode($value["organizacao_militar"]),
+				"refc" => array(
+					explode("&&", utf8_decode($value["segunda_feira"])),
+					explode("&&", utf8_decode($value["terca_feira"])),
+					explode("&&", utf8_decode($value["quarta_feira"])),
+					explode("&&", utf8_decode($value["quinta_feira"])),
+					explode("&&", utf8_decode($value["sexta_feira"])),
+					explode("&&", utf8_decode($value["sabado"])),
+					explode("&&", utf8_decode($value["domingo"])),
+				)
+			);
 
-				
+			$sheetBody .= "<tr data-hash=\"".$value["hash"]."\">";
 
-				// Creating the button checkbox and text
-				foreach ($ObjDecoded["refc"] as $keyRefc => $valueRefc):
+			$sheetBody .= "<td>" . ++$key . "</td>";
+			$sheetBody .= "<td data-content=\"nome\">" . $ObjDecoded["nome"] . "</td>";
+			$sheetBody .= "<td data-content=\"organizacao_militar\">" . $ObjDecoded["organizacao_militar"] . "</td>";
+			$sheetBody .= "<td data-content=\"posto_graduacao\">" . $ObjDecoded["posto_graduacao"] . "</td>";
+			
 
-					$newValue = explode(",", $valueRefc[0]);
+			
 
-					foreach ($newValue as $keynewValue => $valor) {
-						if (!in_array(trim($valor), $refeicoes))
-							array_push($refeicoes, trim($valor));
-					}
+			// Creating the button checkbox and text
+			foreach ($ObjDecoded["refc"] as $keyRefc => $valueRefc):
 
-				endforeach;
+				$newValue = explode(",", $valueRefc[0]);
 
-				// var_dump($refeicoes);
-
-				$sheetBody .= "<td data-content=\"posto_graduacao\">" . $refeicoes[0] . (isset($refeicoes[1]) && !empty($refeicoes[1]) ? ", " . $refeicoes[1] : null) . (isset($refeicoes[2]) && !empty($refeicoes[2]) ? ", " . $refeicoes[2] : null) . "</td>";
-
-				$sheetBody .= "</tr>";
-
-				// break;
+				foreach ($newValue as $keynewValue => $valor) {
+					if (!in_array(trim($valor), $refeicoes))
+						array_push($refeicoes, trim($valor));
+				}
 
 			endforeach;
 
-		endif;
+			// var_dump($refeicoes);
+
+			$sheetBody .= "<td data-content=\"posto_graduacao\">" . $refeicoes[0] . (isset($refeicoes[1]) && !empty($refeicoes[1]) ? ", " . $refeicoes[1] : null) . (isset($refeicoes[2]) && !empty($refeicoes[2]) ? ", " . $refeicoes[2] : null) . "</td>";
+
+			$sheetBody .= "</tr>";
+
+			// break;
+
+		endforeach;
 
 		echo $sheetBody;
 
+		// var_dump($arrayNum);
+
 		?>
 
-	</table>
-<?php endif;
-
-
-// var_dump(count($arrayNum["valor_final"]["oficial"][2][1][1]));
-// var_dump($arrayNum["valor_final"]["st_sgt"][2]);
-// var_dump($arrayNum["valor_final"]["cb_sd"][2]);
-
-// var_dump($arrayNum["valor_final"]["total"]["refc"]);
-
-?>
+</table>
 
 <script>
 	$("select[name=change_cassino]").on("change", function(){

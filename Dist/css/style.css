@@ -372,6 +372,11 @@ table tr:not(.bar-table):nth-child(2n + 1) {
 
 }
 
+
+
+.center {
+    min-height: 100%!important;
+}
 .bg-shadow {
     box-shadow:0 3px 10px rgb(0 0 0 / 5%);
     /*box-sizing: border-box;*/
@@ -562,11 +567,9 @@ td > div {
     overflow-x: auto;
 }
 
-
-
 .window_fixed {
     position: fixed;
-    z-index: 9998;
+    z-index: 999998;
     top: 0;
     left: 0;
     width: 100%;
@@ -730,7 +733,7 @@ button[disabled], .disabled {
 }*/
 
 span.alert {
-    float: left;
+    /*float: left;*/
     display: block;
     padding: .6em;
     border-radius: 3px;

@@ -333,8 +333,14 @@ $(".td-button span[data-filter]").on("click", function(e){
 		},
 		inputDate = [];
 
+	// console.log(cancelar);
+
 	$("div.sub-dropdown").hide();
 	$(".td-button span i").removeClass("rotate180deg");
+
+	$("button.btn_cancel").click(function(){
+		$(".sub-dropdown").hide();
+	});	
 
 	$(this).children("i").addClass("rotate180deg");
 	divdrop.show();

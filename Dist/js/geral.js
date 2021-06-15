@@ -110,10 +110,12 @@ function getMoreItems(){
 		    dataType: "html"
 		});
 
+	divLoading.hide();
+
 	if (countElem.length >= maxElem){
-		divLoading.hide();
+		$("body").removeClass("loading");
 	} else {
-		divLoading.fadeIn(500);
+		$("body").addClass("loading");
 	}
 
 	// console.log(countElem.length);
@@ -121,7 +123,7 @@ function getMoreItems(){
 	request.done(function(data){
 		if (countElem.length < maxElem){
 
-			divLoading.fadeOut(500);
+			$("body").removeClass("loading");
 
 			$('#table-filter').append(data);
 			InputChange();

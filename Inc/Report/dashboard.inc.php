@@ -31,6 +31,7 @@ foreach ($Resp as $key => $value):
 	$pgreal = strtolower(preg_replace(array("/(º|\/)/"), explode(" ",""), str_replace(" ", "_", utf8_decode(trim($value["posto_graduacao"])))));
 
 	$arrayNum["organizacao_militar"][$omreal][0] += 1;
+	$arrayNum["total"] += 1;
 	$arrayNum["organizacao_militar"][$omreal][1] = round(($arrayNum["organizacao_militar"][$omreal][0] * 100) / $arrayNum["total"]);
 
 	$arrayNum["posto_graduacao"][$pgreal][0] += 1;

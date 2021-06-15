@@ -8,12 +8,12 @@ if (isset($get["sort"])):
 	aasort($fromDb, $getSort[0], $getSort[1]);
 endif;
 
-foreach ($fromDb as $key => $value):
+foreach ($fromDbComplete as $key => $value):
 
-
-	if ($_SESSION['objfile']['name'] == $value["datasheet"]):
 
 		// var_dump($value["datasheet"]);
+	if ($_SESSION['objfile']['name'] == $value["datasheet"]):
+
 
 		$Render->setStatus(true);
 
@@ -31,6 +31,10 @@ foreach ($fromDb as $key => $value):
 				explode("&&", utf8_decode($value["domingo"])),
 			)
 		);
+
+		// var_dump($ObjDecoded);
+
+		// break;
 
 			// Td base, header
 			$sheetHeader = null;
@@ -115,7 +119,7 @@ foreach ($fromDb as $key => $value):
 							$Checked = array(false, false, false);
 
 							foreach ($getDbInputCheck as $key => $item) {
-								if ($item["hash_id"] == $value["hash"]){
+								if ($item["hash_id"] == $value["hash"] && $item["datasheet"] == $Render->getTableName()){
 									$DataJSON = json_decode($item["data_json"], true);
 									// break;
 								}
@@ -165,6 +169,13 @@ foreach ($fromDb as $key => $value):
 			endforeach;
 
 			$sheetBody .= "</tr>";
+
+		else:
+
+			// $Alert->setConfig("warning", "<strong>Falha na importação</strong>: Não foi possível importar dados da tabela:<i>\"".$Render->getTableName()."\"</i>, de: <i>\"".$_SESSION['objfile']['name']."\"</i>.");
+			// echo $Alert->displayPrint();
+
+			// // break;
 
 		endif;
 

@@ -222,7 +222,7 @@ class Render
 
 	public function pushData(){
 
-		// try {
+		try {
 
 			$Db = new ObjectDB();
 			$Db->setter(HOST, USER, PASS, DBNAME);
@@ -335,12 +335,12 @@ class Render
 			self::setStatus(true);
 			return true;
 
-		// } catch (Exception $e) {
+		} catch (Exception $e) {
 
-		// 	self::consoleLog("Request failed: " . $e);
+			self::consoleLog("Request failed: " . $e);
 
-		// 	return false;
-		// }
+			return false;
+		}
 	}
 
 	public function consoleLog($txt){

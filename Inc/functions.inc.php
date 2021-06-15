@@ -55,7 +55,6 @@ function encodeRegexPg($p_g){
 }
 
 
-
 function getRefc($posto_graduacao, $refc, $returnCount = true, $table = TB_RESP) {
 
     $count = 0;
@@ -119,4 +118,16 @@ function getRefc($posto_graduacao, $refc, $returnCount = true, $table = TB_RESP)
 
     return array(intval($count), $militar);
 
+}
+
+function countPreTotal($array, $arg = null){
+    $t = 0;
+    if (is_null($arg)):
+        foreach ($array as $key => $value)
+            $t += 1;
+    else:
+        foreach ($array[$arg] as $key => $value)
+            $t += $value[0];
+    endif;
+    return $t;
 }

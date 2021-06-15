@@ -84,6 +84,8 @@ endforeach;
 
 $listPendent = array();
 $listComplete = array();
+$listPresent = array();
+$listMissing = array();
 
 function testListValues($lista1, $lista2){	
 	$clearArray = array(
@@ -97,17 +99,32 @@ function testListValues($lista1, $lista2){
 	return array_diff($clearArray[0], $clearArray[1]);
 }
 
+function clearArrayValues($list){
+	$n = array();
+	foreach ($list as $key => $item)
+		array_push($n, trim($item));
+	return $n;
+}
+
 /**
  Starting comparation beetwen tables
 **/
+
 foreach ($myResp as $keyresp => $resp):
-	
+
 	foreach ($myConf as $keyconf => $conf):
 		
 		if ($conf["hash"] == $resp["hash_id"]):
 
 			$testArrays = testListValues($resp["data_json"]["values"], $conf[0]["values"]);
-			if (!empty($testArrays)):
+
+			if (!empty($conf[0]["values"])):
+				array_push($listPresent, array($conf["hash"], $testArrays));
+
+			elseif (empty($conf[0]["values"])):
+				array_push($listMissing, array($conf["hash"], $testArrays));
+
+			elseif (!empty($testArrays)):
 				array_push($listPendent, array($conf["hash"], $testArrays));
 			else:
 				array_push($listComplete, array($conf["hash"], $resp));
@@ -117,11 +134,11 @@ foreach ($myResp as $keyresp => $resp):
 
 	endforeach;
 
+
 endforeach;
 
 $bodyTable = "<table></table>";
 
-// var_dump($listPendent);
 
 /*
 
@@ -130,6 +147,74 @@ $bodyTable = "<table></table>";
 */
 
 // array_unique($listPendent);
+
+$myList = array(
+	"Complete" => array(),
+	"Missing" => array(),
+	"Present" => array(),
+	"Pendent" => array()
+);
+
+# Pushing data
+
+foreach ($listComplete as $key => $value)
+	if (!in_array($value[0], $myList["Complete"]))
+		array_push($myList["Complete"], $value[0]);
+
+foreach ($listPendent as $key => $value)
+	if (!in_array($value[0], $myList["Pendent"]))
+		array_push($myList["Pendent"], $value[0]);
+
+foreach ($listPresent as $key => $value)
+	if (!in_array($value[0], $myList["Present"]))
+		array_push($myList["Present"], $value[0]);
+
+
+foreach ($listMissing as $key => $value)
+	if (!in_array($value[0], $myList["Missing"]))
+		array_push($myList["Missing"], $value[0]);
+
+$arrayNumStatus = array(
+
+	"posto_graduacao" =>
+		array(
+			"of_capten" => array(0, 0),
+			"1_sgt" => array(0, 0),
+			"2_sgt" => array(0, 0),
+			"st" => array(0, 0),
+			"of_sup" => array(0, 0),
+			"3_sgt" => array(0, 0),
+			"civil" => array(0, 0)
+		),
+
+	"organizacao_militar" =>
+		array(
+			"b_adm_ap_ibirapuera" => array(0, 0),
+			"8_bpe" => array(0, 0),
+			"apoio_direto" => array(0, 0),
+			"agsp" => array(0, 0)
+		),
+
+	"total" => 0
+);
+
+$backgroundColors = array(
+	'rgb(140, 212, 148)',
+	'rgb(140, 169, 212)',
+	'rgb(220, 151, 102)',
+	'rgb(186, 102, 220)',
+	'rgb(220, 178, 102)',
+	'rgb(220, 102, 102)',
+	'rgb(98, 193, 74)',
+	'rgb(186, 193, 74)',
+	'rgb(193, 74, 74)',
+);
+
+if(isset($get["aba"])):
+	$_SESSION['objfile']['aba'] = $get["aba"];
+else:
+	unset($_SESSION['objfile']['aba']);
+endif;
 
 ?>
 
@@ -233,8 +318,14 @@ $bodyTable = "<table></table>";
 					elseif ($get["aba"] == "dashboard"):
 						include REPORT . 'dashboard.inc.php';
 
-					elseif (in_array($get["aba"], array('faltantes', 'presentes'))):
-						include REPORT . 'relatorios.inc.php';
+					elseif ($get["aba"] == "missing"):
+						include REPORT . 'faltantes.php';
+
+					elseif ($get["aba"] == "gift"):
+						include REPORT . 'presentes.php';
+
+					// elseif (in_array($get["aba"], array('faltantes', 'presentes'))):
+						// include REPORT . 'relatorios.inc.php';
 
 					else:
 						include REPORT . '404.php';
@@ -298,7 +389,7 @@ $bodyTable = "<table></table>";
 
 		$(".btn_open_window").on("click", function(e){
 			e.preventDefault();
-			var listByHash = '<?php echo json_encode($listByHash); ?>';
+			var listByHash = '<?php echo (isset($listByHash) ? json_encode($listByHash) : null); ?>';
 			var hash = $(this).attr("data-hash"),
 				$body = $("body"),
 				request = $.ajax({
@@ -359,7 +450,7 @@ $bodyTable = "<table></table>";
 
 		});
 
-		var $rows = $('#table-filter tr');
+		var $rows = $('#table-filter tr:not(.bar-table)');
 		$("#searchbar").on("keyup", function(){
 			var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
 			$rows.show().filter(function() {

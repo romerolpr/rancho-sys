@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 include 'Classes/DisplayAlert.class.php';
 include 'Classes/ObjectDB.class.php';
 include 'Classes/Reader.class.php';
@@ -9,6 +11,8 @@ $Alert = new DisplayAlert();
 $Db = new ObjectDB();
 $Render = new Render();
 $Db->setter(HOST, USER, PASS, DBNAME);
+
+// var_dump($_SESSION);
 
 $content = $_POST["content"];
 
@@ -31,21 +35,21 @@ foreach ($Filter["buttons"][$content] as $keybuttons => $button) {
 	if ($button["drop"]):
 
 		$dropRender .= "<p class=\"txt-center display-buttons\">";
-		$dropRender .= "<button class=\"btn-bg btn-display btn-transparent\" data-exec=\"cancel\" title=\"Cancelar\">Cancelar</button>";
+		$dropRender .= "<button class=\"btn-bg btn-display btn-transparent btn_cancel\" data-exec=\"cancel\" title=\"Cancelar\">Cancelar</button>";
 		$dropRender .= "<button class=\"btn-bg btn-display btn_apply\" data-content=\"".$content."\" title=\"Aplicar\">Aplicar</button>";
 		$dropRender .= "</p>";
 		$dropRender .= "<span class=\"divider\"></span>";
 
 		if ($Filter["drop"][$content]["hide"]):
 
-			$dropRender .= "<p class=\"txt-left\"><a class=\"btn txt-left\" href=\"?filter&hide=".urlencode($content)."\" title=\"Ocultar coluna\" data-exec=\"hide\" data-content=\"".$content."\">Ocultar coluna</a></p>";
+			$dropRender .= "<p class=\"txt-left\"><a class=\"btn txt-left\" href=\"?filter&hide=".urlencode($content).(isset($_SESSION['objfile']['aba']) ? "&aba=" . $_SESSION['objfile']['aba'] . "#table-filter" : null )."\" title=\"Ocultar coluna\" data-exec=\"hide\" data-content=\"".$content."\">Ocultar coluna</a></p>";
 		endif;
 
 		foreach ($Filter["drop"][$content]["order"] as $keyorder => $order) {
 
 			$getSort = (isset($_GET["sort"]) ? $_GET["sort"] : null);
 
-			$dropRender .= "<p class=\"txt-left\"><a class=\"btn txt-left sort-".strtolower($order)."\" href=\"?filter&sort=".(!is_null($getSort) ? $getSort . ";" . $order : $order ).":".urlencode($content)."\" data-content=\"".$content."\" data-sort=\"".strtolower($order)."\" title=\"Classificar por ".$order."\">Classificar por ".$order."</a></p>";
+			$dropRender .= "<p class=\"txt-left\"><a class=\"btn txt-left sort-".strtolower($order)."\" href=\"?filter&sort=".(!is_null($getSort) ? $getSort . ";" . $order : $order ).":".urlencode($content).(isset($_SESSION['objfile']['aba']) ? "&aba=" . $_SESSION['objfile']['aba'] . "#table-filter" : null )."\" data-content=\"".$content."\" data-sort=\"".strtolower($order)."\" title=\"Classificar por ".$order."\">Classificar por ".$order."</a></p>";
 		}
 
 		if ($Filter["buttons"][$content]["drop"]):
