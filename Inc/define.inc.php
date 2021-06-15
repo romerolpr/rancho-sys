@@ -31,9 +31,9 @@ define(
 define(
 	"PASS", "");
 define(
-	"DBNAME", "dbranch");
+	"DBNAME", "u641457582_sisa");
 define(
-	"ALIAS", "dbranch");
+	"ALIAS", "u641457582_sisa");
 define(
 	"LIMIT", 50);
 

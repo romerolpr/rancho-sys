@@ -35,17 +35,17 @@ if (isset($_POST["Envia"]) && !empty($_POST["Envia"])):
 				$_SESSION["objfile"] = $ObjLoad;
 				header("location: ".$url."index.php");
 			else:
-				header("location: ".$url."index.php?err=not_uploaded&filename=" . $ObjLoad["name"]);
+				$header = $url."index.php?err=not_uploaded&filename=" . $ObjLoad["name"];
 				// echo "<span class='alert danger'><strong>Falha</strong>: Não foi possível adicionar o arquivo: ".$ObjLoad["name"]."</span>";
 			endif;
 
 		else:
-			header("location: ".$url."index.php?err=not_supported&filename=" . $ObjLoad["name"]);
+			$header = $url."index.php?err=not_supported&filename=" . $ObjLoad["name"];
 			// echo "<span class='alert warning'><strong>Atenção</strong>: Formato de arquivo não permitido.</span>";
 		endif;
 
 	else:
-		header("location: ".$url."index.php?err=file&filename=" . $ObjLoad["name"]);
+		$header = $url."index.php?err=file&filename=" . $ObjLoad["name"];
 		// echo "<span class='alert warning'><strong>Atenção</strong>: Adicione um arquivo válido.</span>";
 	endif;
 endif;
@@ -61,7 +61,8 @@ if (isset($_POST["Login"]) && !empty($_POST["Login"])):
 	// var_dump($myInput);
 
 	if (in_array('', $_POST)):
-	    header("location: index.php?err=username_or_pass");
+
+	    $header = "index.php?err=username_or_pass";
 	else:
 
 	    $Obj = $Db->return_query($Db->connect_db(), TB_USERS);
@@ -71,6 +72,7 @@ if (isset($_POST["Login"]) && !empty($_POST["Login"])):
 	        if ($myInput["username"] == $values["username"] && $myInput["password"] == $values["password"]):
 	            $_SESSION["user_login"] = $myInput;
 	            $header = $url . "index.php";
+	            break;
 	        else:
 	            // echo "<script>alert('Nome de usuário ou senha inválido.')</script>";
 	            $header = "index.php?err=username_or_pass";
@@ -78,7 +80,8 @@ if (isset($_POST["Login"]) && !empty($_POST["Login"])):
 	        endif;
 	    endforeach;
 
-	    header("location: $header");
+	    // header("location: index.php");
+
 
 	endif;
 

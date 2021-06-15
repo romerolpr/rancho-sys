@@ -19,12 +19,13 @@ class DisplayAlert
 		"border-width" 	=> "1px",
 		"font-weight" 	=> "normal",
 		"font-size" 	=> "12px",
-		"width" 		=> "auto",
+		"width" 		=> "100%",
 		"margin" 		=> "1em 0",
 		"border-style" 	=> "solid",
+		"float"			=> "left",
 		"border-color" 	=> null,
 		"color" 		=> null, 
-		"background" 	=> null,
+		"background-color" 	=> null,
 	);
 	static $Status = true;
 
@@ -48,9 +49,6 @@ class DisplayAlert
 	public function getClass(){
 		return self::$Class;
 	}
-	public function getMessage(){
-		return self::$Message;
-	}
 	public function getConfig(){
 		return self::$Style;
 	}
@@ -59,8 +57,10 @@ class DisplayAlert
 		self::setClass($class);
 		self::setMessage($message);
 	}
-
-	public function setStyle($class)
+	public static function getMessage(){
+		return self::$Message;
+	}
+	public static function setStyle($class)
 	{
 		switch ($class):
 			case 'warning':
@@ -95,7 +95,7 @@ class DisplayAlert
 		return "style=\"". $css ."\"";
 	}
 
-	public function getStyle()
+	public static function getStyle()
 	{
 		return self::setStyle(self::$Class);
 	}
@@ -129,7 +129,7 @@ class DisplayAlert
 		return $return;
 	}
 
-	public function Display()
+	public static function Display()
 	{	
 		return array(
 			"Class" => self::getClass(),

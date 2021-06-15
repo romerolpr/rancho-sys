@@ -47,9 +47,12 @@ if (isset($get["new"]) && !empty($get["new"])):
 	endforeach;
 endif;
 
+// var_dump($Db::$host);
 
 // var_dump($_GET);
 // unset($_SESSION);
+
+
 
 ?>
 
@@ -62,6 +65,8 @@ endif;
 	<title>SisA - Sistema de Arranchamento</title>
 	<link rel="stylesheet" type="text/css" href="<?php echo $url?>Dist/css/style.css">
 	<link rel="stylesheet" type="text/css" href="<?php echo $url?>Dist/css/fontawesome.css">
+
+	<link rel=icon type=image/png href="Dist/image/brasao-exercito.png">
 
 	<script><?php include "Dist/js/jquery.js"; ?></script>
 
@@ -133,11 +138,13 @@ endif;
 
 				else: 
 
+					include FRONT . 'form.php';
 					if (isset($_SESSION["objfile"]["name"])):
 						$Alert->setConfig("warning", "<strong>Aviso</strong>: O arquivo \"".$_SESSION["objfile"]["name"]."\" permanece aberto. <a href='index.php?exit=session_obj' title='Fechar arquivo' class='btn btn_click_consult'>Fechar arquivo</a></span>");
 						echo ($Alert->displayPrint());
 					endif;
-					include FRONT . 'form.php';
+
+					if(isset($header)) echo "<script>window.location.replace('$header')</script>";
 
 				endif;
 
@@ -174,7 +181,6 @@ endif;
 	<script>
 		searchOnTable();
 	</script>
-
 
 </body>
 </html>

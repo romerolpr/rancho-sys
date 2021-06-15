@@ -125,7 +125,7 @@ foreach ($fromDbComplete as $key => $value):
 								}
 							}
 
-							foreach ($DataJSON as $key => $v):
+							foreach ($DataJSON as $v):
 								$valor = $v["values"];
 
 							endforeach;

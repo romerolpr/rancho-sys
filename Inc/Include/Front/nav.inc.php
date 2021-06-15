@@ -1,8 +1,8 @@
 <?php if(!isset($_SESSION["user_login"])): ?>
 
 	<li><a href="<?php echo $url?>index.php" title="Acessar painel">Acessar painel</a></li>
-	<li><a href="<?php echo $url?>index.php?exb=lastsheet" title="Últimos arranchamentos">Últimos arranchamentos</a></li>
-	<li><a href="<?php echo $url?>index.php?exb=consult" title="Consultar arranchamento">Consultar arranchamento</a></li>
+<!-- 	<li><a href="<?php echo $url?>index.php?exb=lastsheet" title="Últimos arranchamentos">Últimos arranchamentos</a></li>
+	<li><a href="<?php echo $url?>index.php?exb=consult" title="Consultar arranchamento">Consultar arranchamento</a></li> -->
 
 <?php else:
 	if(isset($_SESSION["objfile"])): ?>
