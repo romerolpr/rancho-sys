@@ -144,7 +144,7 @@ endif;
 						echo ($Alert->displayPrint());
 					endif;
 
-					// if(isset($header)) echo "<script>window.location.replace('$header')</script>";
+					if(isset($header)) echo "<script>window.location.replace('$header')</script>";
 
 				endif;
 

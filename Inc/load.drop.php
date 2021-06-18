@@ -13,7 +13,8 @@ $Render = new Render();
 $Db->setter(HOST, USER, PASS, DBNAME);
 
 // var_dump($_SESSION);
-
+$datasheet = $_SESSION['objfile']['name'];
+// var_dump($datasheet);
 $content = $_POST["content"];
 
 foreach ($Filter["buttons"][$content] as $keybuttons => $button) {
@@ -21,7 +22,7 @@ foreach ($Filter["buttons"][$content] as $keybuttons => $button) {
 	$arrayDrop = array();
 
 	$db = $Db->connect_db();
-	$query = $db->prepare("SELECT $content FROM `tb_resp`");
+	$query = $db->prepare("SELECT $content FROM `tb_resp` WHERE `datasheet`= \"$datasheet\"");
 	$query->execute();
 
 	foreach ($query->fetchAll(PDO::FETCH_ASSOC) as $keyreturn => $returnValue) {

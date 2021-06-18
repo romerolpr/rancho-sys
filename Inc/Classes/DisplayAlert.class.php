@@ -14,6 +14,7 @@ class DisplayAlert
 	static $Message;
 	static $Style = array(
 		"display" 		=> "block",
+		"box-sizing" 	=> "border-box",
 		"padding" 		=> ".6em",
 		"border-radius" => "3px",
 		"border-width" 	=> "1px",

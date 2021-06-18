@@ -13,6 +13,12 @@ var myFilter = {
 	apply: []
 }
 
+function selectAllInputs(content){
+	$('.input_checked_drop').each(function(){
+		$(this).prop("checked", true);
+	});
+}
+
 function onlyUnique(value, index, self) {
   return self.indexOf(value) === index;
 }
@@ -350,6 +356,7 @@ $(".td-button span[data-filter]").on("click", function(e){
 		// $(this)
 	} else {
 		request.done(function(data){
+			
 			if (divdrop.html().length <= 0){
 				divdrop.append(data);
 			}

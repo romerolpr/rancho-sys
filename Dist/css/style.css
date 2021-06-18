@@ -14,7 +14,7 @@ h2 {
 }
 
 p {
-    font-size: .85em;
+    font-size: 14px;
     line-height: 1.4em;
 }
 
@@ -45,7 +45,7 @@ p {
 .sidebar .top {
     background: #f1f1f1;
     font-weight: bold;
-    font-size: .85em;
+    font-size: 14px;
     padding: 0;
     border-bottom: 1px solid #ddd;
 }
@@ -74,7 +74,7 @@ p {
 }
 
 .sidebar .title-bar span:nth-child(1) {
-    font-size: .85em;
+    font-size: 14px;
 } 
 
 .sidebar .title-bar span:nth-child(2) {
@@ -83,13 +83,13 @@ p {
 } 
 
 .sidebar .title-bar span:nth-child(3) {
-    font-size: .85em;
+    font-size: 14px;
     text-transform: uppercase;
 }   
 
 .sidebar .image-bar {
     float: left;
-    margin: .85em;
+    margin: 14px;
 }
 
 .navgation-bar {
@@ -154,7 +154,7 @@ p {
     box-sizing: border-box;
     color: #1f752a;
     text-align: left;
-    font-size: .85em;
+    font-size: 14px;
 }
 
 /*.content aside nav ul li:last-child { border-bottom: 1px solid #c0c1c1; }*/
@@ -163,7 +163,7 @@ p {
     width: 100%;
     padding: 1em 0;
     color: #999;
-    font-size: .85em;
+    font-size: 14px;
     padding: 1em .5em;
     box-sizing: border-box;
 }
@@ -207,7 +207,7 @@ article h1 {
 }
 
 .main label, p {
-    /*font-size: .85em;*/
+    /*font-size: 14px;*/
     line-height: 1.4em;
 }
 
@@ -225,7 +225,7 @@ article h1 {
 
 .form-post .child {
     box-sizing: border-box;
-    padding: 0 0 0 .85em;
+    padding: 0 0 0 14px;
 }
 
 .form-post .box input[type=date] {
@@ -275,8 +275,13 @@ article h1 {
 }
 
 span.label {
-    font-size: .8em;
+    
     color: #666;
+}
+
+span.label,
+.searchbar {
+    font-size: 12px;
 }
 
 .form-post input[type=submit],
@@ -288,7 +293,7 @@ span.label {
     border-radius: 3px;
     cursor: pointer;
     margin: .8em 0;
-    font-size: .85em;
+    font-size: 14px;
 }
 
 .alert .btn {
@@ -297,7 +302,7 @@ span.label {
 }
 
 .form-post .btn-back {
-    font-size: .85em;
+    font-size: 14px;
     color: #000;
     margin: 0 .25em;
 }
@@ -325,7 +330,7 @@ span.label {
 }
 
 .form-box label {
-    font-size: .85em;
+    font-size: 14px;
     line-height: 1.4em;
 }
 
@@ -350,7 +355,7 @@ table {
 table tr, td {
     position: relative;
     border: 1px solid #c0c1c1;
-    font-size: .85em;
+    font-size: 12px;
     text-align: center;
     height: 30px;
     padding: .4em;
@@ -554,7 +559,7 @@ table tr.removed {
 }
 
 /*table tr td label {
-    font-size: .85em!important;
+    font-size: 14px!important;
     line-height: 18px!important;
 }*/
 
@@ -673,7 +678,7 @@ button[disabled], .disabled {
 
 .separator {
     color: #c0c1c1;
-    font-style: .85em;
+    font-style: 14px;
 }
 
 .btn_link {
@@ -743,14 +748,14 @@ button[disabled], .disabled {
 .list li {
     list-style: none;
     display: block;
-    font-size: .85em;
+    font-size: 14px;
     line-height: 20px;
 }
 
 .list li a {
     display: block;
     width: 100%;
-    font-size: .85em;
+    font-size: 14px;
     line-height: 20px;
     color: #1f752a;
 }
@@ -763,11 +768,11 @@ button[disabled], .disabled {
 span.alert {
     /*float: left;*/
     display: block;
-    padding: .85em;
+    padding: 14px;
     border-radius: 3px;
     border-width: 1px;
     font-weight: normal;
-    font-size: .85em;
+    font-size: 14px;
     width: auto;
     color: #444; 
     background: #eee;
@@ -915,7 +920,7 @@ ul.active #filter::after{
     text-align: left;
     word-break: break-word;
     color: #248636;
-    font-size: .85em;
+    font-size: 14px;
 }
 .input_checked_drop {
     position: relative;
@@ -925,7 +930,7 @@ ul.active #filter::after{
     position: absolute;
     top: 50%;
     right: 100%;
-    width: .85em;
+    width: 14px;
     margin-right: 1px;
     border-top: 1px dashed #c1c1c1;
 }
@@ -949,7 +954,7 @@ ul.active #filter::after{
 }
 
 .report-dev {
-    font-size: .85em;
+    font-size: 14px;
     color: #888;
     font-style: italic;
 }
@@ -964,7 +969,7 @@ ul.active #filter::after{
 
 .txt-left {
     text-align: left;
-    font-size: .85em;
+    font-size: 14px;
     line-height: 18px;
 }
 
@@ -995,7 +1000,7 @@ ul.active #filter::after{
 }
 .btn-display {
     float: right;
-    font-size: .85em;
+    font-size: 14px;
     margin: .2em 0;
     margin-left: .4em;
 }
@@ -1061,7 +1066,7 @@ ul.active #filter::after{
 }
 
 .head-modal span.title-head {
-    font-size: .85em;
+    font-size: 14px;
 }
 .head-modal span.btn {
     color: #666;
@@ -1112,7 +1117,7 @@ ul.active #filter::after{
 #table-filter .sub-dropdown .txt-left {
     display: block;
     width: 100%;
-    font-size: .95em;
+    font-size: 14px;
 }
 
 .searchbar {
@@ -1131,6 +1136,10 @@ ul.active #filter::after{
     background-size: 10%;
     background-position: center;
     padding: 1.5em 0;
+}
+
+.sub-dropdown a {
+    font-size: 12px!important;
 }
 
 @media (max-width: 767px) { 
