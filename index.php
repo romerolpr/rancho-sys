@@ -15,7 +15,10 @@ $breadcrumbTitle = isset($_SESSION["user_login"]) ? "Painel" : "Início";
 
 if (isset($_SESSION["user_login"])):
 	foreach ($Db->return_query($Db->connect_db(), TB_USERS) as $key => $values):
-		if ($_SESSION["user_login"]["username"] == $values["username"] && $_SESSION["user_login"]["password"] == $values["password"]) $_SESSION["user_login"]["nome"] = $values["nome"];
+		if ($_SESSION["user_login"]["username"] == $values["username"] && $_SESSION["user_login"]["password"] == $values["password"]):
+			$_SESSION["user_login"]["nome"] = $values["nome"];
+			$_SESSION["user_login"]["nvl_access"] = $values["nvl_access"];
+		endif;
 	endforeach; 
 endif;
 
@@ -51,8 +54,6 @@ endif;
 
 // var_dump($_GET);
 // unset($_SESSION);
-
-
 
 ?>
 
@@ -110,6 +111,11 @@ endif;
 				// Config params
 				include INC . 'param.inc.php';
 
+				
+				
+
+				// var_dump($_SESSION["objfile"]);
+
 				if(isset($_SESSION["objfile"]) && !empty($_SESSION["objfile"]) && isset($_SESSION["user_login"]) && !empty($_SESSION["user_login"])):
 
 					if (file_exists($_SESSION["objfile"]["tmp_name"])):
@@ -138,15 +144,30 @@ endif;
 
 				else: 
 
+					if (isset($_SESSION["user_login"]) && $_SESSION["user_login"]["nvl_access"] != 1):
+						$myFileatime = array();
+						foreach ($Files as $key => $value):
+							array_push($myFileatime, $value["file"]["fileatime"]);
+						endforeach;
+
+						foreach ($Files as $key => $value):
+							if ($value["file"]["fileatime"] == min($myFileatime)):
+								$header = "index.php?worksheetName=" . $value["name"];
+								$_SESSION["objfile"] = $value;
+								break;
+							endif;
+						endforeach;
+					endif;	
+
 					include FRONT . 'form.php';
 					if (isset($_SESSION["objfile"]["name"])):
 						$Alert->setConfig("warning", "<strong>Aviso</strong>: O arquivo \"".$_SESSION["objfile"]["name"]."\" permanece aberto. <a href='index.php?exit=session_obj' title='Fechar arquivo' class='btn btn_click_consult'>Fechar arquivo</a></span>");
 						echo ($Alert->displayPrint());
-					endif;
-
-					if(isset($header)) echo "<script>window.location.replace('$header')</script>";
+					endif;	
 
 				endif;
+
+				if(isset($header) && isset($_SESSION["user_login"])) echo "<script>window.location.replace('$header')</script>";
 
 				?>
 
@@ -180,6 +201,16 @@ endif;
 
 	<script>
 		searchOnTable();
+		var windowFixed = localStorage.getItem("window");
+		if (windowFixed != "false"){
+			$(".box-table").addClass("window_fixed");
+			$(".btn_expand").addClass("btn_active");
+			click_btn = true;
+		} else {
+			$(".box-table").removeClass("window_fixed");
+			$(".btn_expand").removeClass("btn_active");
+			click_btn = false;
+		}
 	</script>
 
 </body>

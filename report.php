@@ -4,7 +4,7 @@ session_start();
 
 // var_dump($_SESSION['objfile']);
 
-if (!isset($_SESSION["objfile"]) || !isset($_SESSION["user_login"])):
+if (!isset($_SESSION["objfile"]) || !isset($_SESSION["user_login"]) || $_SESSION["user_login"]['nvl_access'] != 1):
 	header("location: index.php");
 endif;
 

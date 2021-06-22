@@ -5,15 +5,14 @@ $fromDbComplete = $Db->return_query($Db->connect_db(), TB_RESP, null, false, nul
 
 if (isset($get["sort"])):
 	$getSort = explode(":", $get["sort"]);
-	aasort($fromDb, $getSort[0], $getSort[1]);
+	aasort($fromDbComplete, $getSort[0], $getSort[1]);
 endif;
+
+// var_dump($fromDbComplete);
 
 foreach ($fromDbComplete as $key => $value):
 
-
-		// var_dump($value["datasheet"]);
 	if ($_SESSION['objfile']['name'] == $value["datasheet"]):
-
 
 		$Render->setStatus(true);
 

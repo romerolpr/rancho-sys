@@ -6,6 +6,8 @@ Send and load data
 
 $Render->setStatus(true);
 
+// var_dump($Render->getWorksheetNameDefault());
+
 if (isset($get["worksheetName"])):
 
 	$filterSubset = new MyReadFilter();
@@ -15,7 +17,6 @@ if (isset($get["worksheetName"])):
 	$objPHPExcel = $objReader->load($inputTmp);
 	$sheetData = $objPHPExcel->getActiveSheet()->toArray();
 	$Render->setSheetData($sheetData);
-
 	
 	$Render->setUnset(true);
 	$Render->setTableName($_SESSION["objfile"]["name"]);
@@ -30,8 +31,10 @@ if (isset($get["worksheetName"])):
 
 		$Alert->setConfig("danger", "<strong>Erro inesperado</strong>: Não foi possível importar 1 ou mais dados da planilha.</span>");
 		echo $Alert->displayPrint();
+		header("location: index.php");
 
 	endif;
+
 
 endif;
 
@@ -62,22 +65,25 @@ else:
 	$sheetBody .= "<a href=\"".$url."index.php".(isset($get["exb_all"]) ? "?exb_all" : null)."\" class=\"btn btn_link btn_manage btn_active\" title=\"Desativar modo: Visualização de filtro\"><i class=\"fas fa-filter\"></i></a>";
 endif;
 
-$sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage\" title=\"Restaurar tabela\"><i class=\"fas fa-undo-alt\"></i></a>";
-
 $sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage btn_expand\" title=\"Expandir tabela\"><i class=\"fas fa-expand\"></i></a>";
-
-$sheetBody .= "<a href=\"". (isset($get) ? replaceUrl("&worksheetName=None") : replaceUrl("worksheetName=None"))."\" class=\"btn btn_link btn_manage\" title=\"Alterar Datasheet\"><i class=\"fas fa-exchange-alt\"></i></a>";
 
 $sheetBody .= "<a href=\"". (!isset($get["exb_all"]) ? (isset($get) ? replaceUrl("&exb_all") : replaceUrl("exb_all")) : (isset($get["filter"]) ? '?filter' : "index.php")) ."\" class=\"btn btn_link btn_manage ". (isset($get["exb_all"]) ? "btn_active" : null) ."\" title=\"Exibir todos os dias\"><i class=\"fas fa-globe\"></i></a>";
 
-$sheetBody .= "<a target=\"_blank\" href=\"".$url."index.php?action=generateReport\" class=\"btn btn_link btn_manage\" title=\"Gerar relatório\"><i class=\"far fa-file-alt\"></i></a>";
-$sheetBody .= "<span class=\"separator\">|</span>";
+if ($_SESSION['user_login']['nvl_access'] == 1):
 
-$sheetBody .= "<a href=\"".$url."index.php?exit=session_obj\" class=\"btn btn_link btn_manage btn_click_consult\" title=\"Fechar arquivo\" data-action=\"fechar\"><i class=\"fas fa-power-off\"></i></a>";
+	$sheetBody .= "<a href=\"". (isset($get) ? replaceUrl("&worksheetName=None") : replaceUrl("worksheetName=None"))."\" class=\"btn btn_link btn_manage\" title=\"Alterar Datasheet\"><i class=\"fas fa-exchange-alt\"></i></a>";
+
+	$sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage\" title=\"Restaurar tabela\"><i class=\"fas fa-undo-alt\"></i></a>";
+
+	$sheetBody .= "<a target=\"_blank\" href=\"".$url."index.php?action=generateReport\" class=\"btn btn_link btn_manage\" title=\"Gerar relatório\"><i class=\"far fa-file-alt\"></i></a>";
+	$sheetBody .= "<span class=\"separator\">|</span>";
+
+	$sheetBody .= "<a href=\"".$url."index.php?exit=session_obj\" class=\"btn btn_link btn_manage btn_click_consult\" title=\"Fechar arquivo\" data-action=\"fechar\"><i class=\"fas fa-power-off\"></i></a>";
+
+endif;
 
 $sheetBody .= "<button class=\"btn btn_link btn_manage\" title=\"Salvar alterações\" disabled id=\"saveAll\">Salvar alterações</button>";
 
-$sheetBody .= "<table id=\"table-filter\" data-exb=\"".((!isset($get["exb_all"])) ? "default" : "exb_all")."\">";
 
 if(isset($get["filter"])): 
 	$sheetBody .= '<div class="fright mb-2">';
@@ -87,6 +93,9 @@ if(isset($get["filter"])):
 		$sheetBody .= '</div>';
 	$sheetBody .= '</div>';
 endif;
+
+$sheetBody .= "<table id=\"table-filter\" data-exb=\"".((!isset($get["exb_all"])) ? "default" : "exb_all")."\">";
+
 
 $sheetBody .= "<div id=\"load_sheet_data\">";
 include FRONT . "pages/load.sheet.php";
@@ -98,7 +107,6 @@ $sheetBody .= "</table></div>";
 // var_dump($Render->getStatus());
 
 if ($Render->getStatus()):
-
 	echo $sheetBody;
 else:
 	$Alert->setConfig("warning", "<strong>Falha na importação</strong>: O arquivo selecionado não possui compatibiliade com o sistema ou não foi possível importar os dados. <a href='index.php?exb=add_new' title='Alterar arquivo' class='btn btn_click_consult'>Alterar arquivo</a></span>");

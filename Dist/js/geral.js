@@ -37,9 +37,11 @@ $(".btn_expand").click(function(){
 	if (click_btn === false){
 		$(this).addClass("btn_active");
 			click_btn = true;
+			localStorage.setItem('window', true);
 	} else {
 		$(".box-table").removeClass("window_fixed");
 		$(this).removeClass("btn_active"); 
+		localStorage.setItem('window', false);
 		click_btn = false;
 	}
 });

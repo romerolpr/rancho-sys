@@ -61,11 +61,11 @@ if (isset($_POST["Login"]) && !empty($_POST["Login"])):
 	    "password" => md5($_POST["pass"])
 	);
 
-	// var_dump($myInput);
+	// var_dump($myInput);	
 
 	if (in_array('', $_POST)):
 
-	    $header = "index.php?err=username_or_pass";
+	    $header = "index.php?err=username_or_pass&null";
 	else:
 
 	    $Obj = $Db->return_query($Db->connect_db(), TB_USERS);
@@ -75,16 +75,15 @@ if (isset($_POST["Login"]) && !empty($_POST["Login"])):
 	        if ($myInput["username"] == $values["username"] && $myInput["password"] == $values["password"]):
 	            $_SESSION["user_login"] = $myInput;
 	            $header = $url . "index.php";
-	            break;
+	            // break;
 	        else:
 	            // echo "<script>alert('Nome de usuário ou senha inválido.')</script>";
 	            $header = "index.php?err=username_or_pass";
-	            break;
+	            // break;
 	        endif;
 	    endforeach;
 
 	    // header("location: index.php");
-
 
 	endif;
 

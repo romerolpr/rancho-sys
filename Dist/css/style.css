@@ -297,8 +297,8 @@ span.label,
 }
 
 .alert .btn {
-    float: right;
-    margin: 0 .25em;
+    /*float: right;*/
+   margin: 0 .5em 0 0;
 }
 
 .form-post .btn-back {

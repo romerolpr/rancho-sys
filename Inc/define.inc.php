@@ -137,7 +137,8 @@ foreach (glob(TRANSFER . "*.*") as $arquivo):
 			"worksheetName" => null,
 			"file" => array(
 				"mtime" 	=> filemtime($arquivo), 
-				"size" 		=> filesize($arquivo)
+				"size" 		=> filesize($arquivo),
+				"fileatime" => fileatime($arquivo)
 			)
 		));
 endforeach;

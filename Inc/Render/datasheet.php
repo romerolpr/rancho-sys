@@ -2,66 +2,75 @@
 
 <?php
 
-if(!isset($get["exb"])):
+if ($_SESSION["user_login"]["nvl_access"] == 1):
 
-	if (is_null($_SESSION["objfile"]["worksheetName"])):
+	if(!isset($get["exb"])):
 
-		echo "<br><p>Selecione o Datasheet:</p>";
-		echo "<ul class='list'>";
+		if (is_null($_SESSION["objfile"]["worksheetName"])):
 
-		foreach ($worksheetData as $worksheet):
-			echo '<li><a href="',$url,'?worksheetName=',$worksheet['worksheetName'],'">', $worksheet['worksheetName'],'</a></li>';
-		endforeach;
+			echo "<br><p>Selecione o Datasheet:</p>";
+			echo "<ul class='list'>";
 
-		echo "</ul>";
-		echo "<br>";
+			foreach ($worksheetData as $worksheet):
+				echo '<li><a href="',$url,'?worksheetName=',$worksheet['worksheetName'],'">', $worksheet['worksheetName'],'</a></li>';
+			endforeach;
 
-		// echo "<p>Arquivos recentes</p>";
-		// echo "<span class=\"divider\"></span>";
+			echo "</ul>";
+			echo "<br>";
 
-		// $nonTitle = true;
-		include PAGES . 'recents.inc.php';
+			// echo "<p>Arquivos recentes</p>";
+			// echo "<span class=\"divider\"></span>";
 
-		// var_dump($Files);
+			// $nonTitle = true;
+			include PAGES . 'recents.inc.php';
+
+			// var_dump($Files);
+
+		else:
+
+			if (isset($get["exb"])):
+				switch ($get["exb"]):
+					
+					case 'add_new':
+						/* Including the render file */
+						$Alert->setConfig("warning", "<strong>Aviso</strong>: Ao adicionar um novo arquivo o sistema fechará automaticamente o arquivo atual.</span>");
+						echo ($Alert->displayPrint());
+
+						$nonTitle = true;
+						include PAGES . 'add.files.php';
+						break;
+					
+					default:
+						include RENDER . 'load.php';
+						break;
+
+				endswitch;
+			else:
+				include RENDER . 'load.php';
+			endif;
+
+		endif;
 
 	else:
 
-		if (isset($get["exb"])):
-			switch ($get["exb"]):
-				
-				case 'add_new':
-					/* Including the render file */
-					$Alert->setConfig("warning", "<strong>Aviso</strong>: Ao adicionar um novo arquivo o sistema fechará automaticamente o arquivo atual.</span>");
-					echo ($Alert->displayPrint());
-
-					$nonTitle = true;
-					include PAGES . 'add.files.php';
-					break;
-				
-				default:
-					include RENDER . 'load.php';
-					break;
-
-			endswitch;
+		if ($get["exb"] == "recents"):
+			$nonTitle = true;
+			include PAGES . 'recents.inc.php';
 		else:
-			include RENDER . 'load.php';
+
+			$Alert->setConfig("warning", "<strong>Aviso</strong>: Ao adicionar um novo arquivo o sistema fechará automaticamente o arquivo atual.</span>");
+			echo ($Alert->displayPrint());
+
+			$nonTitle = true;
+			include PAGES . 'add.files.php';
+
 		endif;
 
 	endif;
 
 else:
 
-	if ($get["exb"] == "recents"):
-		$nonTitle = true;
-		include PAGES . 'recents.inc.php';
-	else:
-
-		$Alert->setConfig("warning", "<strong>Aviso</strong>: Ao adicionar um novo arquivo o sistema fechará automaticamente o arquivo atual.</span>");
-		echo ($Alert->displayPrint());
-
-		$nonTitle = true;
-		include PAGES . 'add.files.php';
-
-	endif;
+	include RENDER . 'load.php';
 
 endif;
+

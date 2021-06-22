@@ -6,17 +6,19 @@
 class Render
 {
 
-	static $TableName;
-	static $DatasheetName;
-	static $SheetData;
-	static $unset;
-	static $Object;
-	static $PregUrl;
-	static $Status;
-	static $Filter;
+	static 
+	$TableName,
+	$DatasheetName,
+	$SheetData,
+	$unset,
+	$Object,
+	$PregUrl,
+	$Status,
+	$Filter,
 
-	static $InsereData = false;
-	static $CountElem = false;
+	$worksheetNameDefault = false,
+	$InsereData = false,
+	$CountElem = false;
 	
 	/** 
 	Getter and Setter 
@@ -49,6 +51,9 @@ class Render
 	public function getFilter(){
 		return self::$Filter;
 	}
+	public function getWorksheetNameDefault(){
+		return self::$worksheetNameDefault;
+	}
 	public function getDatasheetName(){
 		return self::$DatasheetName;
 	}
@@ -72,6 +77,9 @@ class Render
 	}
 	public function setSheetData($newSheetData){
 		self::$SheetData = $newSheetData;
+	}
+	public function setWorksheetNameDefault($newWorksheetNameDefault){
+		self::$worksheetNameDefault = $newWorksheetNameDefault;
 	}
 	public function setTableName($newtableName){
 		self::$TableName = $newtableName;
@@ -226,7 +234,7 @@ class Render
 
 	public function pushData(){
 
-		try {
+		// try {
 
 			$Db = new ObjectDB();
 			$Db->setter(HOST, USER, PASS, DBNAME);
@@ -245,7 +253,7 @@ class Render
 				$carimboData = new DateTime($value[0]);
 				$myObject = array(
 					"id" => null,
-					"hash" => (isset($value[4]) ? md5($carimboData->format("Y-m-d H:i:s") . "_" . utf8_encode($value[4])) : null ),
+					"hash" => md5($carimboData->format("Y-m-d H:i:s") . "_" . utf8_encode($value[1])),
 					"carimbo" => $carimboData->format("Y-m-d H:i:s"),
 					"email" => (isset($value[1]) ? trim($value[1]) : null),
 					"posto_graduacao" => (isset($value[3]) ? utf8_encode($value[3]) : null ),
@@ -290,7 +298,7 @@ class Render
 					// $sql = $Db->return_query(, TB_CONF, null, true);
 					$table = TB_CONF;
 					$datasheet_name = self::getTableName();
-					$hash =  $value["hash"];
+					$hash = $value["hash"];
 
 					$stt = $db->prepare('SELECT * FROM '.$table.' WHERE datasheet="'.$datasheet_name.'" AND hash_id="'.$hash.'"');
 					$stt->execute();
@@ -339,12 +347,12 @@ class Render
 			self::setStatus(true);
 			return true;
 
-		} catch (Exception $e) {
+		// } catch (Exception $e) {
 
-			self::consoleLog("Request failed: " . $e);
+		// 	self::consoleLog("Request failed: " . $e);
 
-			return false;
-		}
+		// 	return false;
+		// }
 	}
 
 	public function consoleLog($txt){
