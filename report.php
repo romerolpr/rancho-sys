@@ -116,13 +116,13 @@ foreach ($myResp as $keyresp => $resp):
 		
 		if ($conf["hash"] == $resp["hash_id"]):
 
+			// var_dump($conf["hash"]);
+			// var_dump(testListValues($resp["data_json"]["values"], $conf[0]["values"]));
+
 			$testArrays = testListValues($resp["data_json"]["values"], $conf[0]["values"]);
 
-			if (!empty($conf[0]["values"])):
+			if (!empty($conf[0]["values"]) ):
 				array_push($listPresent, array($conf["hash"], $testArrays));
-
-			elseif (empty($conf[0]["values"])):
-				array_push($listMissing, array($conf["hash"], $testArrays));
 
 			elseif (!empty($testArrays)):
 				array_push($listPendent, array($conf["hash"], $testArrays));
@@ -169,10 +169,11 @@ foreach ($listPresent as $key => $value)
 	if (!in_array($value[0], $myList["Present"]))
 		array_push($myList["Present"], $value[0]);
 
-
-foreach ($listMissing as $key => $value)
+foreach ($listPendent as $key => $value)
 	if (!in_array($value[0], $myList["Missing"]))
 		array_push($myList["Missing"], $value[0]);
+
+// var_dump($listPendent);
 
 $arrayNumStatus = array(
 
@@ -232,6 +233,8 @@ endif;
 	<style>
 		.box-table { max-height: 100%; }
 	</style>
+
+	<link rel=icon type=image/png href="Dist/image/brasao-exercito.png">
 
 	<script src="Dist/js/chart.js"></script>
 </head>

@@ -118,6 +118,8 @@ $backgroundColors = array(
 	'rgb(193, 74, 74)',
 );
 
+include_once 'config/daily-voucher.config.php';
+
 // var_dump($maxValues);
 
 ?>
@@ -128,6 +130,47 @@ $backgroundColors = array(
 
 <div class="box-bg-board">
 
+	<p>Vale diário</p>
+	<table>
+		
+		<tr class="bar-table">
+			<td>Cassino</td>
+			<td>Café</td>
+			<td>Almoço</td>
+			<td>Jantar</td>
+		</tr>
+
+		<tr>
+			<td>Oficial</td>
+			<td><?php echo $arrayNumVoucher["valor_final"]["oficial"][2][1][0]?></td>
+			<td><?php echo $arrayNumVoucher["valor_final"]["oficial"][2][2][0]?></td>
+			<td><?php echo $arrayNumVoucher["valor_final"]["oficial"][2][3][0]?></td>
+		</tr>	
+
+
+		<tr>
+			<td>St/ Sgt</td>
+			<td><?php echo $arrayNumVoucher["valor_final"]["st_sgt"][2][1][0]?></td>
+			<td><?php echo $arrayNumVoucher["valor_final"]["st_sgt"][2][2][0]?></td>
+			<td><?php echo $arrayNumVoucher["valor_final"]["st_sgt"][2][3][0]?></td>
+		</tr>
+		<tr>
+			<td>Cb/ Sd</td>
+			<td><?php echo $arrayNumVoucher["valor_final"]["cb_sd"][2][1][0]?></td>
+			<td><?php echo $arrayNumVoucher["valor_final"]["cb_sd"][2][2][0]?></td>
+			<td><?php echo $arrayNumVoucher["valor_final"]["cb_sd"][2][3][0]?></td>
+		</tr>
+
+		<tr>
+			<td>Total</td>
+			<td colspan="3"><?php echo $arrayNumVoucher["valor_final"]["total"]["refc"]["total"]?></td>
+		</tr>
+
+	</table>
+
+	<br>
+	<p>Índices gerais</p>
+
 	<div class="box-board">
 		<div class="bg-shadow">
 			<canvas id="chart_posto_graduacao" width="400" height="400"></canvas>
@@ -137,18 +180,6 @@ $backgroundColors = array(
 	<div class="box-board">
 		<div class="bg-shadow">
 			<canvas id="chart_organizacao_militar" width="400" height="400"></canvas>
-		</div>
-	</div>
-
-	<div class="box-board">
-		<div class="bg-shadow">
-			<canvas id="chart_comparations" width="400" height="400"></canvas>
-		</div>
-	</div>
-
-	<div class="box-board">
-		<div class="bg-shadow">
-			<canvas id="chart_max" width="400" height="400"></canvas>
 		</div>
 	</div>
 

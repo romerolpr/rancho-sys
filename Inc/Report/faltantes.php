@@ -119,25 +119,43 @@ foreach ($Resp as $key => $value):
 		$sheetBody .= "<td data-content=\"nome\">" . $ObjDecoded["nome"] . "</td>";
 		$sheetBody .= "<td data-content=\"organizacao_militar\">" . $ObjDecoded["organizacao_militar"] . "</td>";
 		$sheetBody .= "<td data-content=\"posto_graduacao\">" . $ObjDecoded["posto_graduacao"] . "</td>";
-		
-
-		
 
 		// Creating the button checkbox and text
-		foreach ($ObjDecoded["refc"] as $keyRefc => $valueRefc):
+		foreach ($listPendent as $keyRefc => $valueRefc):
 
-			$newValue = explode(",", $valueRefc[0]);
+			var_dump($valueRefc);
+
+			$newValue = explode(";", $valueRefc[0]);
 
 			foreach ($newValue as $keynewValue => $valor) {
-				if (!in_array(trim($valor), $refeicoes))
-					array_push($refeicoes, trim($valor));
+				// if (!in_array(trim($valor), $refeicoes))
+				array_push($refeicoes, trim($valor));
 			}
 
 		endforeach;
 
-		// var_dump($refeicoes);
+		// var_dump($ObjDecoded["nome"]);
 
-		$sheetBody .= "<td data-content=\"posto_graduacao\">" . $refeicoes[0] . (isset($refeicoes[1]) && !empty($refeicoes[1]) ? ", " . $refeicoes[1] : null) . (isset($refeicoes[2]) && !empty($refeicoes[2]) ? ", " . $refeicoes[2] : null) . "</td>";
+		preg_match_all("/Café da manhã/", implode(",", $refeicoes), $myCafe);
+		preg_match_all("/Almoço/", implode(",", $refeicoes), $myAlmoco);
+		preg_match_all("/Jantar/", implode(",", $refeicoes), $myJantar);
+
+		$myInfo = array(
+			"Café" => count($myCafe[0]),
+			"Almoço" => count($myAlmoco[0]),
+			"Jantar" => count($myJantar[0]),
+		);
+
+		// var_dump($myInfo);
+
+		$sheetBody .= "<td data-content=\"posto_graduacao\">";
+		if ($myInfo["Café"] > 0)
+			$sheetBody .= "Café (" . $myInfo["Café"] . ")" . (($myInfo["Almoço"] > 0) ? ", " : null);
+		if ($myInfo["Almoço"] > 0)
+			$sheetBody .= "Almoço (" . $myInfo["Almoço"] . ")" . (($myInfo["Jantar"] > 0) ? ", " : null);;
+		if ($myInfo["Jantar"] > 0)
+			$sheetBody .= " Jantar (" . $myInfo["Jantar"] . ")";
+		$sheetBody .= "</td>";
 
 		$sheetBody .= "</tr>";
 

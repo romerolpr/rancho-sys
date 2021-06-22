@@ -83,7 +83,7 @@ if (isset($_POST["Login"]) && !empty($_POST["Login"])):
 	        endif;
 	    endforeach;
 
-	    // header("location: index.php");
+	    header("location: $header");
 
 	endif;
 

@@ -1,101 +1,7 @@
 <?php 
 
-$arrayNum = array(
-
-	"posto_graduacao" =>
-		array(
-			"of_capten" => array(0, 0),
-			"1_sgt" => array(0, 0),
-			"2_sgt" => array(0, 0),
-			"st" => array(0, 0),
-			"of_sup" => array(0, 0),
-			"3_sgt" => array(0, 0),
-			"civil" => array(0, 0),
-			"cb_sd" => array(0, 0),
-			"total" => 0
-		),
-
-	"valor_final" => array(
-		"oficial" => array(0, 0, array(
-			array("of_capten", "of_sup"),
-			0, 0, 0
-		)),
-		"st_sgt" => array(0, 0, array(
-			array("1_sgt", "2_sgt", "3_sgt", "st"),
-			0, 0, 0
-		)),
-		"cb_sd" => array(0, 0, array(
-			array("cb_sd"),
-			0, 0, 0
-		)),
-		"total" => array(
-			0,
-			"refc" => array(
-				0, 0, 0, 
-				"total" => 0
-			)
-		)
-	),
-
-
-);
-
-
-
-// Calc by pt
-foreach ($Resp as $key => $value):
-	if ($value["datasheet"] == $_SESSION["objfile"]["name"]):
-		$pgreal = strtolower(preg_replace(array("/(º|\/)/"), explode(" ",""), str_replace(" ", "_", utf8_decode(trim($value["posto_graduacao"])))));
-		$arrayNum["posto_graduacao"][$pgreal][0] += 1;
-		$arrayNum["posto_graduacao"]["total"] += 1;
-
-		$arrayNum["posto_graduacao"][$pgreal][1] = round(($arrayNum["posto_graduacao"][$pgreal][0] * 100) / $arrayNum["posto_graduacao"]["total"]);
-	endif;	
-endforeach;
-
-// Calc total values by pt
-foreach ($arrayNum["posto_graduacao"] as $key => $value) $arrayNum["valor_final"]["total"][0] += $value[0];
-
-// Oficial
-$arrayNum["valor_final"]["oficial"][0] = ($arrayNum["posto_graduacao"]["of_capten"][0] + $arrayNum["posto_graduacao"]["of_sup"][0]);
-
-$arrayNum["valor_final"]["oficial"][1] = round(($arrayNum["valor_final"]["oficial"][0] * 100) / $arrayNum["valor_final"]["total"][0]);
-
-// St Sgt
-$arrayNum["valor_final"]["st_sgt"][0] = ($arrayNum["posto_graduacao"]["1_sgt"][0] + $arrayNum["posto_graduacao"]["2_sgt"][0] + $arrayNum["posto_graduacao"]["3_sgt"][0]) + ($arrayNum["posto_graduacao"]["st"][0]);
-$arrayNum["valor_final"]["st_sgt"][1] = round(($arrayNum["valor_final"]["st_sgt"][0] * 100) / $arrayNum["valor_final"]["total"][0]);
-
-// Cb/ Sd
-$arrayNum["valor_final"]["cb_sd"][0] = $arrayNum["posto_graduacao"]["cb_sd"][0];
-$arrayNum["valor_final"]["cb_sd"][1] = round(($arrayNum["valor_final"]["cb_sd"][0] * 100) / $arrayNum["valor_final"]["total"][0]);
-
-// $test = getRefc($arrayNum["valor_final"]["oficial"][2][0], "Café");
-
-$arrayNum["valor_final"]["oficial"][2][1] = getRefc($arrayNum["valor_final"]["oficial"][2][0], "Café da manhã");
-$arrayNum["valor_final"]["oficial"][2][2] = getRefc($arrayNum["valor_final"]["oficial"][2][0], "Almoço");
-$arrayNum["valor_final"]["oficial"][2][3] = getRefc($arrayNum["valor_final"]["oficial"][2][0], "Jantar");
-
-$arrayNum["valor_final"]["st_sgt"][2][1] = getRefc($arrayNum["valor_final"]["st_sgt"][2][0], "Café da manhã");
-$arrayNum["valor_final"]["st_sgt"][2][2] = getRefc($arrayNum["valor_final"]["st_sgt"][2][0], "Almoço");
-$arrayNum["valor_final"]["st_sgt"][2][3] = getRefc($arrayNum["valor_final"]["st_sgt"][2][0], "Jantar");
-
-$arrayNum["valor_final"]["cb_sd"][2][1] = getRefc($arrayNum["valor_final"]["cb_sd"][2][0], "Café da manhã");
-$arrayNum["valor_final"]["cb_sd"][2][2] = getRefc($arrayNum["valor_final"]["cb_sd"][2][0], "Almoço");
-$arrayNum["valor_final"]["cb_sd"][2][3] = getRefc($arrayNum["valor_final"]["cb_sd"][2][0], "Jantar");
-
-
-$arrayNum["valor_final"]["total"]["refc"][0] = ($arrayNum["valor_final"]["oficial"][2][1][0] + $arrayNum["valor_final"]["st_sgt"][2][1][0] + $arrayNum["valor_final"]["cb_sd"][2][1][0]);
-$arrayNum["valor_final"]["total"]["refc"][1] = ($arrayNum["valor_final"]["oficial"][2][2][0] + $arrayNum["valor_final"]["st_sgt"][2][2][0] + $arrayNum["valor_final"]["cb_sd"][2][2][0]);
-$arrayNum["valor_final"]["total"]["refc"][2] = ($arrayNum["valor_final"]["oficial"][2][3][0] + $arrayNum["valor_final"]["st_sgt"][2][3][0] + $arrayNum["valor_final"]["cb_sd"][2][3][0]);
-
-$arrayNum["valor_final"]["total"]["refc"]["total"] = $arrayNum["valor_final"]["total"]["refc"][0] + $arrayNum["valor_final"]["total"]["refc"][1] + $arrayNum["valor_final"]["total"]["refc"][2];
-
-
-
+include_once 'config/daily-voucher.config.php'; 
 ?>
-
-<!-- <p>Daily Voucher</p> -->
-
 
 
 <table>
@@ -109,28 +15,28 @@ $arrayNum["valor_final"]["total"]["refc"]["total"] = $arrayNum["valor_final"]["t
 
 	<tr>
 		<td>Oficial</td>
-		<td><?php echo $arrayNum["valor_final"]["oficial"][2][1][0]?></td>
-		<td><?php echo $arrayNum["valor_final"]["oficial"][2][2][0]?></td>
-		<td><?php echo $arrayNum["valor_final"]["oficial"][2][3][0]?></td>
+		<td><?php echo $arrayNumVoucher["valor_final"]["oficial"][2][1][0]?></td>
+		<td><?php echo $arrayNumVoucher["valor_final"]["oficial"][2][2][0]?></td>
+		<td><?php echo $arrayNumVoucher["valor_final"]["oficial"][2][3][0]?></td>
 	</tr>	
 
 
 	<tr>
 		<td>St/ Sgt</td>
-		<td><?php echo $arrayNum["valor_final"]["st_sgt"][2][1][0]?></td>
-		<td><?php echo $arrayNum["valor_final"]["st_sgt"][2][2][0]?></td>
-		<td><?php echo $arrayNum["valor_final"]["st_sgt"][2][3][0]?></td>
+		<td><?php echo $arrayNumVoucher["valor_final"]["st_sgt"][2][1][0]?></td>
+		<td><?php echo $arrayNumVoucher["valor_final"]["st_sgt"][2][2][0]?></td>
+		<td><?php echo $arrayNumVoucher["valor_final"]["st_sgt"][2][3][0]?></td>
 	</tr>
 	<tr>
 		<td>Cb/ Sd</td>
-		<td><?php echo $arrayNum["valor_final"]["cb_sd"][2][1][0]?></td>
-		<td><?php echo $arrayNum["valor_final"]["cb_sd"][2][2][0]?></td>
-		<td><?php echo $arrayNum["valor_final"]["cb_sd"][2][3][0]?></td>
+		<td><?php echo $arrayNumVoucher["valor_final"]["cb_sd"][2][1][0]?></td>
+		<td><?php echo $arrayNumVoucher["valor_final"]["cb_sd"][2][2][0]?></td>
+		<td><?php echo $arrayNumVoucher["valor_final"]["cb_sd"][2][3][0]?></td>
 	</tr>
 
 	<tr>
 		<td>Total</td>
-		<td colspan="3"><?php echo $arrayNum["valor_final"]["total"]["refc"]["total"]?></td>
+		<td colspan="3"><?php echo $arrayNumVoucher["valor_final"]["total"]["refc"]["total"]?></td>
 	</tr>
 
 </table>
@@ -159,7 +65,7 @@ $arrayNum["valor_final"]["total"]["refc"]["total"] = $arrayNum["valor_final"]["t
 
 		$param = (isset($get["cassino"]) && !empty($get["cassino"]) ? $get["cassino"] : "oficial");
 
-		foreach ($arrayNum["valor_final"][$param][2][1][1] as $key => $value):
+		foreach ($arrayNumVoucher["valor_final"][$param][2][1][1] as $key => $value):
 			
 			$refeicoes = array();
 			$ObjDecoded = array(
@@ -184,9 +90,6 @@ $arrayNum["valor_final"]["total"]["refc"]["total"] = $arrayNum["valor_final"]["t
 			$sheetBody .= "<td data-content=\"organizacao_militar\">" . $ObjDecoded["organizacao_militar"] . "</td>";
 			$sheetBody .= "<td data-content=\"posto_graduacao\">" . $ObjDecoded["posto_graduacao"] . "</td>";
 			
-
-			
-
 			// Creating the button checkbox and text
 			foreach ($ObjDecoded["refc"] as $keyRefc => $valueRefc):
 
@@ -211,7 +114,7 @@ $arrayNum["valor_final"]["total"]["refc"]["total"] = $arrayNum["valor_final"]["t
 
 		echo $sheetBody;
 
-		// var_dump($arrayNum);
+		// var_dump($arrayNumVoucher);
 
 		?>
 
