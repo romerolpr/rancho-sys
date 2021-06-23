@@ -13,6 +13,12 @@
 		</div>
 	</div>
 
+	<div class="box-board">
+		<div class="bg-shadow">
+			<canvas id="chart_faltantes_by_refc" width="400" height="400"></canvas>
+		</div>
+	</div>
+
 </div>
 
 <?php 
@@ -76,7 +82,7 @@ echo "</span></p>";
 		<td>Organização Militar</td>
 		<td>Posto/ Graduação</td>
 	<?php endif; ?>
-	<td>Refeição</td>
+	<td>Refeição (Restando)</td>
 </tr>
 	
 <?php
@@ -88,9 +94,53 @@ endif;
 
 $id = 0;
 
+$maxMissingByRefc = array(
+	"Café" => 0,
+	"Almoço" => 0,
+	"Jantar" => 0,
+	"Todos" => 0
+);
+
 foreach ($Resp as $key => $value):
 	
-	if (in_array($value["hash"], $myList["Missing"]) && $value["datasheet"] == $_SESSION['objfile']['name']):
+	if ($value["datasheet"] == $_SESSION['objfile']['name']):
+
+		// if (!in_array($value["hash"], $myList["Present"])):
+
+		$contagemRefc = array();
+
+		foreach ($listPresent as $keyRefc => $valueRefc):
+
+			if ($valueRefc[0] == $value["hash"]):
+
+				foreach ($valueRefc[1] as $refckey => $refcvalue) {
+
+					$newValue = explode(";", $refcvalue);
+
+					foreach ($newValue as $keynewValue => $valor) {
+						if (!$keynewValue % 2)
+							array_push($contagemRefc, trim($valor));
+					}
+
+				}
+
+			endif;
+
+		endforeach;
+
+		preg_match_all("/Café/", implode(",", $contagemRefc), $myCafe);
+		preg_match_all("/Almoço/", implode(",", $contagemRefc), $myAlmoco);
+		preg_match_all("/Jantar/", implode(",", $contagemRefc), $myJantar);
+
+		$myInfo = array(
+			"Café" => count($myCafe[0]),
+			"Almoço" => count($myAlmoco[0]),
+			"Jantar" => count($myJantar[0]),
+		);
+
+		$maxMissingByRefc["Café"] += count($myCafe[0]);
+		$maxMissingByRefc["Almoço"] += count($myAlmoco[0]);
+		$maxMissingByRefc["Jantar"] += count($myJantar[0]);
 
 		$arrayNumStatus["posto_graduacao"][encodeRegexPg($value["posto_graduacao"])][0] += 1;
 		$arrayNumStatus["organizacao_militar"][encodeRegexPg($value["organizacao_militar"])][0] += 1;
@@ -98,6 +148,8 @@ foreach ($Resp as $key => $value):
 		$id++;
 
 		$refeicoes = array();
+		$refeicoesRealizadas = array();
+
 		$ObjDecoded = array(
 			"nome" => ucfirst(strtolower(utf8_decode(trim($value["nome"])))),
 			"posto_graduacao" => utf8_decode($value["posto_graduacao"]),
@@ -113,49 +165,31 @@ foreach ($Resp as $key => $value):
 			)
 		);
 
-		$sheetBody .= "<tr data-hash=\"".$value["hash"]."\">";
+		$sheetBody .= "<tr data-hash=\"".$value["hash"]."\" ". ((in_array($value["hash"], $myList["Complete"])) ? "class=\"d-none\"" : null) .">";
 
 		$sheetBody .= "<td>" . $id . "</td>";
 		$sheetBody .= "<td data-content=\"nome\">" . $ObjDecoded["nome"] . "</td>";
 		$sheetBody .= "<td data-content=\"organizacao_militar\">" . $ObjDecoded["organizacao_militar"] . "</td>";
 		$sheetBody .= "<td data-content=\"posto_graduacao\">" . $ObjDecoded["posto_graduacao"] . "</td>";
-
-		// Creating the button checkbox and text
-		foreach ($listPendent as $keyRefc => $valueRefc):
-
-			var_dump($valueRefc);
-
-			$newValue = explode(";", $valueRefc[0]);
-
-			foreach ($newValue as $keynewValue => $valor) {
-				// if (!in_array(trim($valor), $refeicoes))
-				array_push($refeicoes, trim($valor));
-			}
-
-		endforeach;
-
-		// var_dump($ObjDecoded["nome"]);
-
-		preg_match_all("/Café da manhã/", implode(",", $refeicoes), $myCafe);
-		preg_match_all("/Almoço/", implode(",", $refeicoes), $myAlmoco);
-		preg_match_all("/Jantar/", implode(",", $refeicoes), $myJantar);
-
-		$myInfo = array(
-			"Café" => count($myCafe[0]),
-			"Almoço" => count($myAlmoco[0]),
-			"Jantar" => count($myJantar[0]),
-		);
-
-		// var_dump($myInfo);
-
 		$sheetBody .= "<td data-content=\"posto_graduacao\">";
+
 		if ($myInfo["Café"] > 0)
-			$sheetBody .= "Café (" . $myInfo["Café"] . ")" . (($myInfo["Almoço"] > 0) ? ", " : null);
+			$sheetBody .= "Café (" . $myInfo["Café"] . ")" . ( ($myInfo["Almoço"] > 0) ? ", " : null );
+
 		if ($myInfo["Almoço"] > 0)
-			$sheetBody .= "Almoço (" . $myInfo["Almoço"] . ")" . (($myInfo["Jantar"] > 0) ? ", " : null);;
-		if ($myInfo["Jantar"] > 0)
+			$sheetBody .= "Almoço (" . $myInfo["Almoço"] . ")" . ( ($myInfo["Jantar"] > 0) ? ", " : null );
+		
+		if ($myInfo["Jantar"] > 0) 
 			$sheetBody .= " Jantar (" . $myInfo["Jantar"] . ")";
-		$sheetBody .= "</td>";
+		
+		if (empty($contagemRefc)):
+			if (!in_array($value["hash"], $myList["Present"])):
+				$sheetBody .= "Restando todos";
+				$maxMissingByRefc["Todos"] += 1;
+			else:
+				$sheetBody .= "Completo";
+			endif;
+		endif;
 
 		$sheetBody .= "</tr>";
 
@@ -163,23 +197,27 @@ foreach ($Resp as $key => $value):
 
 endforeach;
 
-
 echo $sheetBody;
 
 foreach ($arrayNumStatus["posto_graduacao"] as $key => $value)
 	$arrayNumStatus["total"] += $value[0];
 
+$max = max($maxMissingByRefc);
+foreach ($maxMissingByRefc as $key => $value) {
+	if ($max == $value)
+		$max = $key;
+}
+
 ?>
 
 </table></div>
-
-
 
 <script>
 	$(document).ready(function(){
 		var ctx = [
 				document.getElementById('chart_faltantes_pg'), 
 				document.getElementById('chart_faltantes_om'), 
+				document.getElementById('chart_faltantes_by_refc'), 
 			],
 			labels = [
 				'Of cap/ten',
@@ -195,6 +233,12 @@ foreach ($arrayNumStatus["posto_graduacao"] as $key => $value)
 				'8º BPE',
 				'Apoio Direto',
 				'AGSP'
+			],
+			labels_refc = [
+				'Café',
+				'Almoço',
+				'Jantar',
+				'Restando Todos'
 			];
 
 		const options = [
@@ -211,6 +255,14 @@ foreach ($arrayNumStatus["posto_graduacao"] as $key => $value)
 	            title: {
 	                display: true,
 	                text: 'Faltantes: Organização Militar'
+	            }
+	        }
+	    },
+	    {
+	        plugins: {
+	            title: {
+	                display: true,
+	                text: 'Faltantes: Por refeição'
 	            }
 	        }
 	    }
@@ -266,7 +318,32 @@ foreach ($arrayNumStatus["posto_graduacao"] as $key => $value)
 		    ],
 		    hoverOffset: 4
 		  }]
-		}
+		},
+		{
+		  labels: labels_refc,
+		  datasets: [{
+		    // label: 'Arranchados',
+		    data: [
+		    <?php 
+		    	foreach ($maxMissingByRefc as $key => $value) echo $value . ", ";
+		    ?>
+		    ],
+		    backgroundColor: [
+		      <?php 
+		      sort($backgroundColors);
+		      for ($i=0; $i <= $arrayNumStatus['posto_graduacao'] ; $i++):
+		      	if (isset($backgroundColors[$i])):
+		      		echo "\"$backgroundColors[$i]\",\n";
+		      	else:
+		      		echo '"rgb(238, 238, 238)",';
+		      		break;
+		      	endif;
+		      endfor;
+		      ?>
+		    ],
+		    hoverOffset: 4
+		  }]
+		},
 		];
 
 		new Chart(ctx[0], {
@@ -279,6 +356,12 @@ foreach ($arrayNumStatus["posto_graduacao"] as $key => $value)
 		    type: 'pie',
 		    data: data[1],
 		    options: options[1]
+		});
+
+		new Chart(ctx[2], {
+		    type: 'pie',
+		    data: data[2],
+		    options: options[2]
 		});
 
 	});
@@ -294,4 +377,4 @@ else:
 
 endif; 
 
-?>
+// var_dump($maxMissingByRefc);

@@ -87,25 +87,6 @@ $listComplete = array();
 $listPresent = array();
 $listMissing = array();
 
-function testListValues($lista1, $lista2){	
-	$clearArray = array(
-		0 => array(),
-		1 => array()
-	);
-	foreach ($lista1 as $key => $value) 
-		array_push($clearArray[0], trim($value));
-	foreach ($lista2 as $key => $value) 
-		array_push($clearArray[1], trim($value));
-	return array_diff($clearArray[0], $clearArray[1]);
-}
-
-function clearArrayValues($list){
-	$n = array();
-	foreach ($list as $key => $item)
-		array_push($n, trim($item));
-	return $n;
-}
-
 /**
  Starting comparation beetwen tables
 **/
@@ -126,9 +107,13 @@ foreach ($myResp as $keyresp => $resp):
 
 			elseif (!empty($testArrays)):
 				array_push($listPendent, array($conf["hash"], $testArrays));
-			else:
-				array_push($listComplete, array($conf["hash"], $resp));
+
 			endif;
+
+			if (empty($testArrays))
+				array_push($listComplete, array($conf["hash"], $resp));
+
+			// var_dump($listComplete);
 
 		endif;
 
@@ -173,7 +158,7 @@ foreach ($listPendent as $key => $value)
 	if (!in_array($value[0], $myList["Missing"]))
 		array_push($myList["Missing"], $value[0]);
 
-// var_dump($listPendent);
+// var_dump($myList);
 
 $arrayNumStatus = array(
 
@@ -357,14 +342,8 @@ endif;
 
 	<script>
 
-		$(".btn_expand").on("click", function(e){
-			e.preventDefault();
-			// if (!clicked){
-			$(".box-table").addClass("window_fixed");
-			// window.history.pushState({url: "" + $(this).attr('href') + ""}, $(this).attr('title') , $(this).attr('href'));
-				// clicked = true;
-			//}
-		});
+
+
 
 		document.addEventListener('keydown', function (event) {
 		    if (event.keyCode == 27){
@@ -382,10 +361,13 @@ endif;
 			e.preventDefault();
 			if (click_btn === false){
 				$(this).addClass("btn_active");
-					click_btn = true;
+				$(".box-table").addClass("window_fixed");
+				click_btn = true;
+				localStorage.setItem('window', true);
 			} else {
 				$(".box-table").removeClass("window_fixed");
 				$(this).removeClass("btn_active"); 
+				localStorage.setItem('window', false);
 				click_btn = false;
 			}
 		});
@@ -468,6 +450,17 @@ endif;
 		$(document).ready(function(){
 			$('body').removeClass("loading");
 		});
+
+		var windowFixed = localStorage.getItem("window");
+		if (windowFixed != "false"){
+			$(".box-table").addClass("window_fixed");
+			$(".btn_expand").addClass("btn_active");
+			click_btn = true;
+		} else {
+			$(".box-table").removeClass("window_fixed");
+			$(".btn_expand").removeClass("btn_active");
+			click_btn = false;
+		}
 	</script>
 
 

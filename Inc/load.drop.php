@@ -16,6 +16,7 @@ $Db->setter(HOST, USER, PASS, DBNAME);
 $datasheet = $_SESSION['objfile']['name'];
 // var_dump($datasheet);
 $content = $_POST["content"];
+$exbAll = $_POST["exbAll"];
 
 foreach ($Filter["buttons"][$content] as $keybuttons => $button) {
 
@@ -36,7 +37,7 @@ foreach ($Filter["buttons"][$content] as $keybuttons => $button) {
 	if ($button["drop"]):
 
 		$dropRender .= "<p class=\"txt-center display-buttons\">";
-		$dropRender .= "<button class=\"btn-bg btn-display btn-transparent btn_cancel\" data-exec=\"cancel\" title=\"Cancelar\">Cancelar</button>";
+		$dropRender .= "<button class=\"btn-bg btn-display btn-transparent btn_cancel\" data-exec=\"cancel\" title=\"\"></button>";
 		$dropRender .= "<button class=\"btn-bg btn-display btn_apply\" data-content=\"".$content."\" title=\"Aplicar\">Aplicar</button>";
 		$dropRender .= "</p>";
 		$dropRender .= "<span class=\"divider\"></span>";
@@ -50,7 +51,7 @@ foreach ($Filter["buttons"][$content] as $keybuttons => $button) {
 
 			$getSort = (isset($_GET["sort"]) ? $_GET["sort"] : null);
 
-			$dropRender .= "<p class=\"txt-left\"><a class=\"btn txt-left sort-".strtolower($order)."\" href=\"?filter&sort=".(!is_null($getSort) ? $getSort . ";" . $order : $order ).":".urlencode($content).(isset($_SESSION['objfile']['aba']) ? "&aba=" . $_SESSION['objfile']['aba'] . "#table-filter" : null )."\" data-content=\"".$content."\" data-sort=\"".strtolower($order)."\" title=\"Classificar por ".$order."\">Classificar por ".$order."</a></p>";
+			$dropRender .= "<p class=\"txt-left\"><a class=\"btn txt-left sort-".strtolower($order)."\" href=\"?filter&sort=".(!is_null($getSort) ? $getSort . ";" . $order : $order ).":".urlencode($content).(isset($_SESSION['objfile']['aba']) ? "&aba=" . $_SESSION['objfile']['aba'] . "#table-filter" : null ).($exbAll == 1 ? "&exb_all" : null )."\" data-content=\"".$content."\" data-sort=\"".strtolower($order)."\" title=\"Classificar por ".$order."\">Classificar por ".$order."</a></p>";
 		}
 
 		if ($Filter["buttons"][$content]["drop"]):

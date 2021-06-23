@@ -130,7 +130,7 @@ include_once 'config/daily-voucher.config.php';
 
 <div class="box-bg-board">
 
-	<p>Vale diário</p>
+	<p><a href="<?php echo $url;?>report.php?aba=daily-voucher" class="btn_link" title="Vale diário">Vale diário</a></p>
 	<table>
 		
 		<tr class="bar-table">
@@ -169,7 +169,7 @@ include_once 'config/daily-voucher.config.php';
 	</table>
 
 	<br>
-	<p>Índices gerais</p>
+	<p><a href="<?php echo $url;?>report.php?aba=dashboard" class="btn_link" title="Índices gerais">Índices gerais</a></p>
 
 	<div class="box-board">
 		<div class="bg-shadow">

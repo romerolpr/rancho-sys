@@ -74,7 +74,7 @@ endif;
 </head>
 <body>
 
-	<div class="modal"></div>
+	<div class="modal" id="window_loading"></div>
 
 	<header>
 	    <?php include 'Inc/topo.inc.php' ?>
@@ -193,6 +193,7 @@ endif;
 			});
 		}
 
+		var exbAll = "<?php echo ( isset($get['exb_all']) ? true : false ) ?>";
 	</script>
 
 	<!-- Events, functions js -->
@@ -211,7 +212,12 @@ endif;
 			$(".btn_expand").removeClass("btn_active");
 			click_btn = false;
 		}
+
+		
+
+			
 	</script>
+
 
 </body>
 </html>

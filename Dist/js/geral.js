@@ -81,7 +81,7 @@ function mescleItems(){
 	return [mescleItemsVar, trdad];
 }
 
-InputChange();
+InputChange(exbAll);
 
 $('#report').on("click", function(e){
 	e.preventDefault();
@@ -128,7 +128,8 @@ function getMoreItems(){
 			$("body").removeClass("loading");
 
 			$('#table-filter').append(data);
-			InputChange();
+
+			InputChange(exbAll);
 		}
 	});
 	request.fail(function(jqXHR, textStatus) {

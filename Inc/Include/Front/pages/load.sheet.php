@@ -81,7 +81,7 @@ foreach ($fromDbComplete as $key => $value):
 			$sheetBody .= "</tr>";
 
 			$sheetBody .= "<tr data-hash=\"".$value["hash"]."\">";
-			// $sheetBody .= "<td>" . $value["hash"] . "</td>";
+			$sheetBody .= "<td class=\"d-none\">" . $value["hash"] . "</td>";
 			
 			if ($Filter["buttons"]["carimbo"]["hided"] !== true)
 				$sheetBody .= "<td data-content=\"carimbo\">" . $value["carimbo"] . "</td>";

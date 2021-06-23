@@ -131,3 +131,22 @@ function countPreTotal($array, $arg = null){
     endif;
     return $t;
 }
+
+function testListValues($lista1, $lista2){  
+    $clearArray = array(
+        0 => array(),
+        1 => array()
+    );
+    foreach ($lista1 as $key => $value) 
+        array_push($clearArray[0], trim($value));
+    foreach ($lista2 as $key => $value) 
+        array_push($clearArray[1], trim($value));
+    return array_diff($clearArray[0], $clearArray[1]);
+}
+
+function clearArrayValues($list){
+    $n = array();
+    foreach ($list as $key => $item)
+        array_push($n, trim($item));
+    return $n;
+}
