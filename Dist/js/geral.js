@@ -11,31 +11,17 @@ $(".btn_click_consult").on("click", function(e){
 	e.preventDefault();
 	confirm_clicked(url, action);
 });
-
-$(".btn_expand").on("click", function(e){
-	e.preventDefault();
-	// if (!clicked){
-	$(".box-table").addClass("window_fixed");
-	// window.history.pushState({url: "" + $(this).attr('href') + ""}, $(this).attr('title') , $(this).attr('href'));
-		// clicked = true;
-	//}
-});
-
-document.addEventListener('keydown', function (event) {
-    if (event.keyCode == 27){
-     	$(".box-table").removeClass("window_fixed");
-   		$(".btn_expand").removeClass("btn_active"); 
-    }
-});
  
 $(window).bind("popstate", function(e) {
   $('.main').load(e.state.url);
 });
 
 var click_btn = false;
-$(".btn_expand").click(function(){ 
+$(".btn_expand").click(function(e){ 
+	e.preventDefault();
 	if (click_btn === false){
-		$(this).addClass("btn_active");
+			$(this).addClass("btn_active");
+			$(".box-table").addClass("window_fixed");
 			click_btn = true;
 			localStorage.setItem('window', true);
 	} else {
@@ -45,6 +31,15 @@ $(".btn_expand").click(function(){
 		click_btn = false;
 	}
 });
+
+document.addEventListener('keydown', function (event) {
+    if (event.keyCode == 27){
+     	$(".box-table").removeClass("window_fixed");
+   		$(".btn_expand").removeClass("btn_active"); 
+   		localStorage.setItem('window', false);
+    }
+});
+
 
 var itemsBox = [],
 	is_empty = [];
@@ -147,4 +142,57 @@ $('.box-table:not(.exbAll)').bind('scroll', function() {
 	if($(this).scrollTop() + $(this).innerHeight() >= this.scrollHeight) {
       getMoreItems();
   }
+});
+
+function getInputsAll(){
+	let input = [];
+	$(".input_checked").each(function(){
+		input.push($(this));
+	});
+	return input;
+}
+
+let x = false;
+
+function applyEffect(input){
+	for (var i = 0; i < input.length; i++) {
+		if (input[i][0].checked == false) {
+			input[i].parent().parent().parent().show();
+		} else {
+			input[i].parent().parent().parent().fadeOut("slow").hide();
+		}''
+	}
+}
+
+$(".btn_square").on("click", function(e){
+
+	e.preventDefault();
+	var input = getInputsAll(),
+			$body = $("body");
+
+	$body.addClass("loading");
+
+	$(this).addClass("btn_active");
+
+	applyEffect(input);
+
+	if (x == false) {
+		$(this).text("Caixas vazias");
+		x = true;
+	} else {
+		$(this).text("Caixas vazias e marcadas");
+		x = false;
+	}
+	
+	$(".btn_restore").removeClass("none");
+	setTimeout(function(){
+		$body.removeClass("loading");
+	}, 250);
+});
+
+$(".btn_restore").on("click", function(e){
+	e.preventDefault();
+	$("#table-filter tr").fadeIn("slow").show();
+	$(this).addClass("none");
+	$(".btn_square").text("Caixas vazias").removeClass("btn_active");
 });

@@ -34,6 +34,10 @@ p {
     border: none;
 }
 
+.none {
+ display: none!important; 
+}
+
 .sidebar a:hover { text-decoration: none;}
 
 .sidebar div {
@@ -1144,6 +1148,17 @@ ul.active #filter::after{
     font-size: 12px!important;
 }
 
+table.gpdf tr, 
+table.gpdf td {
+    border: 2px solid #000;
+    background: #fff;
+    font-size: 1em;
+    font-family: 'Times New Roman', 'Arial';
+    font-weight: bold;
+    color: #000;
+    height: auto;
+}
+
 @media (max-width: 767px) { 
     .content article, aside { width: 100%!important; }
 
@@ -1182,10 +1197,6 @@ ul.active #filter::after{
         overflow-y: auto;
     }
 
-    * {
-        word-break: break-word;
-    }
-
     .content aside,
     .content aside, .content article {
         margin: 0;
@@ -1199,5 +1210,25 @@ ul.active #filter::after{
     .box-bg-board 
     {
         padding: 0;
+    }
+
+    .head_table {
+        display: block;
+    }
+
+    .btn_manage {
+        float: none;
+    }
+
+    #table-filter {
+        word-break: initial;
+    }
+
+    .box-table {
+        max-height: initial;
+    }
+
+    .window_fixed .d-center-items {
+        width: 50%;
     }
 }

@@ -56,7 +56,7 @@ include_once 'config/daily-voucher.config.php';
 		<td>Nome</td>
 		<td>Organização Militar</td>
 		<td>Posto/ Graduação</td>
-		<td>Refeição</td>
+		<!-- <td>Refeição</td> -->
 	</tr>
 
 		<?php
@@ -67,6 +67,37 @@ include_once 'config/daily-voucher.config.php';
 
 		foreach ($arrayNumVoucher["valor_final"][$param][2][1][1] as $key => $value):
 			
+			$contagemRefc = array();
+
+			foreach ($listPresent as $keyRefc => $valueRefc):
+
+				if ($valueRefc[0] == $value["hash"]):
+
+					foreach ($valueRefc[1] as $refckey => $refcvalue) {
+
+						$newValue = explode(";", $refcvalue);
+
+						foreach ($newValue as $keynewValue => $valor) {
+							if (!$keynewValue % 2)
+								array_push($contagemRefc, trim($valor));
+						}
+
+					}
+
+				endif;
+
+			endforeach;
+
+			preg_match_all("/Café/", implode(",", $contagemRefc), $myCafe);
+			preg_match_all("/Almoço/", implode(",", $contagemRefc), $myAlmoco);
+			preg_match_all("/Jantar/", implode(",", $contagemRefc), $myJantar);
+
+			$myInfo = array(
+				"Café" => count($myCafe[0]),
+				"Almoço" => count($myAlmoco[0]),
+				"Jantar" => count($myJantar[0]),
+			);
+
 			$refeicoes = array();
 			$ObjDecoded = array(
 				"nome" => ucfirst(strtolower(utf8_decode(trim($value["nome"])))),
@@ -89,22 +120,19 @@ include_once 'config/daily-voucher.config.php';
 			$sheetBody .= "<td data-content=\"nome\">" . $ObjDecoded["nome"] . "</td>";
 			$sheetBody .= "<td data-content=\"organizacao_militar\">" . $ObjDecoded["organizacao_militar"] . "</td>";
 			$sheetBody .= "<td data-content=\"posto_graduacao\">" . $ObjDecoded["posto_graduacao"] . "</td>";
+
+			// var_dump($listPresent);
+
+			// if ($myInfo["Café"] > 0)
+			// 	$sheetBody .= "Café (" . $myInfo["Café"] . ")" . ( ($myInfo["Almoço"] > 0) ? ", " : null );
+
+			// if ($myInfo["Almoço"] > 0)
+			// 	$sheetBody .= "Almoço (" . $myInfo["Almoço"] . ")" . ( ($myInfo["Jantar"] > 0) ? ", " : null );
 			
-			// Creating the button checkbox and text
-			foreach ($ObjDecoded["refc"] as $keyRefc => $valueRefc):
+			// if ($myInfo["Jantar"] > 0) 
+			// 	$sheetBody .= " Jantar (" . $myInfo["Jantar"] . ")";
 
-				$newValue = explode(",", $valueRefc[0]);
-
-				foreach ($newValue as $keynewValue => $valor) {
-					if (!in_array(trim($valor), $refeicoes))
-						array_push($refeicoes, trim($valor));
-				}
-
-			endforeach;
-
-			// var_dump($refeicoes);
-
-			$sheetBody .= "<td data-content=\"posto_graduacao\">" . $refeicoes[0] . (isset($refeicoes[1]) && !empty($refeicoes[1]) ? ", " . $refeicoes[1] : null) . (isset($refeicoes[2]) && !empty($refeicoes[2]) ? ", " . $refeicoes[2] : null) . "</td>";
+			// $sheetBody .= "<td data-content=\"posto_graduacao\">" . $refeicoes[0] . (isset($refeicoes[1]) && !empty($refeicoes[1]) ? ", " . $refeicoes[1] : null) . (isset($refeicoes[2]) && !empty($refeicoes[2]) ? ", " . $refeicoes[2] : null) . "</td>";
 
 			$sheetBody .= "</tr>";
 

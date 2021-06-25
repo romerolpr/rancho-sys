@@ -1,4 +1,131 @@
-<?php if (count($myList["Missing"]) > 0): ?>
+<?php 
+
+$sheetBody = null;
+
+$maxMissingByRefc = array(
+	"Café" => 0,
+	"Almoço" => 0,
+	"Jantar" => 0,
+	"Todos" => 0
+);
+
+if (isset($get["gpdf-view"])): 
+
+
+	aasort($Resp, "A-Z", "nome");
+
+	foreach ($Resp as $key => $value):
+		
+		if ($value["datasheet"] == $_SESSION['objfile']['name']):
+
+			// if (!in_array($value["hash"], $myList["Present"])):
+
+			$contagemRefc = array();
+
+			foreach ($listPresent as $keyRefc => $valueRefc):
+
+				if ($valueRefc[0] == $value["hash"]):
+
+					foreach ($valueRefc[1] as $refckey => $refcvalue) {
+
+						$newValue = explode(";", $refcvalue);
+
+						foreach ($newValue as $keynewValue => $valor) {
+							if (!$keynewValue % 2)
+								array_push($contagemRefc, trim($valor));
+						}
+
+					}
+
+				endif;
+
+			endforeach;
+
+			preg_match_all("/Café/", implode(",", $contagemRefc), $myCafe);
+			preg_match_all("/Almoço/", implode(",", $contagemRefc), $myAlmoco);
+			preg_match_all("/Jantar/", implode(",", $contagemRefc), $myJantar);
+
+			$myInfo = array(
+				"Café" => count($myCafe[0]),
+				"Almoço" => count($myAlmoco[0]),
+				"Jantar" => count($myJantar[0]),
+			);
+
+			$maxMissingByRefc["Café"] += count($myCafe[0]);
+			$maxMissingByRefc["Almoço"] += count($myAlmoco[0]);
+			$maxMissingByRefc["Jantar"] += count($myJantar[0]);
+
+			$arrayNumStatus["posto_graduacao"][encodeRegexPg($value["posto_graduacao"])][0] += 1;
+			$arrayNumStatus["organizacao_militar"][encodeRegexPg($value["organizacao_militar"])][0] += 1;
+
+			$ObjDecoded = array(
+				"nome" => ucfirst(strtolower(utf8_decode(trim($value["nome"])))),
+				"posto_graduacao" => utf8_decode($value["posto_graduacao"]),
+				"organizacao_militar" => utf8_decode($value["organizacao_militar"]),
+			);
+
+			if (!empty($contagemRefc)):
+
+				$sheetBody .= "<tr data-hash=\"".$value["hash"]."\" ". ((in_array($value["hash"], $myList["Complete"])) ? "class=\"d-none\"" : null) .">";
+
+				$sheetBody .= "<td data-content=\"organizacao_militar\">" . $ObjDecoded["organizacao_militar"] . "</td>";
+				$sheetBody .= "<td data-content=\"posto_graduacao\">" . $ObjDecoded["posto_graduacao"] . "</td>";
+				$sheetBody .= "<td data-content=\"nome\">" . $ObjDecoded["nome"] . "</td>";
+				
+				$sheetBody .= "<td>";
+				if ($myInfo["Café"] > 0)
+					$sheetBody .= "X";
+				$sheetBody .= "</td>";
+
+				$sheetBody .= "<td>";
+					if ($myInfo["Almoço"] > 0)
+						$sheetBody .= "X";
+				$sheetBody .= "</td>";
+				
+				$sheetBody .= "<td>";
+					if ($myInfo["Jantar"] > 0) 
+						$sheetBody .= "X";
+				$sheetBody .= "</td>";
+				
+				$sheetBody .= "</tr>";
+
+			endif;
+
+		endif;
+
+	endforeach;
+
+?>
+
+<table class="gpdf" cellspacing="1">
+	
+	<tr>
+		<td colspan="7" style="text-transform: uppercase;">DATA EMISSÃO: <?php echo $date->format("d/ M/ Y - H:i:s"); ?></td>
+	</tr>
+	<tr>
+		<td colspan="7">Militares que faltaram nas Refeições</td>
+	</tr>
+	<tr>
+		<td>OM</td>
+		<td>Graduação</td>
+		<td>Nome</td>
+		<td>Café</td>
+		<td>Almoço</td>
+		<td>Janta</td>
+		<!-- <td>Não compareceu</td> -->
+	</tr>
+
+	<?php echo $sheetBody?>
+
+</table>
+
+<?php 
+
+else:
+
+	if (count($myList["Missing"]) > 0): 
+
+?>
 
 <div class="box-bg-board center">
 
@@ -23,33 +150,33 @@
 
 <?php 
 
-$sheetBody = null;
+	echo "<div class=\"box-table ". (isset($get["filter"]) || isset($get["exb_all"]) ? 'exbAll' : null) ."\">";
+	echo "<p class=\"fleft d-center-items sticky\">";
+	echo "<span class=\"fleft\"><strong>Tabela: Faltantes</strong></span>";
+	echo "<span class=\"fright head_table\">";
 
-echo "<div class=\"box-table ". (isset($get["filter"]) || isset($get["exb_all"]) ? 'exbAll' : null) ."\">";
-echo "<p class=\"fleft d-center-items sticky\">";
-echo "<span class=\"fleft\"><strong>Tabela: Faltantes</strong></span>";
-echo "<span class=\"fright head_table\">";
+	if (!isset($get["filter"])):
+		echo "<a href=\"".$url."report.php?aba=missing&filter".(isset($get["exb_all"]) ? "&exb_all" : null)."#table-filter\" class=\"btn btn_link btn_manage\" title=\"Visualização de filtro\" id=\"power_filter\"><i class=\"fas fa-filter\"></i></a>";
+	else:
+		echo "<a href=\"".$url."report.php?aba=missing".(isset($get["exb_all"]) ? "&exb_all" : null)."#table-filter\" class=\"btn btn_link btn_manage btn_active\" title=\"Desativar modo: Visualização de filtro\"><i class=\"fas fa-filter\"></i></a>";
+	endif;
 
-if (!isset($get["filter"])):
-	echo "<a href=\"".$url."report.php?aba=missing&filter".(isset($get["exb_all"]) ? "&exb_all" : null)."#table-filter\" class=\"btn btn_link btn_manage\" title=\"Visualização de filtro\" id=\"power_filter\"><i class=\"fas fa-filter\"></i></a>";
-else:
-	echo "<a href=\"".$url."report.php?aba=missing".(isset($get["exb_all"]) ? "&exb_all" : null)."#table-filter\" class=\"btn btn_link btn_manage btn_active\" title=\"Desativar modo: Visualização de filtro\"><i class=\"fas fa-filter\"></i></a>";
-endif;
+	echo "<a href=\"".$url."report.php?aba=missing&gpdf-view\" class=\"btn btn_link btn_manage\" title=\"Gerar PDF\" target=\"_blank\"><i class=\"fas fa-file-pdf\"></i></a>";
 
-echo "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage btn_expand\" title=\"Expandir tabela\"><i class=\"fas fa-expand\"></i></a>";
+	echo "<a href=\"".$url."report.php?aba=missing\" class=\"btn btn_link btn_manage btn_expand\" title=\"Expandir tabela\"><i class=\"fas fa-expand\"></i></a>";
 
-echo "<table id=\"table-filter\" data-exb=\"".((!isset($get["exb_all"])) ? "default" : "exb_all")."\" class=\"min-h\">";
+	echo "<table id=\"table-filter\" data-exb=\"".((!isset($get["exb_all"])) ? "default" : "exb_all")."\" class=\"min-h\">";
 
-if(isset($get["filter"])): 
-	echo '<div class="fright mb-2">';
-		echo '<div class="box">';
-			echo '<span class="label">Filtrar por: </span>';
-			echo '<input type="text" name="searchByName" class="searchbar" id="searchbar" placeholder="Nome, arranchamento...">';
+	if(isset($get["filter"])): 
+		echo '<div class="fright mb-2">';
+			echo '<div class="box">';
+				echo '<span class="label">Filtrar por: </span>';
+				echo '<input type="text" name="searchByName" class="searchbar" id="searchbar" placeholder="Nome, arranchamento...">';
+			echo '</div>';
 		echo '</div>';
-	echo '</div>';
-endif;
+	endif;
 
-echo "</span></p>";
+	echo "</span></p>";
 
 ?>
 
@@ -87,126 +214,107 @@ echo "</span></p>";
 	
 <?php
 
-if (isset($get["sort"])):
-	$getSort = explode(":", $get["sort"]);
-	aasort($Resp, $getSort[0], $getSort[1]);
-endif; 
+	if (isset($get["sort"])):
+		$getSort = explode(":", $get["sort"]);
+		aasort($Resp, $getSort[0], $getSort[1]);
+	endif; 
 
-$id = 0;
+	$id = 0;
 
-$maxMissingByRefc = array(
-	"Café" => 0,
-	"Almoço" => 0,
-	"Jantar" => 0,
-	"Todos" => 0
-);
+	foreach ($Resp as $key => $value):
+		
+		if ($value["datasheet"] == $_SESSION['objfile']['name']):
 
-foreach ($Resp as $key => $value):
-	
-	if ($value["datasheet"] == $_SESSION['objfile']['name']):
+			// if (!in_array($value["hash"], $myList["Present"])):
 
-		// if (!in_array($value["hash"], $myList["Present"])):
+			$contagemRefc = array();
 
-		$contagemRefc = array();
+			foreach ($listPresent as $keyRefc => $valueRefc):
 
-		foreach ($listPresent as $keyRefc => $valueRefc):
+				if ($valueRefc[0] == $value["hash"]):
 
-			if ($valueRefc[0] == $value["hash"]):
+					foreach ($valueRefc[1] as $refckey => $refcvalue) {
 
-				foreach ($valueRefc[1] as $refckey => $refcvalue) {
+						$newValue = explode(";", $refcvalue);
 
-					$newValue = explode(";", $refcvalue);
+						foreach ($newValue as $keynewValue => $valor) {
+							if (!$keynewValue % 2)
+								array_push($contagemRefc, trim($valor));
+						}
 
-					foreach ($newValue as $keynewValue => $valor) {
-						if (!$keynewValue % 2)
-							array_push($contagemRefc, trim($valor));
 					}
 
-				}
+				endif;
 
+			endforeach;
+
+			preg_match_all("/Café/", implode(",", $contagemRefc), $myCafe);
+			preg_match_all("/Almoço/", implode(",", $contagemRefc), $myAlmoco);
+			preg_match_all("/Jantar/", implode(",", $contagemRefc), $myJantar);
+
+			$myInfo = array(
+				"Café" => count($myCafe[0]),
+				"Almoço" => count($myAlmoco[0]),
+				"Jantar" => count($myJantar[0]),
+			);
+
+			$maxMissingByRefc["Café"] += count($myCafe[0]);
+			$maxMissingByRefc["Almoço"] += count($myAlmoco[0]);
+			$maxMissingByRefc["Jantar"] += count($myJantar[0]);
+
+			$arrayNumStatus["posto_graduacao"][encodeRegexPg($value["posto_graduacao"])][0] += 1;
+			$arrayNumStatus["organizacao_militar"][encodeRegexPg($value["organizacao_militar"])][0] += 1;
+
+			$id++;
+
+			$ObjDecoded = array(
+				"nome" => ucfirst(strtolower(utf8_decode(trim($value["nome"])))),
+				"posto_graduacao" => utf8_decode($value["posto_graduacao"]),
+				"organizacao_militar" => utf8_decode($value["organizacao_militar"]),
+			);
+
+			$sheetBody .= "<tr data-hash=\"".$value["hash"]."\" ". ((in_array($value["hash"], $myList["Complete"])) ? "class=\"d-none\"" : null) .">";
+
+			$sheetBody .= "<td>" . $id . "</td>";
+			$sheetBody .= "<td data-content=\"nome\">" . $ObjDecoded["nome"] . "</td>";
+			$sheetBody .= "<td data-content=\"organizacao_militar\">" . $ObjDecoded["organizacao_militar"] . "</td>";
+			$sheetBody .= "<td data-content=\"posto_graduacao\">" . $ObjDecoded["posto_graduacao"] . "</td>";
+			$sheetBody .= "<td data-content=\"posto_graduacao\">";
+
+			if ($myInfo["Café"] > 0)
+				$sheetBody .= "Café (" . $myInfo["Café"] . ")" . ( ($myInfo["Almoço"] > 0) ? ", " : null );
+
+			if ($myInfo["Almoço"] > 0)
+				$sheetBody .= "Almoço (" . $myInfo["Almoço"] . ")" . ( ($myInfo["Jantar"] > 0) ? ", " : null );
+			
+			if ($myInfo["Jantar"] > 0) 
+				$sheetBody .= " Jantar (" . $myInfo["Jantar"] . ")";
+			
+			if (empty($contagemRefc)):
+				if (!in_array($value["hash"], $myList["Present"])):
+					$sheetBody .= "Restando todos";
+					$maxMissingByRefc["Todos"] += 1;
+				else:
+					$sheetBody .= "Completo";
+				endif;
 			endif;
 
-		endforeach;
+			$sheetBody .= "</tr>";
 
-		preg_match_all("/Café/", implode(",", $contagemRefc), $myCafe);
-		preg_match_all("/Almoço/", implode(",", $contagemRefc), $myAlmoco);
-		preg_match_all("/Jantar/", implode(",", $contagemRefc), $myJantar);
-
-		$myInfo = array(
-			"Café" => count($myCafe[0]),
-			"Almoço" => count($myAlmoco[0]),
-			"Jantar" => count($myJantar[0]),
-		);
-
-		$maxMissingByRefc["Café"] += count($myCafe[0]);
-		$maxMissingByRefc["Almoço"] += count($myAlmoco[0]);
-		$maxMissingByRefc["Jantar"] += count($myJantar[0]);
-
-		$arrayNumStatus["posto_graduacao"][encodeRegexPg($value["posto_graduacao"])][0] += 1;
-		$arrayNumStatus["organizacao_militar"][encodeRegexPg($value["organizacao_militar"])][0] += 1;
-
-		$id++;
-
-		$refeicoes = array();
-		$refeicoesRealizadas = array();
-
-		$ObjDecoded = array(
-			"nome" => ucfirst(strtolower(utf8_decode(trim($value["nome"])))),
-			"posto_graduacao" => utf8_decode($value["posto_graduacao"]),
-			"organizacao_militar" => utf8_decode($value["organizacao_militar"]),
-			"refc" => array(
-				explode("&&", utf8_decode($value["segunda_feira"])),
-				explode("&&", utf8_decode($value["terca_feira"])),
-				explode("&&", utf8_decode($value["quarta_feira"])),
-				explode("&&", utf8_decode($value["quinta_feira"])),
-				explode("&&", utf8_decode($value["sexta_feira"])),
-				explode("&&", utf8_decode($value["sabado"])),
-				explode("&&", utf8_decode($value["domingo"])),
-			)
-		);
-
-		$sheetBody .= "<tr data-hash=\"".$value["hash"]."\" ". ((in_array($value["hash"], $myList["Complete"])) ? "class=\"d-none\"" : null) .">";
-
-		$sheetBody .= "<td>" . $id . "</td>";
-		$sheetBody .= "<td data-content=\"nome\">" . $ObjDecoded["nome"] . "</td>";
-		$sheetBody .= "<td data-content=\"organizacao_militar\">" . $ObjDecoded["organizacao_militar"] . "</td>";
-		$sheetBody .= "<td data-content=\"posto_graduacao\">" . $ObjDecoded["posto_graduacao"] . "</td>";
-		$sheetBody .= "<td data-content=\"posto_graduacao\">";
-
-		if ($myInfo["Café"] > 0)
-			$sheetBody .= "Café (" . $myInfo["Café"] . ")" . ( ($myInfo["Almoço"] > 0) ? ", " : null );
-
-		if ($myInfo["Almoço"] > 0)
-			$sheetBody .= "Almoço (" . $myInfo["Almoço"] . ")" . ( ($myInfo["Jantar"] > 0) ? ", " : null );
-		
-		if ($myInfo["Jantar"] > 0) 
-			$sheetBody .= " Jantar (" . $myInfo["Jantar"] . ")";
-		
-		if (empty($contagemRefc)):
-			if (!in_array($value["hash"], $myList["Present"])):
-				$sheetBody .= "Restando todos";
-				$maxMissingByRefc["Todos"] += 1;
-			else:
-				$sheetBody .= "Completo";
-			endif;
 		endif;
 
-		$sheetBody .= "</tr>";
+	endforeach;
 
-	endif;
+	echo $sheetBody;
 
-endforeach;
+	foreach ($arrayNumStatus["posto_graduacao"] as $key => $value)
+		$arrayNumStatus["total"] += $value[0];
 
-echo $sheetBody;
-
-foreach ($arrayNumStatus["posto_graduacao"] as $key => $value)
-	$arrayNumStatus["total"] += $value[0];
-
-$max = max($maxMissingByRefc);
-foreach ($maxMissingByRefc as $key => $value) {
-	if ($max == $value)
-		$max = $key;
-}
+	$max = max($maxMissingByRefc);
+	foreach ($maxMissingByRefc as $key => $value) {
+		if ($max == $value)
+			$max = $key;
+	}
 
 ?>
 
@@ -263,7 +371,22 @@ foreach ($maxMissingByRefc as $key => $value) {
 	            title: {
 	                display: true,
 	                text: 'Faltantes: Por refeição'
-	            }
+	            },
+	            tooltips: {
+                    enabled: false
+                },
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => {
+                            sum += data;
+                        });
+                        let percentage = (value*100 / sum).toFixed(2)+"%";
+                        return percentage;
+                    },
+                    color: '#fff',
+                }
 	        }
 	    }
 	    ]
@@ -322,7 +445,7 @@ foreach ($maxMissingByRefc as $key => $value) {
 		{
 		  labels: labels_refc,
 		  datasets: [{
-		    // label: 'Arranchados',
+		    label: 'Valores',
 		    data: [
 		    <?php 
 		    	foreach ($maxMissingByRefc as $key => $value) echo $value . ", ";
@@ -370,11 +493,11 @@ foreach ($maxMissingByRefc as $key => $value) {
 
 <?php 
 
-else:
+	else:
 
-	$Alert->setConfig("warning", "<strong>Aviso</strong>: Não possui registros de militares faltantes no momento.");
-	echo $Alert->displayPrint();
+		$Alert->setConfig("warning", "<strong>Aviso</strong>: Não possui registros de militares faltantes no momento.");
+		echo $Alert->displayPrint();
+
+	endif; 
 
 endif; 
-
-// var_dump($maxMissingByRefc);

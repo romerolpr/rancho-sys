@@ -111,8 +111,6 @@ endif;
 				// Config params
 				include INC . 'param.inc.php';
 
-				
-				
 
 				// var_dump($_SESSION["objfile"]);
 
@@ -181,7 +179,7 @@ endif;
 
 
 	<script>
-		
+			
 		function searchOnTable(){
 			var $rows = $('#table-filter tr:not(.bar-table)');
 			$("#searchbar").on("keyup", function(){
@@ -194,13 +192,11 @@ endif;
 		}
 
 		var exbAll = "<?php echo ( isset($get['exb_all']) ? true : false ) ?>";
-	</script>
 
-	<!-- Events, functions js -->
-	<script><?php include 'Dist/js/Filter.js'; ?></script>
-	<script><?php include 'Dist/js/geral.js'; ?></script>
+		// Events, functions js
+		<?php include 'Dist/js/Filter.js'; ?>
+		<?php include 'Dist/js/geral.js'; ?>
 
-	<script>
 		searchOnTable();
 		var windowFixed = localStorage.getItem("window");
 		if (windowFixed != "false"){
@@ -213,9 +209,6 @@ endif;
 			click_btn = false;
 		}
 
-		
-
-			
 	</script>
 
 

@@ -6,12 +6,16 @@ function clearString($string){
     return preg_replace(array("/(á|à|ã|â|ä)/","/(Á|À|Ã|Â|Ä)/","/(é|è|ê|ë)/","/(É|È|Ê|Ë)/","/(í|ì|î|ï)/","/(Í|Ì|Î|Ï)/","/(ó|ò|õ|ô|ö)/","/(Ó|Ò|Õ|Ô|Ö)/","/(ú|ù|û|ü)/","/(Ú|Ù|Û|Ü)/","/(ñ)/","/(Ñ)/"),explode(" ","a A e E i I o O u U n N"),$string);
 }
 
-function resizeString($desc, $qnt_1, $r = 10){
+function resizeString($desc, $qnt_1, $r = 10, $hash = false){
 
     if (mb_strlen($desc, "UTF-8") > $qnt_1):
-        $desc = mb_substr($desc, 0, $qnt_1 - ($r / 5));
-        $final = strrpos($desc, " ");
-        $desc = substr($desc, 0, $final);
+        if ($hash !== false):
+            $desc = mb_substr($desc, 0, $qnt_1 - ($r / 5));
+        else:
+            $desc = mb_substr($desc, 0, $qnt_1 - ($r / 5));
+            $final = strrpos($desc, " ");
+            $desc = substr($desc, 0, $final);
+        endif;
         // $desc .= ".";
     elseif (mb_strlen($desc, "UTF-8") < $qnt_1 - $r && mb_strlen($desc, "UTF-8") > $r - 10 ):
         $desc .= "...";
@@ -149,4 +153,16 @@ function clearArrayValues($list){
     foreach ($list as $key => $item)
         array_push($n, trim($item));
     return $n;
+}
+
+function encryptIt( $q ) {
+    $cryptKey  = 'qJB0rGtIn5UB1xG03efyCp';
+    $qEncoded      = base64_encode( mcrypt_encrypt( MCRYPT_RIJNDAEL_256, md5( $cryptKey ), $q, MCRYPT_MODE_CBC, md5( md5( $cryptKey ) ) ) );
+    return( $qEncoded );
+}
+
+function decryptIt( $q ) {
+    $cryptKey  = 'qJB0rGtIn5UB1xG03efyCp';
+    $qDecoded      = rtrim( mcrypt_decrypt( MCRYPT_RIJNDAEL_256, md5( $cryptKey ), base64_decode( $q ), MCRYPT_MODE_CBC, md5( md5( $cryptKey ) ) ), "\0");
+    return( $qDecoded );
 }

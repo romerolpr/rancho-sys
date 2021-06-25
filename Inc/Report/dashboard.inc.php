@@ -27,15 +27,20 @@ $arrayNum = array(
 
 foreach ($Resp as $key => $value):
 
-	$omreal = strtolower(preg_replace(array("/(º|\/)/"), explode(" ",""), str_replace(" ", "_", utf8_decode(trim($value["organizacao_militar"])))));
-	$pgreal = strtolower(preg_replace(array("/(º|\/)/"), explode(" ",""), str_replace(" ", "_", utf8_decode(trim($value["posto_graduacao"])))));
+	if ($value["datasheet"] == $_SESSION["objfile"]["name"]):
+		$omreal = encodeRegexPg($value["organizacao_militar"]);
+		$pgreal = encodeRegexPg($value["posto_graduacao"]);
 
-	$arrayNum["organizacao_militar"][$omreal][0] += 1;
-	$arrayNum["total"] += 1;
-	$arrayNum["organizacao_militar"][$omreal][1] = round(($arrayNum["organizacao_militar"][$omreal][0] * 100) / $arrayNum["total"]);
+		$arrayNum["organizacao_militar"][$omreal][0] += 1;
+		$arrayNum["total"] += 1;
+		$arrayNum["organizacao_militar"][$omreal][1] = round(($arrayNum["organizacao_militar"][$omreal][0] * 100) / $arrayNum["total"]);
 
-	$arrayNum["posto_graduacao"][$pgreal][0] += 1;
-	$arrayNum["posto_graduacao"][$pgreal][1] = round(($arrayNum["posto_graduacao"][$pgreal][0] * 100) / $arrayNum["total"]);
+		if (isset($arrayNum["posto_graduacao"][$pgreal])):
+			$arrayNum["posto_graduacao"][$pgreal][0] += 1;
+		endif;
+		$arrayNum["posto_graduacao"][$pgreal][1] = round(($arrayNum["posto_graduacao"][$pgreal][0] * 100) / $arrayNum["total"]);
+	endif;
+
 endforeach;
 
 $arranc = array(
@@ -171,6 +176,7 @@ include_once 'config/daily-voucher.config.php';
 	<br>
 	<p><a href="<?php echo $url;?>report.php?aba=dashboard" class="btn_link" title="Índices gerais">Índices gerais</a></p>
 
+
 	<div class="box-board">
 		<div class="bg-shadow">
 			<canvas id="chart_posto_graduacao" width="400" height="400"></canvas>
@@ -193,6 +199,8 @@ include_once 'config/daily-voucher.config.php';
 		document.getElementById('chart_posto_graduacao'),
 		document.getElementById('chart_comparations'),
 		document.getElementById('chart_max'),
+		document.getElementById('chart_faltantes_pg'), 
+		document.getElementById('chart_faltantes_om'),
 	];
 
 	var labels = {

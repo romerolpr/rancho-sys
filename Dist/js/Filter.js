@@ -326,9 +326,6 @@ $(".td-button span[data-filter]").on("click", function(e){
 		initialized = false;
 		inputDate = [];
 
-		// divdrop.hide();
-		// i.removeClass("rotate180deg");
-
 		click[$(this)[0].dataset.filter] += 1;
 
 		if (click[$(this)[0].dataset.filter] == 2) {
@@ -365,6 +362,9 @@ $(".td-button span[data-filter]").on("click", function(e){
 					setTimeout(function(){
 						applyFilter(content);
 						$("body").removeClass("loading");
+						$("div.sub-dropdown").hide();
+						click[$(this)[0].dataset.filter] = 0;
+
 					}, 250);
 
 					myFilter.load = true;

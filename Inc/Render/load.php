@@ -65,7 +65,10 @@ else:
 	$sheetBody .= "<a href=\"".$url."index.php".(isset($get["exb_all"]) ? "?exb_all" : null)."\" class=\"btn btn_link btn_manage btn_active\" title=\"Desativar modo: Visualização de filtro\"><i class=\"fas fa-filter\"></i></a>";
 endif;
 
+
+
 $sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage btn_expand\" title=\"Expandir tabela\"><i class=\"fas fa-expand\"></i></a>";
+
 
 $sheetBody .= "<a href=\"". (!isset($get["exb_all"]) ? (isset($get) ? replaceUrl("&exb_all") : replaceUrl("exb_all")) : (isset($get["filter"]) ? '?filter' : "index.php")) ."\" class=\"btn btn_link btn_manage ". (isset($get["exb_all"]) ? "btn_active" : null) ."\" title=\"Exibir todos os dias\"><i class=\"fas fa-globe\"></i></a>";
 
@@ -73,7 +76,6 @@ if ($_SESSION['user_login']['nvl_access'] == 1):
 
 	$sheetBody .= "<a href=\"". (isset($get) ? replaceUrl("&worksheetName=None") : replaceUrl("worksheetName=None"))."\" class=\"btn btn_link btn_manage\" title=\"Alterar Datasheet\"><i class=\"fas fa-exchange-alt\"></i></a>";
 
-	$sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage\" title=\"Restaurar tabela\"><i class=\"fas fa-undo-alt\"></i></a>";
 
 	$sheetBody .= "<a target=\"_blank\" href=\"".$url."index.php?action=generateReport\" class=\"btn btn_link btn_manage\" title=\"Gerar relatório\"><i class=\"far fa-file-alt\"></i></a>";
 	$sheetBody .= "<span class=\"separator\">|</span>";
@@ -81,6 +83,11 @@ if ($_SESSION['user_login']['nvl_access'] == 1):
 	$sheetBody .= "<a href=\"".$url."index.php?exit=session_obj\" class=\"btn btn_link btn_manage btn_click_consult\" title=\"Fechar arquivo\" data-action=\"fechar\"><i class=\"fas fa-power-off\"></i></a>";
 
 endif;
+
+
+$sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage btn_square\" title=\"Caixas vazias\">Caixas vazias</a>";
+
+$sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage btn_restore none\" title=\"Restaurar tabela\"><i class=\"fas fa-undo-alt\"></i></a>";
 
 $sheetBody .= "<button class=\"btn btn_link btn_manage\" title=\"Salvar alterações\" disabled id=\"saveAll\">Salvar alterações</button>";
 

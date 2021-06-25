@@ -338,32 +338,30 @@ endif;
 
 	</section>
 
-	<script><?php include 'Dist/js/Filter.js'; ?></script>
-
 	<script>
 
+		var exbAll = "<?php echo ( isset($get['exb_all']) ? true : false ) ?>";
 
+		function searchOnTable(){
+			var $rows = $('#table-filter tr:not(.bar-table)');
+			$("#searchbar").on("keyup", function(){
+				var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+				$rows.show().filter(function() {
+			        var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+			        return !~text.indexOf(val);
+			    }).hide();
+			});
+		}
 
-
-		document.addEventListener('keydown', function (event) {
-		    if (event.keyCode == 27){
-		     	$(".box-table").removeClass("window_fixed");
-		   		$(".btn_expand").removeClass("btn_active"); 
-		    }
-		});
-		 
-		$(window).bind("popstate", function(e) {
-		  $('.main').load(e.state.url);
-		});
+		<?php include 'Dist/js/Filter.js'; ?>
 
 		var click_btn = false;
 		$(".btn_expand").click(function(e){ 
 			e.preventDefault();
 			if (click_btn === false){
 				$(this).addClass("btn_active");
-				$(".box-table").addClass("window_fixed");
-				click_btn = true;
-				localStorage.setItem('window', true);
+					click_btn = true;
+					localStorage.setItem('window', true);
 			} else {
 				$(".box-table").removeClass("window_fixed");
 				$(this).removeClass("btn_active"); 
@@ -372,77 +370,98 @@ endif;
 			}
 		});
 
-		$(".btn_open_window").on("click", function(e){
+		document.addEventListener('keydown', function (event) {
+		    if (event.keyCode == 27){
+		     	$(".box-table").removeClass("window_fixed");
+		   		$(".btn_expand").removeClass("btn_active"); 
+		   		localStorage.setItem('window', false);
+		    }
+		});
+
+		function mescleItems(){
+			
+			var mescleItemsVar = {
+				checked	: [],
+				empty 	: []
+			};
+
+			let elem  = $(".input_checked").parent().parent(),
+					trdad   = elem.parent(),
+					input = $("td").children("div").children("input");
+
+			for (var i = input.length-1; i >= 0; i--) {
+				if (input[i].checked !== false) {
+					mescleItemsVar['checked'].push(input[i].id);
+				} else {
+					mescleItemsVar['empty'].push(input[i].id);
+				}
+			}
+
+			return [mescleItemsVar, trdad];
+		}
+
+		InputChange(exbAll);
+
+		$('#report').on("click", function(e){
 			e.preventDefault();
-			var listByHash = '<?php echo (isset($listByHash) ? json_encode($listByHash) : null); ?>';
-			var hash = $(this).attr("data-hash"),
-				$body = $("body"),
-				request = $.ajax({
-				    url: "Inc/window.modal.php",
+			var url = $(this).attr("href");
+
+			tryStatus();
+			if (is_empty.length !== 0){
+				if (confirm("Existem campos vazios. Deseja gerar o relatório mesmo assim?")){
+					window.open(url, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=150,width=800,height=800")
+				}
+			} else {
+
+				// document.location = url;
+				window.open(url, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=150,width=800,height=800")
+			}
+		});
+
+		function getMoreItems(){
+			var divLoading = $(".bg-loading"),
+				 	newLimit = divLoading.attr("data-limit"),
+				 	maxElem = divLoading.attr("data-maxElem"),
+					countElem = $("#table-filter tr:not(.bar-table)"),
+					$body = $('body');
+					request = $.ajax({
+				    url: "Inc/get.inc.php",
 				    type: "POST",
-				    data: "hash=" + hash + "&listByHash=" + listByHash,
+				    data: "newLimit=" + newLimit + "&countElem=" + countElem.length,
 				    dataType: "html"
 				});
-			// console.log(hash);
-			$body.addClass("loading");
+
+			divLoading.hide();
+
+			if (countElem.length >= maxElem){
+				$("body").removeClass("loading");
+			} else {
+				$("body").addClass("loading");
+			}
+
+			// console.log(countElem.length);
+
 			request.done(function(data){
-				if ($(".window-user").length == 0)
-					$body.css({"overflow":"hidden"}).append(data);
-				$body.removeClass("loading");
+				if (countElem.length < maxElem){
+
+					$("body").removeClass("loading");
+
+					$('#table-filter').append(data);
+
+					InputChange(exbAll);
+				}
 			});
 			request.fail(function(jqXHR, textStatus) {
 			    console.log("Request failed: " + textStatus);
+			    $(".modal").append("<span class=\"message\">Request failed: "+textStatus+"</span>");
+			    setTimeout(function(){
+			    	$body.removeClass("loading");
+			    }, 2500);
 			});
 
-		});
-		$(".td-button span[data-filter]").on("click", function(e){
-			// Build dropdown
-			var divdrop = $(this).children("div.sub-dropdown"),
-				request = $.ajax({
-				    url: "Inc/load.drop.php",
-				    type: "POST",
-				    data: "content=" + $(this)[0].dataset.filter,
-				    dataType: "html"
-				}),
-				myselfFilter = {
-					filter: $(this)[0].dataset.filter,
-					extract: $(this)[0].dataset.filterExtract
-				},
-				inputDate = [];
+			searchOnTable();
+		}
 
-			$("div.sub-dropdown").hide();
-			$(".td-button span i").removeClass("rotate180deg");
-
-			$(this).children("i").addClass("rotate180deg");
-			divdrop.show();
-
-			// divdrop.addClass("loading");
-			if (myselfFilter.filterExtract !== undefined){
-				// $(this)
-			} else {
-				request.done(function(data){
-					if (divdrop.html().length <= 0){
-						divdrop.append(data);
-					}
-					divdrop.css({"background":"#fff"});
-					initializeFilter(myselfFilter.filter);
-				});
-				request.fail(function(jqXHR, textStatus) {
-						divdrop.append("<p>Request failed: " + textStatus + "</p>");
-				    console.log("Request failed: " + textStatus);
-				});
-			}
-
-		});
-
-		var $rows = $('#table-filter tr:not(.bar-table)');
-		$("#searchbar").on("keyup", function(){
-			var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
-			$rows.show().filter(function() {
-		        var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
-		        return !~text.indexOf(val);
-		    }).hide();
-		});
 	</script>
 
 	<script>

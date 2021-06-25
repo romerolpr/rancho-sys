@@ -1,4 +1,16 @@
-<h1><?php echo $_SESSION["objfile"]["name"]; ?></h1>
+<h1>
+	<?php
+	if (isset($get["exb"])):
+		if ($get["exb"] != "users"):
+			echo $_SESSION["objfile"]["name"];
+		else:
+			echo "Gerenciar usuários";
+		endif;
+	else:
+		echo $_SESSION["objfile"]["name"];
+	endif;
+	?>
+</h1>
 
 <?php
 
@@ -56,6 +68,8 @@ if ($_SESSION["user_login"]["nvl_access"] == 1):
 		if ($get["exb"] == "recents"):
 			$nonTitle = true;
 			include PAGES . 'recents.inc.php';
+		elseif ($get["exb"] == "users"):
+			include PAGES . 'users.php';
 		else:
 
 			$Alert->setConfig("warning", "<strong>Aviso</strong>: Ao adicionar um novo arquivo o sistema fechará automaticamente o arquivo atual.</span>");

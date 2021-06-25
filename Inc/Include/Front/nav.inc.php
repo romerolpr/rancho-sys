@@ -14,7 +14,7 @@
 
 		<li><a href="<?php echo $url?>index.php?exb=add_new" title="Adicionar arquivo">Adicionar arquivo</a></li>
 		<li><a href="<?php echo $url?>index.php?exb=recents" title="Adicionados recentemente">Adicionados recentemente</a></li>
-		<li><a href="<?php echo $url?>index.php?exb=users" title="Gerenciar usuários">Gerenciar usuários</a></li>
+		<!-- <li><a href="<?php echo $url?>index.php?exb=users" title="Gerenciar usuários">Gerenciar usuários</a></li> -->
 		<?php if(isset($_SESSION["objfile"])):?>
 			<li><a href="<?php echo $url?>index.php?exit=session_obj" title="Fechar arquivo">Fechar arquivo</a></li>
 		<?php endif; 
