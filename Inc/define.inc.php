@@ -1,6 +1,20 @@
 <?php
 
+/**
+While True, db connection is localhost, but while False sisa.romerlpr.com.br 
+**/
+
+define("LOCALHOST", false);
+
+set_time_limit(360);
+
+ini_set('post_max_size', '640M');
+ini_set('upload_max_filesize', '640M');
+ini_set('max_input_time', 360);
+ini_set('max_execution_time', 360);
+
 date_default_timezone_set('America/Sao_Paulo');
+
 
 /**
 	Define for includes on project
@@ -19,23 +33,6 @@ define(
 	"REPORT", "Inc/Report/");
 define(
 	"PAGES", "Inc/Include/Front/pages/");
-
-/** 
-	Db config
-**/
-
-define(
-	"HOST", "127.0.0.1");
-define(
-	"USER", "root");
-define(
-	"PASS", "");
-define(
-	"DBNAME", "u641457582_sisa");
-define(
-	"ALIAS", "u641457582_sisa");
-define(
-	"LIMIT", 50);
 
 /** 
 	Db TABLES
@@ -143,4 +140,29 @@ foreach (glob(TRANSFER . "*.*") as $arquivo):
 		));
 endforeach;
 
-?>
+/** 
+	Db config
+**/
+
+if (!LOCALHOST):
+	define(
+		"USER", "u641457582_sisa");
+	define(
+		"PASS", "KOs3d&r2P@");
+	define(
+		"HOST", "127.0.0.1");
+else:
+	define(
+		"USER", "root");
+	define(
+		"PASS", "");
+	define(
+		"HOST", "127.0.0.1");
+endif;
+
+define(
+	"DBNAME", "u641457582_sisa");
+define(
+	"ALIAS", "u641457582_sisa");
+define(
+	"LIMIT", 50);

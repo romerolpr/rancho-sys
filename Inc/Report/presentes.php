@@ -1,8 +1,21 @@
-<?php if (count($myList["Present"]) > 0): ?>
+<?php
+
+$maxMissingByRefc = array(
+	"Café" => 0,
+	"Almoço" => 0,
+	"Jantar" => 0,
+	"Todos" => 0
+);
+
+
+if (count($myList["Present"]) > 0):
+
+
+?>
 
 	<div class="box-bg-board center">
 
-		<div class="box-board">
+<!-- 		<div class="box-board">
 			<div class="bg-shadow">
 				<canvas id="chart_faltantes_pg" width="400" height="400"></canvas>
 			</div>
@@ -10,6 +23,11 @@
 		<div class="box-board">
 			<div class="bg-shadow">
 				<canvas id="chart_faltantes_om" width="400" height="400"></canvas>
+			</div>
+		</div> -->
+		<div class="box-board">
+			<div class="bg-shadow">
+				<canvas id="chart_faltantes_by_refc" width="400" height="400"></canvas>
 			</div>
 		</div>
 
@@ -30,7 +48,7 @@ else:
 	echo "<a href=\"".$url."report.php?aba=gift".(isset($get["exb_all"]) ? "&exb_all" : null)."\" class=\"btn btn_link btn_manage btn_active\" title=\"Desativar modo: Visualização de filtro\"><i class=\"fas fa-filter\"></i></a>";
 endif;
 
-echo "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage btn_expand\" title=\"Expandir tabela\"><i class=\"fas fa-expand\"></i></a>";
+// echo "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage btn_expand\" title=\"Expandir tabela\"><i class=\"fas fa-expand\"></i></a>";
 
 echo "<table id=\"table-filter\" data-exb=\"".((!isset($get["exb_all"])) ? "default" : "exb_all")."\">";
 
@@ -38,7 +56,7 @@ if(isset($get["filter"])):
 	echo '<div class="fright mb-2">';
 		echo '<div class="box">';
 			echo '<span class="label">Filtrar por: </span>';
-			echo '<input type="text" name="searchByName" class="searchbar" id="searchbar" placeholder="Nome, arranchamento...">';
+			echo '<input type="text" name="searchByName" class="searchbar" id="searchbar" placeholder="Qualquer valor...">';
 		echo '</div>';
 	echo '</div>';
 endif;
@@ -48,7 +66,7 @@ echo "</span></p>";
 ?>
 
 	<tr class="bar-table">
-		<td>#</td>
+		<!-- <td>#</td> -->
 		<?php if(isset($get["filter"])): ?>
 			<td class="td-button">
 				<div><span data-filter="nome" class="btn btn_order fright"><i class="fas fa-sort-down"></i><div class="sub-dropdown drop-render"></div></span></div>
@@ -76,79 +94,124 @@ echo "</span></p>";
 			<td>Organização Militar</td>
 			<td>Posto/ Graduação</td>
 		<?php endif; ?>
-		<td>Refeição</td>
+		<td>Refeição (qnt. Realizado)</td>
 	</tr>
 
 <?php 
 
 
+sortByColumns($Resp);
 $id = 0;
 
-if (isset($get["sort"])):
-	$getSort = explode(":", $get["sort"]);
-	aasort($Resp, $getSort[0], $getSort[1]);
-endif; 
+foreach ($Resp as $key => $valueResp) {
 
-foreach ($Resp as $key => $value) {
-
-	
-	if (in_array($value["hash"], $myList["Present"]) && $value["datasheet"] == $_SESSION['objfile']['name']):
+	if ($valueResp["datasheet"] == $_SESSION['objfile']['name']):
 
 		$id++;
 
-		$arrayNumStatus["posto_graduacao"][encodeRegexPg($value["posto_graduacao"])][0] += 1;
-		$arrayNumStatus["organizacao_militar"][encodeRegexPg($value["organizacao_militar"])][0] += 1;
+		$contagemRefc = array();
 
-		$refeicoes = array();
-		$ObjDecoded = array(
-			"nome" => ucfirst(strtolower(utf8_decode(trim($value["nome"])))),
-			"posto_graduacao" => utf8_decode($value["posto_graduacao"]),
-			"organizacao_militar" => utf8_decode($value["organizacao_militar"]),
-			"refc" => array(
-				explode("&&", utf8_decode($value["segunda_feira"])),
-				explode("&&", utf8_decode($value["terca_feira"])),
-				explode("&&", utf8_decode($value["quarta_feira"])),
-				explode("&&", utf8_decode($value["quinta_feira"])),
-				explode("&&", utf8_decode($value["sexta_feira"])),
-				explode("&&", utf8_decode($value["sabado"])),
-				explode("&&", utf8_decode($value["domingo"])),
-			)
-		);
+		foreach ($myConf as $keyRefc => $valueRefc):
 
-		$sheetBody .= "<tr data-hash=\"".$value["hash"]."\">";
+			if ($valueRefc["hash"] == $valueResp["hash"]):
 
-		$sheetBody .= "<td>" . $id . "</td>";
-		$sheetBody .= "<td data-content=\"nome\">" . $ObjDecoded["nome"] . "</td>";
-		$sheetBody .= "<td data-content=\"organizacao_militar\">" . $ObjDecoded["organizacao_militar"] . "</td>";
-		$sheetBody .= "<td data-content=\"posto_graduacao\">" . $ObjDecoded["posto_graduacao"] . "</td>";
-		
+				foreach ($valueRefc[0] as $refckey => $refcvalue) {
 
-		
+					// var_dump($refcvalue);
+					$foreach = $refcvalue;
+					
 
-		// Creating the button checkbox and text
-		foreach ($ObjDecoded["refc"] as $keyRefc => $valueRefc):
+					if (is_array($foreach) || is_object($foreach))
+					{
+						foreach ($foreach as $refcValkey => $refcVal) {
 
-			$newValue = explode(",", $valueRefc[0]);
+							$newValue = explode(";", $refcVal);
 
-			foreach ($newValue as $keynewValue => $valor) {
-				if (!in_array(trim($valor), $refeicoes))
-					array_push($refeicoes, trim($valor));
-			}
+							foreach ($newValue as $keynewValue => $valor) {
+								if (!$keynewValue % 2)
+									array_push($contagemRefc, trim($valor));
+							}
+						}
+					}
+
+				}
+
+			endif;
 
 		endforeach;
 
-		// var_dump($refeicoes);
 
-		$sheetBody .= "<td data-content=\"posto_graduacao\">" . $refeicoes[0] . (isset($refeicoes[1]) && !empty($refeicoes[1]) ? ", " . $refeicoes[1] : null) . (isset($refeicoes[2]) && !empty($refeicoes[2]) ? ", " . $refeicoes[2] : null) . "</td>";
+		preg_match_all("/Café/", implode(",", $contagemRefc), $myCafe);
+		preg_match_all("/Almoço/", implode(",", $contagemRefc), $myAlmoco);
+		preg_match_all("/Jantar/", implode(",", $contagemRefc), $myJantar);
 
-		$sheetBody .= "</tr>";
+		$myInfo = array(
+			"Café" => count($myCafe[0]),
+			"Almoço" => count($myAlmoco[0]),
+			"Jantar" => count($myJantar[0]),
+		);
+
+		$maxMissingByRefc["Café"] += count($myCafe[0]);
+		$maxMissingByRefc["Almoço"] += count($myAlmoco[0]);
+		$maxMissingByRefc["Jantar"] += count($myJantar[0]);
+
+		$arrayNumStatus["posto_graduacao"][encodeRegexPg($valueResp["posto_graduacao"])][0] += 1;
+		$arrayNumStatus["organizacao_militar"][encodeRegexPg($valueResp["organizacao_militar"])][0] += 1;
+
+		$ObjDecoded = array(
+			"nome" => ucfirst(strtolower(utf8_decode(trim($valueResp["nome"])))),
+			"posto_graduacao" => utf8_decode($valueResp["posto_graduacao"]),
+			"organizacao_militar" => utf8_decode($valueResp["organizacao_militar"])
+		);
+
+		
+		if (!empty($contagemRefc))
+		{
+			$sheetBody .= "<tr data-hash=\"".$valueResp["hash"]."\">";
+
+			// $sheetBody .= "<td>" . ++$key . "</td>";
+			$sheetBody .= "<td data-content=\"nome\">" . $ObjDecoded["nome"] . "</td>";
+			$sheetBody .= "<td data-content=\"organizacao_militar\">" . $ObjDecoded["organizacao_militar"] . "</td>";
+			$sheetBody .= "<td data-content=\"posto_graduacao\">" . $ObjDecoded["posto_graduacao"] . "</td>";
+
+			$sheetBody .= "<td>";
+			if ($myInfo["Café"] > 0)
+				$sheetBody .= "Café (" . $myInfo["Café"] . ")" . ( ($myInfo["Almoço"] > 0) ? ", " : null );
+
+			if ($myInfo["Almoço"] > 0)
+
+				$sheetBody .= "Almoço (" . $myInfo["Almoço"] . ")" . ( ($myInfo["Jantar"] > 0) ? ", " : null );
+
+			
+			if ($myInfo["Jantar"] > 0) 
+
+				$sheetBody .= " Jantar (" . $myInfo["Jantar"] . ")";
+			
+			$sheetBody .= "</td>";
+
+			$sheetBody .= "</tr>";
+
+		} 
+
+		// else {
+
+		// 	$sheetBody .= "<td>";
+		// 	$sheetBody .= "Restando todos";
+		// 	$sheetBody .= "</td>";
+
+		// }
+		
 
 	endif;
+
+	// break;
 
 }
 
 
 echo $sheetBody;
+
+
 
 foreach ($arrayNumStatus["posto_graduacao"] as $key => $value)
 	$arrayNumStatus["total"] += $value[0];
@@ -255,26 +318,102 @@ foreach ($arrayNumStatus["posto_graduacao"] as $key => $value)
 		}
 		];
 
-		new Chart(ctx[0], {
-		    type: 'pie',
-		    data: data[0],
-		    options: options[0]
-		});
+		// new Chart(ctx[0], {
+		//     type: 'pie',
+		//     data: data[0],
+		//     options: options[0]
+		// });
 
-		new Chart(ctx[1], {
-		    type: 'pie',
-		    data: data[1],
-		    options: options[1]
-		});
+		// new Chart(ctx[1], {
+		//     type: 'pie',
+		//     data: data[1],
+		//     options: options[1]
+		// });
 		
 	});
+
+		$(document).ready(function(){
+			var ctx = document.getElementById('chart_faltantes_by_refc');
+
+				labels_refc = [
+					'Café',
+					'Almoço',
+					'Jantar',
+					// 'Restando Todos'
+				];
+
+			const options = 
+		    {
+		        plugins: {
+		            title: {
+		                display: true,
+		                text: '<?php echo (isset($get["cassino"]) ? ucfirst(str_replace("_", "/ ", $get["cassino"])) : "Presentes" )?>: Por refeição'
+		            },
+		            tooltips: {
+	                    enabled: false
+	                },
+	                datalabels: {
+	                    formatter: (value, ctx) => {
+	                        let sum = 0;
+	                        let dataArr = ctx.chart.data.datasets[0].data;
+	                        dataArr.map(data => {
+	                            sum += data;
+	                        });
+	                        let percentage = (value*100 / sum).toFixed(2)+"%";
+	                        return percentage;
+	                    },
+	                    color: '#fff',
+	                }
+		        }
+		    }
+		    
+
+		    const data = 
+			{
+			  labels: labels_refc,
+			  datasets: [{
+			    label: 'Valores',
+			    data: [
+			    <?php 
+			    	foreach ($maxMissingByRefc as $key => $value) echo $value . ", ";
+			    ?>
+			    ],
+			    backgroundColor: [
+			      <?php 
+			      sort($backgroundColors);
+			      for ($i=0; $i <= $arrayNumStatus['posto_graduacao'] ; $i++):
+			      	if (isset($backgroundColors[$i])):
+			      		echo "\"$backgroundColors[$i]\",\n";
+			      	else:
+			      		echo '"rgb(238, 238, 238)",';
+			      		break;
+			      	endif;
+			      endfor;
+			      ?>
+			    ],
+			    hoverOffset: 4
+			  }]
+			}
+
+
+			new Chart(ctx, {
+			    type: 'pie',
+			    data: data,
+			    options: options
+			});
+
+		});
+
 </script>
 
 <?php 
 
+// var_dump($contagemRefc);
+// var_dump($myInfo);
+
 else:
 
-	$Alert->setConfig("warning", "<strong>Aviso</strong>: Não possui registros de militares presentes no momento.");
+	$Alert->setConfig("warning", "<strong>Aviso</strong>: O sistema não registrou militares presentes ainda. Tente registrar uma presença primeiro.");
 	echo $Alert->displayPrint();
 
 endif; 

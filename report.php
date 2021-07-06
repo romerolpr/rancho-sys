@@ -164,13 +164,25 @@ $arrayNumStatus = array(
 
 	"posto_graduacao" =>
 		array(
-			"of_capten" => array(0, 0),
-			"1_sgt" => array(0, 0),
-			"2_sgt" => array(0, 0),
-			"st" => array(0, 0),
-			"of_sup" => array(0, 0),
+			"civil" => array(0, 0),
+			"cb_sd" => array(0, 0),
 			"3_sgt" => array(0, 0),
-			"civil" => array(0, 0)
+			"2_sgt" => array(0, 0),
+			"1_sgt" => array(0, 0),
+			"st" => array(0, 0),
+			"sub_ten" => array(0, 0),
+			"asp_of" => array(0, 0),
+			"al" => array(0, 0),
+			"al_cfc" => array(0, 0),
+			"al_cfst" => array(0, 0),
+			"1_ten" => array(0, 0),
+			"2_ten" => array(0, 0),
+			"cap" => array(0, 0),
+			"maj" => array(0, 0),
+			"ten_cel" => array(0, 0),
+			"cel" => array(0, 0),
+			"of_capten" => array(0, 0),
+			"of_sup" => array(0, 0),
 		),
 
 	"organizacao_militar" =>
@@ -178,7 +190,10 @@ $arrayNumStatus = array(
 			"b_adm_ap_ibirapuera" => array(0, 0),
 			"8_bpe" => array(0, 0),
 			"apoio_direto" => array(0, 0),
-			"agsp" => array(0, 0)
+			"agsp" => array(0, 0),
+			"base" => array(0, 0),
+			"cmdo_2_rm" => array(0, 0),
+			"2rm" => array(0, 0),
 		),
 
 	"total" => 0
@@ -211,9 +226,17 @@ endif;
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<title>Relatório de arranchamento</title>
+	<?php 
+
+	$nameDoc = (isset($get["doc"]) ? $get["doc"] : "doc") . "_";
+	$title = ( isset($get["gpdf-view"]) ? strtoupper( $nameDoc . $date->format('d_M_Y_h_i_s') ) : "Relatório de arranchamento" );
+
+	?>
+
+	<title><?php echo $title?></title>
 	<link rel="stylesheet" type="text/css" href="<?php echo $url?>Dist/css/style.css">
 	<link rel="stylesheet" type="text/css" href="<?php echo $url?>Dist/css/fontawesome.css">
+	<script src="https://cdn.jsdelivr.net/gh/linways/table-to-excel@v1.0.4/dist/tableToExcel.js"></script>
 	<script><?php include "Dist/js/jquery.js"; ?></script>
 	<style>
 		.box-table { max-height: 100%; }
@@ -222,6 +245,14 @@ endif;
 	<link rel=icon type=image/png href="Dist/image/brasao-exercito.png">
 
 	<script src="Dist/js/chart.js"></script>
+
+	<style>
+		.main {
+			position: relative;
+			box-sizing: border-box;
+			padding: 1em 0;
+		}
+	</style>
 </head>
 <body>
 
@@ -353,13 +384,13 @@ endif;
 			});
 		}
 
-		<?php include 'Dist/js/Filter.js'; ?>
-
 		var click_btn = false;
+		console.log(click_btn);
 		$(".btn_expand").click(function(e){ 
 			e.preventDefault();
 			if (click_btn === false){
 				$(this).addClass("btn_active");
+				$(".box-table").addClass("window_fixed");
 					click_btn = true;
 					localStorage.setItem('window', true);
 			} else {
@@ -377,6 +408,9 @@ endif;
 		   		localStorage.setItem('window', false);
 		    }
 		});
+
+		<?php include 'Dist/js/Filter.js'; ?>
+
 
 		function mescleItems(){
 			
@@ -470,17 +504,61 @@ endif;
 			$('body').removeClass("loading");
 		});
 
-		var windowFixed = localStorage.getItem("window");
-		if (windowFixed != "false"){
-			$(".box-table").addClass("window_fixed");
-			$(".btn_expand").addClass("btn_active");
-			click_btn = true;
-		} else {
-			$(".box-table").removeClass("window_fixed");
-			$(".btn_expand").removeClass("btn_active");
-			click_btn = false;
-		}
-	</script>
+		// var windowFixed = localStorage.getItem("window");
+		// if (windowFixed != "false"){
+		// 	$(".box-table").addClass("window_fixed");
+		// 	$(".btn_expand").addClass("btn_active");
+		// 	click_btn = true;
+		// } else {
+		// 	$(".box-table").removeClass("window_fixed");
+		// 	$(".btn_expand").removeClass("btn_active");
+		// 	click_btn = false;
+		// }
+
+		var tableToExcel = (function() {
+		  // var uri = 'data:application/vnd.ms-excel;base64,'
+		  var uri = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,'
+		    , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>'
+		    , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+		    , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+		  return function(table, name) {
+		    if (!table.nodeType) table = document.getElementById(table)
+		    var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+			var filename = name + ".xlsx";
+		    document.getElementById("dlink").href = uri + base64(format(template, ctx))
+            document.getElementById("dlink").download = filename;
+            document.getElementById("dlink").click();
+		  }
+		})()
+
+		function tableToPDF(table, name) {
+
+	        var sTable = document.getElementById(table).outerHTML, 
+	        	style = "<style>";
+
+		        style += "table {width: 100%;font: 17px Calibri;}";
+		        style += "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+		        style += "padding: 2px 3px;text-align: center;}";
+		        style += "</style>";
+
+	        // CREATE A WINDOW OBJECT.
+	        var win = window.open('', '', 'height=700,width=700');
+
+	        win.document.write('<html><head>');
+	        win.document.write('<title>'+name+'</title>');   // <title> FOR PDF HEADER.
+	        win.document.write(style);          // ADD STYLE INSIDE THE HEAD TAG.
+	        win.document.write('</head>');
+	        win.document.write('<body>');
+	        win.document.write(sTable); // THE TABLE CONTENTS INSIDE THE BODY TAG.
+	        win.document.write('</body></html>');
+
+	        win.document.close(); 	// CLOSE THE CURRENT WINDOW.
+
+	        win.print();    // PRINT THE CONTENTS.
+	    }
+
+
+	 </script>
 
 
 </body>

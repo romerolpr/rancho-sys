@@ -17,15 +17,34 @@ $arrayNumVoucher = array(
 
 	"valor_final" => array(
 		"oficial" => array(0, 0, array(
-			array("of_capten", "of_sup"),
+			array(
+				"asp_of", 
+				"1_ten",
+				"2_ten", 
+				"cap", 
+				"maj", 
+				"ten_cel", 
+				"cel", 
+				"of_capten", 
+				"of_sup", 
+			),
 			0, 0, 0
 		)),
 		"st_sgt" => array(0, 0, array(
-			array("1_sgt", "2_sgt", "3_sgt", "st"),
+			array(
+				"1_sgt", 
+				"2_sgt", 
+				"3_sgt", 
+				"st", 
+				"al_cfst", 
+				"sub_ten",
+			),
 			0, 0, 0
 		)),
 		"cb_sd" => array(0, 0, array(
-			array("cb_sd"),
+			array(
+				"cb_sd"
+			),
 			0, 0, 0
 		)),
 		"total" => array(
@@ -40,29 +59,42 @@ $arrayNumVoucher = array(
 
 // Calc by pt
 foreach ($Resp as $key => $value):
+
 	if ($value["datasheet"] == $_SESSION["objfile"]["name"]):
-		$pgreal = strtolower(preg_replace(array("/(º|\/)/"), explode(" ",""), str_replace(" ", "_", utf8_decode(trim($value["posto_graduacao"])))));
+
+		tryArrayPg(encodeRegexPg($value["posto_graduacao"]), $arrayNumVoucher["posto_graduacao"]);
+
+		$pgreal = encodeRegexPg($value["posto_graduacao"]);
+
 		$arrayNumVoucher["posto_graduacao"][$pgreal][0] += 1;
 		$arrayNumVoucher["posto_graduacao"]["total"] += 1;
 
 		$arrayNumVoucher["posto_graduacao"][$pgreal][1] = round(($arrayNumVoucher["posto_graduacao"][$pgreal][0] * 100) / $arrayNumVoucher["posto_graduacao"]["total"]);
+
 	endif;	
+
 endforeach;
+
+
+// echo("posto_graduacao");
+// foreach ($arrayNumVoucher["posto_graduacao"] as $key => $value) {
+// 	var_dump($key);
+// }
 
 // Calc total values by pt
 foreach ($arrayNumVoucher["posto_graduacao"] as $key => $value) $arrayNumVoucher["valor_final"]["total"][0] += $value[0];
 
 // Oficial
-$arrayNumVoucher["valor_final"]["oficial"][0] = ($arrayNumVoucher["posto_graduacao"]["of_capten"][0] + $arrayNumVoucher["posto_graduacao"]["of_sup"][0]);
-
+foreach ($arrayNumVoucher["valor_final"]["oficial"][2][0] as $keyoficial => $valueoficial) 
+	$arrayNumVoucher["valor_final"]["oficial"][0] += $arrayNumVoucher["posto_graduacao"][$valueoficial][0];
 $arrayNumVoucher["valor_final"]["oficial"][1] = round(($arrayNumVoucher["valor_final"]["oficial"][0] * 100) / $arrayNumVoucher["valor_final"]["total"][0]);
 
 // St Sgt
-$arrayNumVoucher["valor_final"]["st_sgt"][0] = ($arrayNumVoucher["posto_graduacao"]["1_sgt"][0] + $arrayNumVoucher["posto_graduacao"]["2_sgt"][0] + $arrayNumVoucher["posto_graduacao"]["3_sgt"][0]) + ($arrayNumVoucher["posto_graduacao"]["st"][0]);
+foreach ($arrayNumVoucher["valor_final"]["st_sgt"][2][0] as $keyst_sgt => $valuest_sgt) $arrayNumVoucher["valor_final"]["st_sgt"][0] += $arrayNumVoucher["posto_graduacao"][$valuest_sgt][0];
 $arrayNumVoucher["valor_final"]["st_sgt"][1] = round(($arrayNumVoucher["valor_final"]["st_sgt"][0] * 100) / $arrayNumVoucher["valor_final"]["total"][0]);
 
 // Cb/ Sd
-$arrayNumVoucher["valor_final"]["cb_sd"][0] = $arrayNumVoucher["posto_graduacao"]["cb_sd"][0];
+foreach ($arrayNumVoucher["valor_final"]["cb_sd"][2][0] as $keycb_sd => $valuecb_sd) $arrayNumVoucher["valor_final"]["cb_sd"][0] += $arrayNumVoucher["posto_graduacao"][$valuecb_sd][0];
 $arrayNumVoucher["valor_final"]["cb_sd"][1] = round(($arrayNumVoucher["valor_final"]["cb_sd"][0] * 100) / $arrayNumVoucher["valor_final"]["total"][0]);
 
 // $test = getRefc($arrayNumVoucher["valor_final"]["oficial"][2][0], "Café");
@@ -86,4 +118,4 @@ $arrayNumVoucher["valor_final"]["total"]["refc"][2] = ($arrayNumVoucher["valor_f
 
 $arrayNumVoucher["valor_final"]["total"]["refc"]["total"] = $arrayNumVoucher["valor_final"]["total"]["refc"][0] + $arrayNumVoucher["valor_final"]["total"]["refc"][1] + $arrayNumVoucher["valor_final"]["total"]["refc"][2];
 
-?>
+// var_dump($arrayNumVoucher);

@@ -54,8 +54,8 @@ function aasort (&$array, $order, $key) {
     $array = $ret;
 }
 
-function encodeRegexPg($p_g){
-    return strtolower(preg_replace(array("/(º|\/)/"), explode(" ",""), str_replace(" ", "_", utf8_decode(trim($p_g)))));
+function encodeRegexPg($p_g, $switch = false){
+    return ( !$switch ? strtolower(preg_replace(array("/(º|ª|\/)/"), explode(" ",""), str_replace(" ", "_", utf8_decode(trim($p_g))))) : strtolower(preg_replace(array("/(º|ª|\/)/"), explode(" ",""), str_replace(" ", "_", utf8_encode(trim($p_g))))));
 }
 
 
@@ -165,4 +165,50 @@ function decryptIt( $q ) {
     $cryptKey  = 'qJB0rGtIn5UB1xG03efyCp';
     $qDecoded      = rtrim( mcrypt_decrypt( MCRYPT_RIJNDAEL_256, md5( $cryptKey ), base64_decode( $q ), MCRYPT_MODE_CBC, md5( md5( $cryptKey ) ) ), "\0");
     return( $qDecoded );
+}
+
+function sortByColumns(&$array) {
+    if (isset($_GET["sort"])):
+        $getSort = explode(":", $_GET["sort"]);
+        $sorted = aasort($array, $getSort[0], $getSort[1]);
+        if (is_array($sorted))
+            $array = $sorted;
+    endif;
+}
+
+function convertDayName($diasemana, $x = false){
+    $diasemana = ($x !== false) ? date('w', strtotime(str_replace("/", "-", $diasemana))) : $diasemana;
+
+    $diasemana_numero = array('Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab');
+    return $diasemana_numero[$diasemana];
+}
+
+function tryArrayPg($pg, &$array){
+    // echo(utf8_decode($pg));
+    foreach ($array as $key => $value) {
+        if (!in_array(utf8_decode($pg), $array))
+            $array[encodeRegexPg($pg)] = array(0, 0);
+    }
+}
+
+function array_combine_($keys, $values)
+{
+    $result = array();
+    foreach ($keys as $i => $k) {
+        $result[$k][] = $values[$i];
+    }
+    
+    # create_function('&$v', '$v = (count($v) == 1)? array_pop($v): $v;')
+
+    array_walk($result, function(&$v) {$v = (count($v) == 1)? array_pop($v): $v;});
+    return $result;
+}
+
+function encode_to_url($string) 
+{
+    return preg_replace(array("/\//"),explode(" ","-"), trim($string));
+}
+function decode_to_url($string) 
+{
+    return preg_replace(array("/-/"),explode(" ","/"), trim($string));
 }

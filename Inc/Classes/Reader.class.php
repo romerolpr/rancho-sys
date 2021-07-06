@@ -252,6 +252,7 @@ class Render
 			foreach ($Data as $key => $value):
 				$carimboData = new DateTime($value[0]);
 				$myObject = array(
+					// "array_key" => $key,
 					"id" => null,
 					"hash" => md5($carimboData->format("Y-m-d H:i:s") . "_" . utf8_encode($value[1])),
 					"carimbo" => $carimboData->format("Y-m-d H:i:s"),
@@ -281,10 +282,17 @@ class Render
 					"domingo" => 
 					(isset($value[11]) ? utf8_encode($value[11]) . "&&" . self::cut($cabecalho, 11) : "&&" . self::cut($cabecalho, 11) ),
 
-					"datasheet_name" => self::getTableName(),
+					"datasheet" => self::getTableName(),
 				);
 				array_push($Items, $myObject);
 			endforeach;
+
+			// var_dump($myObject["datasheet"]);
+
+			// if (is_null($myObject["email"]) || is_null($myObject["posto_graduacao"])):
+			// 	var_dump($myObject["array_key"]);
+			// 	var_dump($myObject);
+			// endif;
 
 			// var_dump($Items);
 
@@ -355,8 +363,11 @@ class Render
 		// }
 	}
 
-	public function consoleLog($txt){
+	public static function consoleLog($txt){
 		echo "<script>console.log('".$txt."')</script>";
+	}
+	public static function urlReplace($url){
+		echo "<script>location.replace('".$url."')</script>";
 	}
 
 }

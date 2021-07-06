@@ -27,8 +27,9 @@ if (isset($_POST["Envia"]) && !empty($_POST["Envia"])):
 			$timestamp = strtotime(implode('-', array_reverse(explode('/', $dataAtual))));
 
 			$ObjLoad["name"] = $timestamp . "_" . $newfilename;
-			$dir = TRANSFER . $ObjLoad["name"];
+			$dir = TRANSFER . (!isset($_POST["name"]) || empty($_POST["name"]) ? $ObjLoad["name"] : str_replace(" ", "_", strtoupper(trim(clearString($_POST["name"])))) . "." . end(explode(".", $ObjLoad["name"])));
 			$ObjLoad["file"][1] = filemtime($_FILES["file"]);
+
 			if(move_uploaded_file($ObjLoad["tmp_name"], $dir)):
 				$ObjLoad["tmp_name"] = $dir;
 
@@ -75,7 +76,7 @@ if (isset($_POST["Login"]) && !empty($_POST["Login"])):
 	        if ($myInput["username"] == $values["username"] && $myInput["password"] == $values["password"]):
 	            $_SESSION["user_login"] = $myInput;
 	            $header = $url . "index.php";
-	            // break;
+	            break;
 	        else:
 	            // echo "<script>alert('Nome de usuário ou senha inválido.')</script>";
 	            $header = "index.php?err=username_or_pass";
@@ -83,8 +84,9 @@ if (isset($_POST["Login"]) && !empty($_POST["Login"])):
 	        endif;
 	    endforeach;
 
-	    header("location: $header");
+	    
 
 	endif;
 
+	header("location: $header");
 endif;

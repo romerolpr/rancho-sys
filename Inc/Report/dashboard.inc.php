@@ -28,6 +28,10 @@ $arrayNum = array(
 foreach ($Resp as $key => $value):
 
 	if ($value["datasheet"] == $_SESSION["objfile"]["name"]):
+
+		tryArrayPg(encodeRegexPg($value["organizacao_militar"]), $arrayNum["organizacao_militar"]);
+		tryArrayPg(encodeRegexPg($value["posto_graduacao"]), $arrayNum["posto_graduacao"]);
+
 		$omreal = encodeRegexPg($value["organizacao_militar"]);
 		$pgreal = encodeRegexPg($value["posto_graduacao"]);
 
@@ -42,6 +46,13 @@ foreach ($Resp as $key => $value):
 	endif;
 
 endforeach;
+
+// echo("organizacao_militar");
+// foreach ($arrayNum["organizacao_militar"] as $key => $value) {
+// 	var_dump($key);
+// }
+
+// var_dump($arrayNum);
 
 $arranc = array(
 	"a" => array(),

@@ -1,3 +1,12 @@
+#php_flag display_errors on
+#php_value error_reporting -1
+
+<Files log_erros.log>
+ Order allow,deny
+ Deny from all
+ Satisfy All
+</Files>
+
 # eliminar a “assinatura” do servidor que é exibida nas páginas de erro
 
 ServerSignature Off

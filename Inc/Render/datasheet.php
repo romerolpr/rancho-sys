@@ -18,17 +18,34 @@ if ($_SESSION["user_login"]["nvl_access"] == 1):
 
 	if(!isset($get["exb"])):
 
+		$listWorksheet = null;
 		if (is_null($_SESSION["objfile"]["worksheetName"])):
 
-			echo "<br><p>Selecione o Datasheet:</p>";
-			echo "<ul class='list'>";
+			$Alert->setConfig("warning", "<strong>Dica</strong>: Para que você consiga fazer uso de todos os recursos, selecione a página recomendada pelo sistema.");
+			echo $Alert->displayPrint();
+
+			$listWorksheet .= "<br><p>Selecione a página desejada:</p>";
+			$listWorksheet .= "<ul class='list'>";
+			$exists = 0;
 
 			foreach ($worksheetData as $worksheet):
-				echo '<li><a href="',$url,'?worksheetName=',$worksheet['worksheetName'],'">', $worksheet['worksheetName'],'</a></li>';
+				if (!preg_match("/respostas/", strtolower(trim($worksheet['worksheetName'])))):
+					$listWorksheet .= '<li ' . ( isset($get["more"]) && $get["more"] == "listComplete"  ? null : "class=\"none\"" ) . '><a href="'.	$url.	'?worksheetName='.	$worksheet['worksheetName'].	'">'.	 $worksheet['worksheetName'].	'</a></li>';
+				else:
+					$listWorksheet .= '<li><a href="'.	$url.	'?worksheetName='.	$worksheet['worksheetName'].	'">'.	 $worksheet['worksheetName'].	' <strong>(Maior compatibilidade com sistema)</strong></a></li>';
+				endif;
 			endforeach;
 
-			echo "</ul>";
-			echo "<br>";
+			$listWorksheet .= "<br>";
+			if (!isset($get["more"])):
+				$listWorksheet .= "<li><a href='".$url."index.php?more=listComplete' title=\"Mostrar todos\">Mostrar todos</a><li>";
+			else:
+				$listWorksheet .= "<li><a href='".$url."index.php' title=\"Mostrar menos\">Mostrar menos</a><li>";
+			endif;
+			$listWorksheet .= "</ul>";
+			$listWorksheet .= "<br>";
+
+			echo $listWorksheet;
 
 			// echo "<p>Arquivos recentes</p>";
 			// echo "<span class=\"divider\"></span>";

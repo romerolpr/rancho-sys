@@ -1,9 +1,7 @@
 // Object filter
 var myFilter = {
 	load: false,
-	loading: false,
 	hide: [],
-	sort: [],
 	filter : {
 		'carimbo': [],
 		'email': [],
@@ -12,7 +10,29 @@ var myFilter = {
 		'nome': []
 	},
 	apply: []
-};
+}, 
+
+click = {
+	"carimbo": 0,
+	"email": 0,
+	"posto_graduacao": 0,
+	"organizacao_militar": 0,
+	"nome": 0
+}
+
+function getTarget(event) {
+    var el = event.target || event.srcElement;
+    return el.nodeType == 1? el : el.parentNode;
+}
+
+function alocateArray(array) {
+	var myJSON = array;
+	// JSON.parse(myJSON);
+	localStorage.setItem("myFilterJson", jQuery.parseJSON(JSON.stringify(myJSON)));
+
+	return localStorage.getItem("myFilterJson");
+	// return myJSON;
+}
 
 function selectAllInputs(content){
 	$('.input_checked_drop').each(function(){
@@ -227,7 +247,6 @@ function applyFilter(content){
 
 function initializeFilter(content){
 
-
 	selectAll(content);
 
 	$("a[data-exec=hide]").on("click", function(e){
@@ -235,8 +254,25 @@ function initializeFilter(content){
 		showHideColumn($(this).attr("data-content"));
 	});
 
+	console.log("initialized filter...");
+
 	
 }
+
+function loadFilterDefault(){
+
+	$(".input_checked_drop_all").each(function(){
+		if ($(this)[0].checked !== false) {
+			var $content = $(this)[0].dataset.content;
+			$(".input_checked_drop[data-content=" + $content + "]").each(function(){
+				myFilter.filter[$content].push($(this)[0]);
+			});
+			
+		}
+	});
+
+}
+
 
 function InputChange(exbAll = false){
 
@@ -286,7 +322,7 @@ $('#saveAll').on("click", function(e){
 	$body.addClass("loading");
 	request.done(function(response){
 		$("button#saveAll").text("Salvando...");
-		console.log(response);
+		label.length = 0;
 	});
 	request.fail(function(jqXHR, textStatus) {
 	    console.log("Request failed: " + textStatus);
@@ -299,16 +335,10 @@ $('#saveAll').on("click", function(e){
 
 });	
 
-var click = {
-	"carimbo": 0,
-	"email": 0,
-	"posto_graduacao": 0,
-	"organizacao_militar": 0,
-	"nome": 0
-}
+$(".td-button span[data-filter]").on("click", function(e){	
 
-$(".td-button span[data-filter]").on("click", function(e){
-	
+	loadFilterDefault();
+
 	// Build dropdown
 	var divdrop = $(this).children("div.sub-dropdown"),
 			i 			= $(this).children("i.fa-sort-down"),
@@ -317,23 +347,19 @@ $(".td-button span[data-filter]").on("click", function(e){
 		    type: "POST",
 		    data: "content=" + $(this)[0].dataset.filter + "&exbAll=" + exbAll,
 		    dataType: "html"
-		}),
-
-		myselfFilter = {
+		}), myselfFilter = {
 			filter: $(this)[0].dataset.filter,
 			extract: $(this)[0].dataset.filterExtract
-		},
-		initialized = false;
-		inputDate = [];
+		}
 
-		click[$(this)[0].dataset.filter] += 1;
+		click[myselfFilter.filter] += 1;
 
-		if (click[$(this)[0].dataset.filter] == 2) {
-			// divdrop.hide();
-			// i.removeClass("rotate180deg");
-			click[$(this)[0].dataset.filter] = 0;
+		if (click[myselfFilter.filter] >= 2 && [getTarget(e)][0].localName == "span" || [getTarget(e)][0].localName == "i" && click[myselfFilter.filter] == 2) {
+			divdrop.hide();
+			i.removeClass("rotate180deg");
+			click[myselfFilter.filter] = 0;
 		} else {
-			$(this).children("i").addClass("rotate180deg");
+			i.addClass("rotate180deg");
 			divdrop.show();
 		}
 
@@ -351,6 +377,8 @@ $(".td-button span[data-filter]").on("click", function(e){
 
 			$("button.btn_apply").on("click", function(){
 
+				$("#table-filter tr").attr('style', "");
+				$(".btn_square").hide();
 				$("body").addClass("loading");
 
 				if (myFilter.load !== true) {
@@ -363,13 +391,17 @@ $(".td-button span[data-filter]").on("click", function(e){
 						applyFilter(content);
 						$("body").removeClass("loading");
 						$("div.sub-dropdown").hide();
-						click[$(this)[0].dataset.filter] = 0;
+						// click[$(this)[0].dataset.filter] = 0;
 
 					}, 250);
 
 					myFilter.load = true;
 
 				}
+
+				$(".fa-sort-down").removeClass("rotate180deg");
+				
+				// myFilter = alocateArray(myFilter);
 
 			});
 
@@ -382,10 +414,8 @@ $(".td-button span[data-filter]").on("click", function(e){
 		});
 	}
 
-
-	// console.log(click);
+	console.log(myFilter);
 
 });
-
 
 }

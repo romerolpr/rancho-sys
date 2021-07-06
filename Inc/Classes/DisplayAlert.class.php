@@ -14,7 +14,9 @@ class DisplayAlert
 	static $Message;
 	static $Style = array(
 		"display" 		=> "block",
+		// "min-width"		=> "200px",
 		"box-sizing" 	=> "border-box",
+		"font-family"	=> "Arial, Helvetica, Times new roman",
 		"padding" 		=> ".6em",
 		"border-radius" => "3px",
 		"border-width" 	=> "1px",
@@ -33,7 +35,7 @@ class DisplayAlert
 	public function __construct()
 	{	
 		if (isset(self::$Class) && isset(self::$Message)):
-			$class = buildSpan(self::$Message);
+			$class = self::buildSpan(self::$Message);
 			return (isset($class) ? $class : "undefined");
 		endif;
 	}
@@ -151,6 +153,11 @@ class DisplayAlert
 	public function displayPrint()
 	{
 		return isset(self::$Status) ? self::buildSpan() : null;
+	}
+
+	public function displayEcho()
+	{
+		echo isset(self::$Status) ? self::buildSpan() : null;
 	}
 
 }

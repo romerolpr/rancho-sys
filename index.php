@@ -38,7 +38,7 @@ if (isset($get["path"]) && isset($get["unlink"]) && !empty($get["path"])):
 	foreach ($Files as $key => $value):
 		if ($value["tmp_name"] == $get["path"])
 			unlink($arquivo);
-			header("location: index.php?unlink=true");
+			header("location: index.php?exb=recents&unlink=true");
 	endforeach;
 endif;
 
@@ -54,6 +54,10 @@ endif;
 
 // var_dump($_GET);
 // unset($_SESSION);
+
+if(!isset($get["aba"])):
+	unset($_SESSION['objfile']['aba']);
+endif;
 
 ?>
 
@@ -72,7 +76,7 @@ endif;
 	<script><?php include "Dist/js/jquery.js"; ?></script>
 
 </head>
-<body>
+<body class="loading">
 
 	<div class="modal" id="window_loading"></div>
 
@@ -133,9 +137,14 @@ endif;
 
 					else:
 
-						$Alert->setConfig("danger", "<strong>404</strong>: Não foi possível localizar o arquivo em: \"/Transfer/load/".str_replace(" ", "_", $_SESSION["objfile"]["name"])."\". Adicione o arquivo novamente.</span>");
-						echo ($Alert->displayPrint());
-						include FRONT . 'form.php';
+						if ($_SESSION["user_login"]["nvl_access"] == 1):
+							$Alert->setConfig("danger", "<strong>404</strong>: Não foi possível localizar o arquivo em: \"/Transfer/load/".str_replace(" ", "_", $_SESSION["objfile"]["name"])."\". Adicione o arquivo novamente.</span>");
+							echo ($Alert->displayPrint());
+							include FRONT . 'form.php';
+						else:
+							$Alert->setConfig("danger", "<strong>404</strong>: Não foi possível localizar o arquivo em: \"/Transfer/load/".str_replace(" ", "_", $_SESSION["objfile"]["name"])."\". Adicione o arquivo novamente.</span>");
+							echo ($Alert->displayPrint());
+						endif;
 
 					endif;
 
@@ -159,7 +168,7 @@ endif;
 
 					include FRONT . 'form.php';
 					if (isset($_SESSION["objfile"]["name"])):
-						$Alert->setConfig("warning", "<strong>Aviso</strong>: O arquivo \"".$_SESSION["objfile"]["name"]."\" permanece aberto. <a href='index.php?exit=session_obj' title='Fechar arquivo' class='btn btn_click_consult'>Fechar arquivo</a></span>");
+						$Alert->setConfig("warning", "<strong>Aviso</strong>: Não existem arquivos disponíveis no sistema. Solicite ao administrador.");
 						echo ($Alert->displayPrint());
 					endif;	
 
@@ -208,6 +217,10 @@ endif;
 			$(".btn_expand").removeClass("btn_active");
 			click_btn = false;
 		}
+
+		$(document).ready(function(){
+			$("body").removeClass("loading");
+		});
 
 	</script>
 

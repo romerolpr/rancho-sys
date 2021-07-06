@@ -76,7 +76,7 @@ function mescleItems(){
 	return [mescleItemsVar, trdad];
 }
 
-InputChange(exbAll);
+
 
 $('#report').on("click", function(e){
 	e.preventDefault();
@@ -152,47 +152,47 @@ function getInputsAll(){
 	return input;
 }
 
-let x = false;
-
 function applyEffect(input){
 	for (var i = 0; i < input.length; i++) {
 		if (input[i][0].checked == false) {
 			input[i].parent().parent().parent().show();
 		} else {
-			input[i].parent().parent().parent().fadeOut("slow").hide();
+			input[i].parent().parent().parent().hide();
 		}''
 	}
 }
 
-$(".btn_square").on("click", function(e){
+function removeEffect(input){
+	$("#table-filter tr").show().removeClass("hide");
+}
 
+let X = false;
+$(".btn_square").on("click", function(e){
 	e.preventDefault();
 	var input = getInputsAll(),
 			$body = $("body");
 
 	$body.addClass("loading");
-
-	$(this).addClass("btn_active");
-
-	applyEffect(input);
-
-	if (x == false) {
-		$(this).text("Caixas vazias");
-		x = true;
-	} else {
-		$(this).text("Caixas vazias e marcadas");
-		x = false;
-	}
 	
-	$(".btn_restore").removeClass("none");
+
+	if (X !== true) {
+		$(this).addClass("btn_active").text("Mostrar tudo");
+		applyEffect(input);
+		X = true;
+	} else {
+		$(this).removeClass("btn_active").text("Caixas vazias");
+		removeEffect(input);
+		X = false;
+	}
+
+	// $(".btn_restore").removeClass("none");
+
 	setTimeout(function(){
 		$body.removeClass("loading");
 	}, 250);
+
 });
 
-$(".btn_restore").on("click", function(e){
-	e.preventDefault();
-	$("#table-filter tr").fadeIn("slow").show();
-	$(this).addClass("none");
-	$(".btn_square").text("Caixas vazias").removeClass("btn_active");
-});
+InputChange(exbAll);
+
+$(".td-button span[data-filter=\"posto_graduacao\"], .td-button span[data-filter=\"organizacao_militar\"]").trigger("click");

@@ -14,10 +14,10 @@ $Db->setter(HOST, USER, PASS, DBNAME);
 
 // var_dump($_SESSION);
 $datasheet = $_SESSION['objfile']['name'];
-// var_dump($datasheet);
 $content = $_POST["content"];
 $exbAll = $_POST["exbAll"];
 
+// var_dump($exbAll);
 foreach ($Filter["buttons"][$content] as $keybuttons => $button) {
 
 	$arrayDrop = array();
@@ -34,7 +34,7 @@ foreach ($Filter["buttons"][$content] as $keybuttons => $button) {
 
 	$dropRender = null;
 
-	if ($button["drop"]):
+	if (isset($button) && $button["drop"]):
 
 		$dropRender .= "<p class=\"txt-center display-buttons\">";
 		$dropRender .= "<button class=\"btn-bg btn-display btn-transparent btn_cancel\" data-exec=\"cancel\" title=\"\"></button>";
@@ -51,7 +51,11 @@ foreach ($Filter["buttons"][$content] as $keybuttons => $button) {
 
 			$getSort = (isset($_GET["sort"]) ? $_GET["sort"] : null);
 
-			$dropRender .= "<p class=\"txt-left\"><a class=\"btn txt-left sort-".strtolower($order)."\" href=\"?filter&sort=".(!is_null($getSort) ? $getSort . ";" . $order : $order ).":".urlencode($content).(isset($_SESSION['objfile']['aba']) ? "&aba=" . $_SESSION['objfile']['aba'] . "#table-filter" : null ).($exbAll == 1 ? "&exb_all" : null )."\" data-content=\"".$content."\" data-sort=\"".strtolower($order)."\" title=\"Classificar por ".$order."\">Classificar por ".$order."</a></p>";
+			if (isset($_SESSION["objfile"]["aba"])):
+				$dropRender .= "<p class=\"txt-left\"><a class=\"btn txt-left sort-".strtolower($order)."\" href=\"?filter&sort=".(!is_null($getSort) ? $getSort . ";" . $order : $order ).":".urlencode($content).(isset($_SESSION['objfile']['aba']) ? "&aba=" . $_SESSION['objfile']['aba'] . ($exbAll == 1 ? "&exb_all" : null ) . "#table-filter" : null )."\" data-content=\"".$content."\" data-sort=\"".strtolower($order)."\" title=\"Classificar por ".$order."\">Classificar por ".$order."</a></p>";
+			else:
+				$dropRender .= "<p class=\"txt-left\"><a class=\"btn txt-left sort-".strtolower($order)."\" href=\"?filter&sort=".(!is_null($getSort) ? $getSort . ";" . $order : $order ).":".urlencode($content).($exbAll == 1 ? "&exb_all" : null )."\" data-content=\"".$content."\" data-sort=\"".strtolower($order)."\" title=\"Classificar por ".$order."\">Classificar por ".$order."</a></p>";
+			endif;
 		}
 
 		if ($Filter["buttons"][$content]["drop"]):
@@ -60,13 +64,13 @@ foreach ($Filter["buttons"][$content] as $keybuttons => $button) {
 			foreach ($Filter["drop"][$content] as $keydrop => $drop) {
 
 				// Seleciona tudo
-				$dropRender .= "<li><div class=\"d-width\"><input data-content=\"".$content."\" type=\"checkbox\" name=\"filter\" value=\"(Selecionar tudo)\" id=\"".md5($content . "_" . $keybuttons.$keydrop). "_all" ."\" class=\"input_checked_drop_all\"></div><div class=\"d-width\"><a href=\"?filter=".urlencode($content).":All"."\" title=\"(Selecionar tudo)\">(Selecionar tudo)</a></div></li>";
+				$dropRender .= "<li><div class=\"d-width\"><input checked data-content=\"".$content."\" type=\"checkbox\" name=\"filter\" value=\"(Selecionar tudo)\" id=\"".md5($content . "_" . $keybuttons.$keydrop). "_all" ."\" class=\"input_checked_drop_all\"></div><div class=\"d-width\"><a href=\"?filter=".urlencode($content).":All"."\" title=\"(Selecionar tudo)\">(Selecionar tudo)</a></div></li>";
 
 				foreach ($arrayDrop as $keyArrayDrop => $arraydrop) {
 					$idInput = md5($content . "_" . $keybuttons.$keydrop."_".preg_replace("/(-|\/|:| )/", "_", $arraydrop));
 
 					// List
-					$dropRender .= "<li><div class=\"d-width\"><input data-content=\"".$content."\" type=\"checkbox\" name=\"filter\" value=\"".urlencode($arraydrop)."\" id=\"".$idInput."\" class=\"input_checked_drop\"></div><div class=\"d-width\"><a href=\"?filter=".urlencode($arraydrop).":".urlencode($content)."\" title=\"".$arraydrop."\" class=\"text_input_label\"><label for=\"".$idInput."\">" . ucfirst($arraydrop) . "</label></a></div></li>";
+					$dropRender .= "<li><div class=\"d-width\"><input checked data-content=\"".$content."\" type=\"checkbox\" name=\"filter\" value=\"".urlencode($arraydrop)."\" id=\"".$idInput."\" class=\"input_checked_drop\"></div><div class=\"d-width\"><a href=\"?filter=".urlencode($arraydrop).":".urlencode($content)."\" title=\"".$arraydrop."\" class=\"text_input_label\"><label for=\"".$idInput."\">" . ucfirst($arraydrop) . "</label></a></div></li>";
 				}
 
 				break;

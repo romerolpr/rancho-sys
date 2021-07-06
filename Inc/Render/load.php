@@ -6,9 +6,9 @@ Send and load data
 
 $Render->setStatus(true);
 
-// var_dump($Render->getWorksheetNameDefault());
-
 if (isset($get["worksheetName"])):
+	
+	$Render->setDatasheetName($get["worksheetName"]);
 
 	$filterSubset = new MyReadFilter();
 	$objReader = PHPExcel_IOFactory::createReader($inputFileName);
@@ -24,20 +24,21 @@ if (isset($get["worksheetName"])):
 
 	if ($Render->pushData() !== false):
 		$Render->setStatus(true);
-		header("location: index.php");
-
 	else:
 		$Render->setStatus(false);
 
 		$Alert->setConfig("danger", "<strong>Erro inesperado</strong>: Não foi possível importar 1 ou mais dados da planilha.</span>");
 		echo $Alert->displayPrint();
-		header("location: index.php");
-
 	endif;
 
+	// header("location: index.php");
+	$Render->urlReplace("index.php");
+
+	// var_dump($Render->getStatus());
 
 endif;
 
+// var_dump($Render->getWorksheetNameDefault());
 
 if (isset($get["filter"]) && empty($get["filter"])):
 	$Render->setFilter(null, true);
@@ -46,10 +47,13 @@ else:
 	$Render->manipuleFilter();
 endif;
 
+
+
 $paramLimit = (isset($get["filter"]) || isset($get["exb_all"]) ? null : LIMIT);
 $fromDb = $Db->return_query($Db->connect_db(), TB_RESP, null, false, $paramLimit);
 
-// var_dump($fromDb);
+// var_dump($Render::$TableName);
+// var_dump($Render::$DatasheetName);
 
 $Today  = $date->format("d/m/Y");
 $diasemana = array('Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sabado');
@@ -61,13 +65,20 @@ $sheetBody .= "<span class=\"fright head_table\">";
 
 if (!isset($get["filter"])):
 	$sheetBody .= "<a href=\"".$url."index.php?filter".(isset($get["exb_all"]) ? "&exb_all" : null)."\" class=\"btn btn_link btn_manage\" title=\"Visualização de filtro\" id=\"power_filter\"><i class=\"fas fa-filter\"></i></a>";
+	$sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage btn_expand\" title=\"Expandir tabela\"><i class=\"fas fa-expand\"></i></a>";
+	$sheetBody .= "<button class=\"btn btn_link btn_manage\" title=\"Salvar alterações\" disabled id=\"saveAll\">Salvar alterações</button>";
 else:
 	$sheetBody .= "<a href=\"".$url."index.php".(isset($get["exb_all"]) ? "?exb_all" : null)."\" class=\"btn btn_link btn_manage btn_active\" title=\"Desativar modo: Visualização de filtro\"><i class=\"fas fa-filter\"></i></a>";
-endif;
+	$sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage btn_expand\" title=\"Expandir tabela\"><i class=\"fas fa-expand\"></i></a>";
+	$sheetBody .= "<button class=\"btn btn_link btn_manage\" title=\"Salvar alterações\" disabled id=\"saveAll\">Salvar alterações</button>";
 
-
-
-$sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage btn_expand\" title=\"Expandir tabela\"><i class=\"fas fa-expand\"></i></a>";
+ 	$sheetBody .= '<div class="fright mb-2">';
+ 		$sheetBody .= '<div class="box">';
+ 			$sheetBody .= '<span class="label">Filtrar: </span>';
+ 			$sheetBody .= '<input type="text" name="searchByName" class="searchbar" id="searchbar" placeholder="Qualquer valor...">';
+ 		$sheetBody .= '</div>';
+ 	$sheetBody .= '</div>';
+ endif;
 
 
 $sheetBody .= "<a href=\"". (!isset($get["exb_all"]) ? (isset($get) ? replaceUrl("&exb_all") : replaceUrl("exb_all")) : (isset($get["filter"]) ? '?filter' : "index.php")) ."\" class=\"btn btn_link btn_manage ". (isset($get["exb_all"]) ? "btn_active" : null) ."\" title=\"Exibir todos os dias\"><i class=\"fas fa-globe\"></i></a>";
@@ -76,9 +87,9 @@ if ($_SESSION['user_login']['nvl_access'] == 1):
 
 	$sheetBody .= "<a href=\"". (isset($get) ? replaceUrl("&worksheetName=None") : replaceUrl("worksheetName=None"))."\" class=\"btn btn_link btn_manage\" title=\"Alterar Datasheet\"><i class=\"fas fa-exchange-alt\"></i></a>";
 
-
 	$sheetBody .= "<a target=\"_blank\" href=\"".$url."index.php?action=generateReport\" class=\"btn btn_link btn_manage\" title=\"Gerar relatório\"><i class=\"far fa-file-alt\"></i></a>";
-	$sheetBody .= "<span class=\"separator\">|</span>";
+
+	// $sheetBody .= "<span class=\"separator\">|</span>";
 
 	$sheetBody .= "<a href=\"".$url."index.php?exit=session_obj\" class=\"btn btn_link btn_manage btn_click_consult\" title=\"Fechar arquivo\" data-action=\"fechar\"><i class=\"fas fa-power-off\"></i></a>";
 
@@ -89,17 +100,6 @@ $sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage btn
 
 $sheetBody .= "<a href=\"".$url."index.php\" class=\"btn btn_link btn_manage btn_restore none\" title=\"Restaurar tabela\"><i class=\"fas fa-undo-alt\"></i></a>";
 
-$sheetBody .= "<button class=\"btn btn_link btn_manage\" title=\"Salvar alterações\" disabled id=\"saveAll\">Salvar alterações</button>";
-
-
-if(isset($get["filter"])): 
-	$sheetBody .= '<div class="fright mb-2">';
-		$sheetBody .= '<div class="box">';
-			$sheetBody .= '<span class="label">Filtrar por: </span>';
-			$sheetBody .= '<input type="text" name="searchByName" class="searchbar" id="searchbar" placeholder="Nome, arranchamento...">';
-		$sheetBody .= '</div>';
-	$sheetBody .= '</div>';
-endif;
 
 $sheetBody .= "<table id=\"table-filter\" data-exb=\"".((!isset($get["exb_all"])) ? "default" : "exb_all")."\">";
 
@@ -110,7 +110,6 @@ $sheetBody .= "</div>";
 
 $sheetBody .= "</table></div>";
 
-// var_dump($Render->getStatus());
 // var_dump($Render->getStatus());
 
 if ($Render->getStatus()):

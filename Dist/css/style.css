@@ -18,6 +18,10 @@ p {
     line-height: 1.4em;
 }
 
+.m-0 {
+    margin: 0;
+}
+
 .container {
     display: block;
     max-width: 1000px;
@@ -190,6 +194,7 @@ article h1 {
     border-bottom: 1px solid #c0c1c1;
     box-sizing: border-box;
     padding-bottom: .4em;
+    word-break: break-all;
 }
 
 .main {
@@ -692,7 +697,20 @@ button[disabled], .disabled {
     color: #248636;
 }
 
+.link {
+    color: #248636;
+    text-decoration: none;
+}
+.link:hover {
+    text-decoration: underline;
+}
+
+.box-table .btn_manage {
+    float: left;
+}
+
 .btn_manage {
+    /*height: 20px;*/
     margin: 0 .2em;
     background: #d4f7d8;
     padding: .3em;
@@ -705,7 +723,9 @@ button[disabled], .disabled {
 .btn_manage:hover {
     text-decoration: none!important;
 }
-
+input.btn_active_input {
+    background: #004e0b!important;
+}
 .btn_active {
     background: #b2e6b9;
     color: #248636;
@@ -1147,16 +1167,56 @@ ul.active #filter::after{
 .sub-dropdown a {
     font-size: 12px!important;
 }
+table.gpdf {
+    position: relative;
+    width: 100%;
+    margin: auto;
+    box-sizing: border-box;
+    padding: 1.4em;
+}
 
-table.gpdf tr, 
+/*table.gpdf tr, 
 table.gpdf td {
-    border: 2px solid #000;
+    border: 1px solid #000;
     background: #fff;
     font-size: 1em;
     font-family: 'Times New Roman', 'Arial';
     font-weight: bold;
     color: #000;
     height: auto;
+}*/
+
+.btn_export {
+ position: fixed;
+ top: 0;
+ left: 0;
+ width: 100%;
+ z-index: 9999998;
+ box-sizing: border-box;
+ padding: .5em;
+ /*display: flex;*/
+ /*justify-content: space-between;*/
+ transition: all .3s ease;
+ opacity: .7;
+
+}
+
+.btn_export:hover {
+    background-color: rgba(255, 255, 255, .9);
+    box-shadow: 0 1px 8px rgba(0, 0, 0, .3);
+    opacity: 1;
+}
+
+.btnExport {
+    float: right;
+    border: 1px solid #09691d;
+    background: #248636;
+    color: #fff!important;
+    padding: .25em;
+    border-radius: 3px;
+    cursor: pointer;
+    margin: .3em .25em;
+    font-size: 14px;
 }
 
 @media (max-width: 767px) { 
@@ -1228,7 +1288,20 @@ table.gpdf td {
         max-height: initial;
     }
 
-    .window_fixed .d-center-items {
+/*    .window_fixed .d-center-items {
         width: 50%;
+    }*/
+
+    .window_fixed {
+        height: 100%;
+        overflow-y: auto;
+    }
+
+    .btn_export {
+        display: flex;
+        justify-content: center;
+        background-color: rgba(255, 255, 255, .9);
+        box-shadow: 0 1px 8px rgba(0, 0, 0, .3);
+        opacity: .9;
     }
 }
