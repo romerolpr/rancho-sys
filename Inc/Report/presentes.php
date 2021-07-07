@@ -1,5 +1,35 @@
 <?php
 
+$days = array();
+$daysNonSorted = array();
+foreach ($Resp as $key => $value):
+	if ($value["datasheet"] == $_SESSION['objfile']['name']):
+
+		$seg = explode("&&", $value["segunda_feira"]);
+		$ter = explode("&&", $value["terca_feira"]);
+		$qua = explode("&&", $value["quarta_feira"]);
+		$qui = explode("&&", $value["quinta_feira"]);
+		$sex = explode("&&", $value["sexta_feira"]);
+		$sab = explode("&&", $value["sabado"]);
+		$dom = explode("&&", $value["domingo"]);
+
+		$arr = array(
+			"seg" => end($seg),
+			"ter" => end($ter),
+			"qua" => end($qua),
+			"qui" => end($qui),
+			"sex" => end($sex),
+			"sab" => end($sab),
+			"dom" => end($dom),
+		);
+
+		$days = $arr;
+		$daysNonSorted = $arr;
+
+	endif;
+endforeach;
+sort($days);
+
 $maxMissingByRefc = array(
 	"Café" => 0,
 	"Almoço" => 0,
@@ -37,7 +67,7 @@ if (count($myList["Present"]) > 0):
 
 $sheetBody = null;
 
-echo "<div class=\"box-table ". (isset($get["filter"]) || isset($get["exb_all"]) ? 'exbAll' : null) ."\">";
+echo "<div id=\"myTable\" class=\"box-table ". (isset($get["filter"]) || isset($get["exb_all"]) ? 'exbAll' : null) ."\">";
 echo "<p class=\"fleft d-center-items sticky\">";
 echo "<span class=\"fleft\"><strong>Tabela: Presentes</strong></span>";
 echo "<span class=\"fright head_table\">";
@@ -64,6 +94,20 @@ endif;
 echo "</span></p>";
 
 ?>
+
+<p>Exibir relatório</p>
+<select name="change_relatorio" data-href="<?php echo "report.php?aba=gift&rel="?>">
+	<option value="semanal">Semanal</option>
+	<?php foreach ($days as $abrDay => $day): ?>
+		<option value="<?php echo encode_to_url($day)?>" <?php if (isset($get["rel"]) && $get["rel"] == encode_to_url($day)) echo "selected" ?> ><?php echo $day?> (<?php echo convertDayName($day, true)?>)</option>
+	<?php endforeach; ?>
+</select>
+
+<script>
+	$("select[name=change_relatorio]").on("change", function(){
+		location.replace($(this).attr("data-href") + $(this).val() + "#myTable"); 
+	});
+</script>
 
 	<tr class="bar-table">
 		<!-- <td>#</td> -->
@@ -94,13 +138,14 @@ echo "</span></p>";
 			<td>Organização Militar</td>
 			<td>Posto/ Graduação</td>
 		<?php endif; ?>
-		<td>Refeição (qnt. Realizado)</td>
+		<td><?php if (isset($get["rel"]) && $get["rel"] !== "semanal") echo decode_to_url($get["rel"]) . "<br>" ?>Refeição (qnt. Realizado)</td>
 	</tr>
 
 <?php 
 
 
 sortByColumns($Resp);
+$countItem=0;
 $id = 0;
 
 foreach ($Resp as $key => $valueResp) {
@@ -110,6 +155,7 @@ foreach ($Resp as $key => $valueResp) {
 		$id++;
 
 		$contagemRefc = array();
+		$contagemRefcDays = array();
 
 		foreach ($myConf as $keyRefc => $valueRefc):
 
@@ -128,8 +174,11 @@ foreach ($Resp as $key => $valueResp) {
 							$newValue = explode(";", $refcVal);
 
 							foreach ($newValue as $keynewValue => $valor) {
-								if (!$keynewValue % 2)
+								if (!$keynewValue % 2) {
 									array_push($contagemRefc, trim($valor));
+								} else {
+									array_push($contagemRefcDays, trim($valor));
+								}
 							}
 						}
 					}
@@ -140,6 +189,57 @@ foreach ($Resp as $key => $valueResp) {
 
 		endforeach;
 
+		$ObjDecoded = array(
+			"nome" => ucfirst(strtolower(utf8_decode(trim($valueResp["nome"])))),
+			"posto_graduacao" => utf8_decode($valueResp["posto_graduacao"]),
+			"organizacao_militar" => utf8_decode($valueResp["organizacao_militar"])
+		);
+
+		$contagem = array_combine_($contagemRefcDays, $contagemRefc);
+
+		if (isset($get["rel"])):
+
+			$str = array(
+				"Café" => 0,
+				"Almoço" => 0,
+				"Jantar" => 0,
+			);
+
+			foreach ($contagem as $keycontagem => $contagemVal) {
+				if ($keycontagem == decode_to_url($get["rel"])){
+
+					if (!is_array($contagemVal)):
+						if (trim($contagemVal) == "Café"):
+							$str["Café"] += 1;
+						endif;
+
+						if (trim($contagemVal) == "Almoço"):
+							$str["Almoço"] += 1;
+						endif;
+
+						if (trim($contagemVal) == "Jantar"):
+							$str["Jantar"] += 1;
+						endif;
+					else:
+						foreach ($contagemVal as $keycontagemVal => $valuecontagemVal) {
+							if (trim($valuecontagemVal) == "Café"):
+								$str["Café"] += 1;
+							endif;
+
+							if (trim($valuecontagemVal) == "Almoço"):
+								$str["Almoço"] += 1;
+							endif;
+
+							if (trim($valuecontagemVal) == "Jantar"):
+								$str["Jantar"] += 1;
+							endif;
+						}
+					endif;
+			
+				}
+			}
+
+		endif;
 
 		preg_match_all("/Café/", implode(",", $contagemRefc), $myCafe);
 		preg_match_all("/Almoço/", implode(",", $contagemRefc), $myAlmoco);
@@ -158,49 +258,79 @@ foreach ($Resp as $key => $valueResp) {
 		$arrayNumStatus["posto_graduacao"][encodeRegexPg($valueResp["posto_graduacao"])][0] += 1;
 		$arrayNumStatus["organizacao_militar"][encodeRegexPg($valueResp["organizacao_militar"])][0] += 1;
 
-		$ObjDecoded = array(
-			"nome" => ucfirst(strtolower(utf8_decode(trim($valueResp["nome"])))),
-			"posto_graduacao" => utf8_decode($valueResp["posto_graduacao"]),
-			"organizacao_militar" => utf8_decode($valueResp["organizacao_militar"])
-		);
+		if (isset($get["rel"]) && $get["rel"] !== "semanal"):
 
-		
-		if (!empty($contagemRefc))
-		{
-			$sheetBody .= "<tr data-hash=\"".$valueResp["hash"]."\">";
+			if ($str["Café"] == 0 && $str["Almoço"] == 0 && $str["Jantar"] == 0):
+				// nothing
+			else:
 
-			// $sheetBody .= "<td>" . ++$key . "</td>";
-			$sheetBody .= "<td data-content=\"nome\">" . $ObjDecoded["nome"] . "</td>";
-			$sheetBody .= "<td data-content=\"organizacao_militar\">" . $ObjDecoded["organizacao_militar"] . "</td>";
-			$sheetBody .= "<td data-content=\"posto_graduacao\">" . $ObjDecoded["posto_graduacao"] . "</td>";
+				$countItem++;
 
-			$sheetBody .= "<td>";
-			if ($myInfo["Café"] > 0)
-				$sheetBody .= "Café (" . $myInfo["Café"] . ")" . ( ($myInfo["Almoço"] > 0) ? ", " : null );
+				$sheetBody .= "<tr data-hash=\"".$value["hash"]."\" ". ((in_array($value["hash"], $myList["Complete"])) ? "class=\"d-none\"" : null) .">";
 
-			if ($myInfo["Almoço"] > 0)
+				// $sheetBody .= "<td>" . $id . "</td>";
+				$sheetBody .= "<td data-content=\"nome\">" . $ObjDecoded["nome"] . "</td>";
+				$sheetBody .= "<td data-content=\"organizacao_militar\">" . $ObjDecoded["organizacao_militar"] . "</td>";
+				$sheetBody .= "<td data-content=\"posto_graduacao\">" . $ObjDecoded["posto_graduacao"] . "</td>";
+				$sheetBody .= "<td data-content=\"posto_graduacao\">";
 
-				$sheetBody .= "Almoço (" . $myInfo["Almoço"] . ")" . ( ($myInfo["Jantar"] > 0) ? ", " : null );
 
+				if ($str["Café"] > 0) {
+					$sheetBody .= "Café (" . $str["Café"] . ")" . ( ($str["Almoço"] > 0) ? ", " : null );
+				}
+
+				if ($str["Almoço"] > 0) {
+					$sheetBody .= "Almoço (" . $str["Almoço"] . ")" . ( ($str["Jantar"] > 0) ? ", " : null );
+				}
+				
+				if ($str["Jantar"] > 0) {
+					$sheetBody .= " Jantar (" . $str["Jantar"] . ")";
+				}
+
+				if (empty($contagem)):
+					if (!in_array($value["hash"], $myList["Present"])):
+						$sheetBody .= "Restando todos";
+						$maxMissingByRefc["Todos"] += 1;
+					else:
+						$sheetBody .= "Completo";
+					endif;
+				endif;
+
+			endif;
+
+		else:
 			
-			if ($myInfo["Jantar"] > 0) 
+			if (!empty($contagemRefc)):
 
-				$sheetBody .= " Jantar (" . $myInfo["Jantar"] . ")";
-			
-			$sheetBody .= "</td>";
+				$countItem++;
 
-			$sheetBody .= "</tr>";
+				$sheetBody .= "<tr data-hash=\"".$valueResp["hash"]."\">";
 
-		} 
+				// $sheetBody .= "<td>" . ++$key . "</td>";
+				$sheetBody .= "<td data-content=\"nome\">" . $ObjDecoded["nome"] . "</td>";
+				$sheetBody .= "<td data-content=\"organizacao_militar\">" . $ObjDecoded["organizacao_militar"] . "</td>";
+				$sheetBody .= "<td data-content=\"posto_graduacao\">" . $ObjDecoded["posto_graduacao"] . "</td>";
 
-		// else {
+				$sheetBody .= "<td>";
+				if ($myInfo["Café"] > 0)
+					$sheetBody .= "Café (" . $myInfo["Café"] . ")" . ( ($myInfo["Almoço"] > 0) ? ", " : null );
 
-		// 	$sheetBody .= "<td>";
-		// 	$sheetBody .= "Restando todos";
-		// 	$sheetBody .= "</td>";
+				if ($myInfo["Almoço"] > 0)
 
-		// }
+					$sheetBody .= "Almoço (" . $myInfo["Almoço"] . ")" . ( ($myInfo["Jantar"] > 0) ? ", " : null );
+
+				
+				if ($myInfo["Jantar"] > 0) 
+
+					$sheetBody .= " Jantar (" . $myInfo["Jantar"] . ")";
+				
+				$sheetBody .= "</td>";
+			endif;
+
+
+		endif;
 		
+		$sheetBody .= "</tr>";
 
 	endif;
 
@@ -209,9 +339,15 @@ foreach ($Resp as $key => $valueResp) {
 }
 
 
-echo $sheetBody;
+if ($countItem > 0):
 
+	echo $sheetBody;
 
+else:
+
+	echo "<td colspan=\"4\" class=\"txt-center\">Não existem dados a serem exibidos no dia selecionado.</td>";
+
+endif;
 
 foreach ($arrayNumStatus["posto_graduacao"] as $key => $value)
 	$arrayNumStatus["total"] += $value[0];

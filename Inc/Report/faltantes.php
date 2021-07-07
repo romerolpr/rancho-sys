@@ -240,26 +240,75 @@ if (isset($get["gpdf-view"])):
 
 <div class="btn_export">
 	<a id="dlink"  style="display:none;"></a>
-	<input type="button" class="btnExport btn" id="btnExport" value="Exportar para Excel" />
-	<input type="button" class="btnExport btn" id="btnExportPdf" value="Exportar para PDF" />
-	<input type="button" class="btnExport btn <?php echo (isset($get["none"]) ? "btn_active_input" : null) ?>" id="btnRefc" value="<?php echo (!isset($get["none"]) ? "Apenas refeições" : "Mostrar tudo") ?>" data-href="<?php echo "report.php?aba=missing&gpdf-view=1&doc=faltantes&rel=" . (isset($get["rel"]) ? $get["rel"] : "semanal") . (!isset($get["none"]) ? "&none" : null)?>"/>
-
-	<p>Relatório</p>
-	<select name="change_relatorio" data-href="<?php echo "report.php?aba=missing&gpdf-view=1&doc=faltantes&rel="?>">
-		<option value="semanal">Semanal</option>
-		<?php foreach ($days as $abrDay => $day): ?>
-			<option value="<?php echo encode_to_url($day)?>" <?php if (isset($get["rel"]) && $get["rel"] == encode_to_url($day)) echo "selected" ?> ><?php echo $day?> (<?php echo convertDayName($day, true)?>)</option>
-		<?php endforeach; ?>
-	</select>
+	<div>
+		<div id="msg"><p class="p-label">Clique aqui para diminuir a opacidade.</p></div>
+		<p>Relatório</p>
+		<select name="change_relatorio" data-href="<?php echo "report.php?aba=missing&gpdf-view=1&doc=faltantes&rel="?>">
+			<option value="semanal">Semanal</option>
+			<?php foreach ($days as $abrDay => $day): ?>
+				<option value="<?php echo encode_to_url($day)?>" <?php if (isset($get["rel"]) && $get["rel"] == encode_to_url($day)) echo "selected" ?> ><?php echo $day?> (<?php echo convertDayName($day, true)?>)</option>
+			<?php endforeach; ?>
+		</select>
+	</div>
+	<div>
+		<input type="button" class="btnExport btn" id="btnExport" value="Exportar para Excel" />
+		<input type="button" class="btnExport btn" id="btnExportPdf" value="Exportar para PDF" />
+		<?php if(isset($get["rel"]) && $get["rel"] === "semanal"): ?>
+		<input type="button" class="btnExport btn <?php echo (isset($get["none"]) ? "btn_active_input" : null) ?>" id="btnRefc" value="<?php echo (!isset($get["none"]) ? "Não exibir: Restando todos" : "Mostrar tudo") ?>" data-href="<?php echo "report.php?aba=missing&gpdf-view=1&doc=faltantes&rel=" . (isset($get["rel"]) ? $get["rel"] : "semanal") . (!isset($get["none"]) ? "&none" : null)?>"/>
+		<?php endif; ?>
+		<!-- <span class="divider"></span> -->
+		<!-- <input type="button" class="btnExport btn" id="btnExportMinimize" value="Ocultar janela" /> -->
+	</div>
 
 	<script>
+		function dropBtn(){
+			if ($("#myFlyBtn").length <= 0) {
+				$("<span>", {
+					class: "fly_btn",
+					id: "myFlyBtn",
+					text: "Expandir"
+				}).appendTo("body").animate({ opacity: "1", bottom: "2%" }, "slow").on("click", function(){
+					$(".btn_export").animate(
+					{
+					    opacity: "toggle",
+					    top: "0"
+				  	}, "slow", function () {
+				  		// dropBtn();
+				  		$("#myFlyBtn").animate({top: "100%"}, "slow")
+				  	});
+				});
+			} else {
+				$("#myFlyBtn").animate({ opacity: "1", bottom: "2%" }, "slow").on("click", function(){
+					$(".btn_export").animate(
+					{
+					    opacity: "toggle",
+					    top: "0"
+				  	}, "slow", function () {
+				  		// dropBtn();
+				  		// $("#myFlyBtn").animate({top: "100%"}, "slow")
+				  	});
+				});
+			}
+		}
+
 		$("select[name=change_relatorio]").on("change", function(){
 			location.replace($(this).attr("data-href") + $(this).val()); 
 		});
+		$("#btnExportMinimize").on("click", function(e){
+			e.preventDefault();
+			$(".btn_export").animate(
+			{
+			    opacity: "toggle",
+			    top: "100%"
+		  	}, "slow", function () {
+		  		dropBtn();
+		  	});
+		});
+		
 	</script>
 </div>
 
-<table class="gpdf <?php echo (isset($get["gpdf-view"]) && $get["gpdf-view"] == 1) ? 'window_fixed m-0' : null ?>" cellspacing="0" id="table-gpdf" <?php echo (isset($get["gpdf-view"]) && $get["gpdf-view"] == 1) ? 'style="position:absolute!important;width: auto;"' : "style='width: auto;'" ?>>
+<table class="gpdf <?php echo (isset($get["gpdf-view"]) && $get["gpdf-view"] == 1) ? 'window_fixed m-0' : null ?>" cellspacing="0" id="table-gpdf" <?php echo (isset($get["gpdf-view"]) && $get["gpdf-view"] == 1) ? 'style="position:absolute!important;width: 75%;"' : "style='width: 75%;'" ?>>
 	
 	<tr style="text-align:center;border: 1px solid #000; background: #fff; font-size: 1em; font-family: 'Times New Roman', 'Arial'; font-weight: bold; color: #000; height: auto;">
 		<td style="text-align:center;border: 1px solid #000; background: #fff; font-size: 1em; font-family: 'Times New Roman', 'Arial'; font-weight: bold; color: #000; height: auto;text-transform: uppercase;" colspan="6">DATA: 
@@ -366,7 +415,7 @@ else:
 
 <?php 
 
-	echo "<div class=\"box-table ". (isset($get["filter"]) || isset($get["exb_all"]) ? 'exbAll' : null) ."\">";
+	echo "<div id=\"myTable\" class=\"box-table ". (isset($get["filter"]) || isset($get["exb_all"]) ? 'exbAll' : null) ."\">";
 	echo "<p class=\"fleft d-center-items sticky\">";
 	echo "<span class=\"fleft\"><strong>Tabela: Faltantes</strong></span>";
 	echo "<span class=\"fright head_table\">";
@@ -406,7 +455,7 @@ else:
 
 <script>
 	$("select[name=change_relatorio]").on("change", function(){
-		location.replace($(this).attr("data-href") + $(this).val()); 
+		location.replace($(this).attr("data-href") + $(this).val() + "#myTable"); 
 	});
 </script>
 
@@ -439,13 +488,14 @@ else:
 		<td>Organização Militar</td>
 		<td>Posto/ Graduação</td>
 	<?php endif; ?>
-	<td><?php if (isset($get["rel"]) && $get["rel"] !== "semanal") echo "Relatório: " . decode_to_url($get["rel"]) . "<br>" ?>Refeição (qnt. Restando)</td>
+	<td><?php if (isset($get["rel"]) && $get["rel"] !== "semanal") echo decode_to_url($get["rel"]) . "<br>" ?>Refeição (qnt. Restando)</td>
 </tr>
 	
 <?php
 
 	$id = 0;
 	sortByColumns($Resp);
+	$countItem = 0;
 
 	foreach ($Resp as $key => $value):
 		
@@ -489,9 +539,7 @@ else:
 
 			$contagem = array_combine_($contagemRefcDays, $contagemRefc);
 
-
 			if (isset($get["rel"])):
-
 
 				$str = array(
 					"Café" => 0,
@@ -561,6 +609,8 @@ else:
 					// nothing
 				else:
 
+					$countItem++;
+
 					$sheetBody .= "<tr data-hash=\"".$value["hash"]."\" ". ((in_array($value["hash"], $myList["Complete"])) ? "class=\"d-none\"" : null) .">";
 
 					// $sheetBody .= "<td>" . $id . "</td>";
@@ -594,6 +644,8 @@ else:
 				endif;
 
 			else:
+
+				$countItem++;
 
 				$sheetBody .= "<tr data-hash=\"".$value["hash"]."\" ". ((in_array($value["hash"], $myList["Complete"])) ? "class=\"d-none\"" : null) .">";
 
@@ -629,7 +681,15 @@ else:
 
 	endforeach;
 
-	echo $sheetBody;
+	if ($countItem > 0):
+
+		echo $sheetBody;
+
+	else:
+
+		echo "<td colspan=\"4\" class=\"txt-center\">Não existem dados a serem exibidos no dia selecionado.</td>";
+
+	endif;
 
 	foreach ($arrayNumStatus["posto_graduacao"] as $key => $value)
 		$arrayNumStatus["total"] += $value[0];

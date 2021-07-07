@@ -377,6 +377,7 @@ $(".td-button span[data-filter]").on("click", function(e){
 
 			$("button.btn_apply").on("click", function(){
 
+				$(".fa-sort-down").removeClass("rotate180deg");
 				$("#table-filter tr").attr('style', "");
 				$(".btn_square").hide();
 				$("body").addClass("loading");
@@ -399,8 +400,6 @@ $(".td-button span[data-filter]").on("click", function(e){
 
 				}
 
-				$(".fa-sort-down").removeClass("rotate180deg");
-				
 				// myFilter = alocateArray(myFilter);
 
 			});

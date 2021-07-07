@@ -1189,33 +1189,60 @@ table.gpdf td {
 .btn_export {
  position: fixed;
  top: 0;
- left: 0;
- width: 100%;
+ right: 0;
+ width: 300px;
  z-index: 9999998;
  box-sizing: border-box;
- padding: .5em;
- /*display: flex;*/
+ padding: 1em;
+ display: grid;
  /*justify-content: space-between;*/
  transition: all .3s ease;
- opacity: .7;
-
+ opacity: 1;
+ background-color: rgba(255, 255, 255,1);
+ box-shadow: 0 1px 8px rgba(0, 0, 0, .3);
+ 
 }
 
-.btn_export:hover {
-    background-color: rgba(255, 255, 255, .9);
+.fly_btn {
+    display: block;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: #248636;
+    color: #fff;
+    text-align: center;
+    font-size: .8em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: 0;
+    left: 2%;
     box-shadow: 0 1px 8px rgba(0, 0, 0, .3);
-    opacity: 1;
+    opacity: 0;
+    cursor: pointer;
 }
+
+.btn_export > div {
+    margin: .25em 0;
+}
+/*
+.btn_export:hover {
+   opacity: 1;
+}*/
+
+#msg { display: none; }
 
 .btnExport {
-    float: right;
+    width: 100%;
+    float: left;
     border: 1px solid #09691d;
     background: #248636;
     color: #fff!important;
     padding: .25em;
     border-radius: 3px;
     cursor: pointer;
-    margin: .3em .25em;
+    margin: .25em 0;
     font-size: 14px;
 }
 
@@ -1298,10 +1325,17 @@ table.gpdf td {
     }
 
     .btn_export {
-        display: flex;
-        justify-content: center;
+        /*display: flex;*/
+        /*justify-content: center;*/
         background-color: rgba(255, 255, 255, .9);
         box-shadow: 0 1px 8px rgba(0, 0, 0, .3);
         opacity: .9;
+        width: 60%;
+    }
+
+    #msg { display: block; }
+
+    .btn_export:hover {
+        opacity: .25;
     }
 }

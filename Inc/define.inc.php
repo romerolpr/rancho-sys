@@ -4,7 +4,7 @@
 While True, db connection is localhost, but while False sisa.romerlpr.com.br 
 **/
 
-define("LOCALHOST", false);
+define("LOCALHOST", true);
 
 set_time_limit(360);
 

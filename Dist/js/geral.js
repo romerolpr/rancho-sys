@@ -6,6 +6,7 @@ function confirm_clicked(url, action) {
 		document.location = url;
 	}
 }
+
 $(".btn_click_consult").on("click", function(e){
 	var url = $(this).attr("href"), action = $(this).attr("data-action");
 	e.preventDefault();
